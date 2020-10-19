@@ -1,10 +1,12 @@
 package behaviours;
 
+import Messages.InformStatus;
 import jade.core.Agent;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import jade.proto.ContractNetResponder;
 
+import java.io.IOException;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class PoliceBehaviour extends VehicleBehaviour {
@@ -18,7 +20,11 @@ public class PoliceBehaviour extends VehicleBehaviour {
     public ACLMessage handleCfp(ACLMessage cfp) {
         ACLMessage vehicleReply = cfp.createReply();
         vehicleReply.setPerformative(ACLMessage.PROPOSE);
-        vehicleReply.setContent(String.valueOf(distance));
+        try {
+            vehicleReply.setContentObject(new InformStatus(distance));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         return vehicleReply;
     }
 

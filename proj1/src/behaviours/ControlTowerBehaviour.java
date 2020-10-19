@@ -1,7 +1,9 @@
 package behaviours;
 
+import Messages.InformStatus;
 import jade.core.Agent;
 import jade.lang.acl.ACLMessage;
+import jade.lang.acl.UnreadableException;
 import jade.proto.ContractNetInitiator;
 
 import java.util.ArrayList;
@@ -33,28 +35,36 @@ public class ControlTowerBehaviour extends ContractNetInitiator {
 
         for (Object response : responses) {
             ACLMessage vehicleMsg = (ACLMessage) response;
-            int distance = Integer.parseInt(vehicleMsg.getContent());
-            System.out.println(
-                    "Received message from vehicle " +
-                    vehicleMsg.getSender().getLocalName() +
-                    ", distance = " +
-                    distance
-            );
+            int distance = 0;
+            try {
+                Object content = vehicleMsg.getContentObject();
+                switch (vehicleMsg.getPerformative()){
+                    case (ACLMessage.PROPOSE):
+                        if(content instanceof InformStatus){
+                            distance = ((InformStatus) content).getDistance();
+                            System.out.println(
+                                    "Received message from vehicle " +
+                                            vehicleMsg.getSender().getLocalName() +
+                                            ", distance = " +
+                                            distance
+                            );
+                        }
+                }
+            } catch (UnreadableException e) {
+                e.printStackTrace();
+            }
 
             if (bestDistance == -1 || bestDistance > distance) {
                 bestDistance = distance;
-                if (bestVehicleMsg != null) {
-                    otherVehicleMsgs.add(bestVehicleMsg);
-                }
+                if (bestVehicleMsg != null) otherVehicleMsgs.add(bestVehicleMsg);
+
                 bestVehicleMsg = vehicleMsg;
             }
-            else {
-                otherVehicleMsgs.add(vehicleMsg);
-            }
+            else otherVehicleMsgs.add(vehicleMsg);
+
         }
 
-        if (bestDistance == -1 || bestVehicleMsg == null)
-            return;
+        if (bestDistance == -1 || bestVehicleMsg == null)  return;
 
         sendRejectMsgs(acceptances);
         sendAcceptMsg(acceptances);
