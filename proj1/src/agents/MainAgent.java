@@ -15,7 +15,8 @@ public class MainAgent extends Agent {
         ContainerController container = rt.createAgentContainer(p);
 
         try {
-            VehicleAgent[] vehicles = createVehicles(10,container);
+            VehicleAgent[] vehicles = createVehicles(5,5,5);
+            startVehicles(vehicles,container);
             AgentController controlTower = container.acceptNewAgent("tower", new ControlTowerAgent(vehicles));
             controlTower.start();
         } catch (StaleProxyException e) {
@@ -24,24 +25,40 @@ public class MainAgent extends Agent {
     }
 
 
-    private VehicleAgent[] createVehicles(int number,ContainerController container){
-        VehicleAgent[] vehicles  = new VehicleAgent[number];
+    private VehicleAgent[] createVehicles(int numberInem,int numberFire,int numberPolice){
+        int total = numberFire + numberInem + numberPolice;
+        VehicleAgent[] vehicles  = new VehicleAgent[total];
 
-        for (int i = 0; i < number; i++) {
+        for (int i = 0; i < numberInem; i++) {
+            String name = "Inem" + i;
+            VehicleAgent vehicleAgent = new InemAgent(name);
+            vehicles[i] = vehicleAgent;
+        }
+        for (int i = numberInem; i < numberInem+numberFire; i++) {
+            String name = "Fireman" + i;
+            VehicleAgent vehicleAgent = new FiremanAgent(name);
+            vehicles[i] = vehicleAgent;
+        }
+        for (int i = numberInem+numberFire; i < total; i++) {
+            String name = "Police" + i;
+            VehicleAgent vehicleAgent = new PoliceAgent(name);
+            vehicles[i] = vehicleAgent;
+        }
+        return vehicles;
+    }
+
+    private void startVehicles(VehicleAgent[] vehicleAgents,ContainerController container){
+        for (VehicleAgent vehicleAgent : vehicleAgents){
+            AgentController vehicle = null;
             try {
-                String name = "vehicle" + i;
-                VehicleAgent vehicleAgent = new VehicleAgent(name);
-                AgentController vehicle = container.acceptNewAgent(name, vehicleAgent);
-                vehicles[i] = vehicleAgent;
+                vehicle = container.acceptNewAgent(vehicleAgent.getVehicleName(), vehicleAgent);
                 vehicle.start();
             } catch (StaleProxyException e) {
                 e.printStackTrace();
             }
         }
-
-        return vehicles;
-
     }
+
 
 
 
