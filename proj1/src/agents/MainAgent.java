@@ -5,6 +5,7 @@ import jade.core.Runtime;
 import jade.wrapper.AgentController;
 import jade.wrapper.ContainerController;
 import jade.wrapper.StaleProxyException;
+import static utils.Emergencies.EmergencyType.*;
 
 public class MainAgent extends Agent {
 
@@ -15,9 +16,9 @@ public class MainAgent extends Agent {
         ContainerController container = rt.createAgentContainer(p);
 
         try {
-            VehicleAgent[] vehicles = createVehicles(5,5,5);
+            VehicleAgent[] vehicles = createVehicles(3,3,3);
             startVehicles(vehicles,container);
-            AgentController controlTower = container.acceptNewAgent("tower", new ControlTowerAgent(vehicles));
+            AgentController controlTower = container.acceptNewAgent("tower", new ControlTowerAgent(vehicles, Fire));
             controlTower.start();
         } catch (StaleProxyException e) {
             e.printStackTrace();

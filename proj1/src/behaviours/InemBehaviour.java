@@ -5,6 +5,7 @@ import jade.core.Agent;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import jade.proto.ContractNetResponder;
+import utils.AgentTypes;
 
 import java.io.IOException;
 import java.util.concurrent.ThreadLocalRandom;
@@ -20,7 +21,7 @@ public class InemBehaviour extends VehicleBehaviour {
         ACLMessage vehicleReply = cfp.createReply();
         vehicleReply.setPerformative(ACLMessage.PROPOSE);
         try {
-            vehicleReply.setContentObject(new InformStatus(distance));
+            vehicleReply.setContentObject(new InformStatus(distance,getAgentType()));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -36,6 +37,10 @@ public class InemBehaviour extends VehicleBehaviour {
     public ACLMessage handleAcceptProposal(ACLMessage cfp, ACLMessage propose, ACLMessage accept) {
         System.out.println("Tower accepted my distance of " + distance + "!!");
         return null;
+    }
+    @Override
+    public AgentTypes.AgentType getAgentType() {
+        return AgentTypes.AgentType.INEM;
     }
 
 

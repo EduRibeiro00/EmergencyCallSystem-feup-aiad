@@ -4,6 +4,7 @@ import jade.core.Agent;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import jade.proto.ContractNetResponder;
+import utils.AgentTypes.AgentType;
 
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -28,4 +29,6 @@ public abstract class VehicleBehaviour extends ContractNetResponder {
 
     @Override
     public abstract ACLMessage handleAcceptProposal(ACLMessage cfp, ACLMessage propose, ACLMessage accept) ;
+
+    public abstract AgentType getAgentType();
 }
