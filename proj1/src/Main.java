@@ -16,7 +16,7 @@ public class Main {
      * @param args Command line arguments
      */
     public static void main(String[] args) {
-        Runtime rt = Runtime.instance();
+        /*Runtime rt = Runtime.instance();
         Profile p = new ProfileImpl();
         ContainerController mainContainer = rt.createMainContainer(p);
 
@@ -27,6 +27,6 @@ public class Main {
             ac2.start();
         } catch (StaleProxyException e) {
             e.printStackTrace();
-        }
+        }*/
     }
 }

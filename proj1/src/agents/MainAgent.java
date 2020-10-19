@@ -15,8 +15,8 @@ public class MainAgent extends Agent {
         ContainerController container = rt.createAgentContainer(p);
 
         try {
-            String[] vehicles = createVehicles(10,container);
-            AgentController controlTower = container.createNewAgent("tower", "agents.ControlTowerAgent",vehicles);
+            VehicleAgent[] vehicles = createVehicles(10,container);
+            AgentController controlTower = container.acceptNewAgent("tower", new ControlTowerAgent(vehicles));
             controlTower.start();
         } catch (StaleProxyException e) {
             e.printStackTrace();
@@ -24,14 +24,15 @@ public class MainAgent extends Agent {
     }
 
 
-    private String[] createVehicles(int number,ContainerController container){
-        String[] vehicles  = new String[number];
+    private VehicleAgent[] createVehicles(int number,ContainerController container){
+        VehicleAgent[] vehicles  = new VehicleAgent[number];
 
         for (int i = 0; i < number; i++) {
             try {
                 String name = "vehicle" + i;
-                AgentController vehicle = container.acceptNewAgent(name, new VehicleAgent());
-                vehicles[i] = name;
+                VehicleAgent vehicleAgent = new VehicleAgent(name);
+                AgentController vehicle = container.acceptNewAgent(name, vehicleAgent);
+                vehicles[i] = vehicleAgent;
                 vehicle.start();
             } catch (StaleProxyException e) {
                 e.printStackTrace();
