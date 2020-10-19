@@ -17,6 +17,7 @@ public class MainAgent extends Agent {
 
         try {
             VehicleAgent[] vehicles = createVehicles(3,3,3);
+            System.out.println("Emeregency type: " + Fire + "\n");
             startVehicles(vehicles,container);
             AgentController controlTower = container.acceptNewAgent("tower", new ControlTowerAgent(vehicles, Fire));
             controlTower.start();
