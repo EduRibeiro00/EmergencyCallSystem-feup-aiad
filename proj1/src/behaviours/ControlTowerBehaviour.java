@@ -12,12 +12,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
+import static Messages.Messages.*;
 import static utils.AgentTypes.AgentType.*;
 
 public class ControlTowerBehaviour extends ContractNetInitiator {
 
-    private static String REJECT_CONTENT = "Will not recruit this vehicle";
-    private static String ACCEPT_CONTENT = "Recruiting this vehicle";
+
 
     private int bestDistance;
     private EmergencyType emergencyType;
@@ -45,15 +45,14 @@ public class ControlTowerBehaviour extends ContractNetInitiator {
         for (Object response : responses) {
             ACLMessage vehicleMsg = (ACLMessage) response;
             int distance = 0;
-            boolean occupied = false;
 
             try {
-                Object content = vehicleMsg.getContentObject();
+
                 switch (vehicleMsg.getPerformative()){
                     case (ACLMessage.PROPOSE):
+                        Object content = vehicleMsg.getContentObject();
                         if(content instanceof InformStatus){
                             distance = ((InformStatus) content).getDistance();
-                            occupied = ((InformStatus) content).isOccupied();
                             System.out.println(
                                     "Received message from vehicle " +
                                             vehicleMsg.getSender().getLocalName() +
@@ -61,12 +60,18 @@ public class ControlTowerBehaviour extends ContractNetInitiator {
                                             distance
                             );
                         }
+                        break;
+                    case (ACLMessage.REFUSE):
+                        System.out.println(vehicleMsg.getSender().getLocalName() +" was occupied");
+                        otherVehicleMsgs.add(vehicleMsg);
+                        continue;
+
                 }
             } catch (UnreadableException e) {
                 e.printStackTrace();
             }
 
-            if ((bestDistance == -1 || bestDistance > distance) && !occupied) {
+            if ((bestDistance == -1 || bestDistance > distance)) {
                 bestDistance = distance;
                 if (bestVehicleMsg != null) otherVehicleMsgs.add(bestVehicleMsg);
 
@@ -86,7 +91,7 @@ public class ControlTowerBehaviour extends ContractNetInitiator {
         for (ACLMessage vehicleMsg : otherVehicleMsgs) {
             ACLMessage towerReply = vehicleMsg.createReply();
             towerReply.setPerformative(ACLMessage.REJECT_PROPOSAL);
-            towerReply.setContent(REJECT_CONTENT);
+            towerReply.setContent(REJECT_VEHICLE);
             acceptances.add(towerReply);
         }
     }
@@ -101,7 +106,7 @@ public class ControlTowerBehaviour extends ContractNetInitiator {
 
         ACLMessage towerReply = bestVehicleMsg.createReply();
         towerReply.setPerformative(ACLMessage.ACCEPT_PROPOSAL);
-        towerReply.setContent(ACCEPT_CONTENT);
+        towerReply.setContent(ACCEPT_VEHICLE);
         acceptances.add(towerReply);
     }
 

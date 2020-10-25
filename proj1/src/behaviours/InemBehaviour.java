@@ -10,6 +10,8 @@ import utils.AgentTypes;
 import java.io.IOException;
 import java.util.concurrent.ThreadLocalRandom;
 
+import static Messages.Messages.IS_OCCUPIED;
+
 public class InemBehaviour extends VehicleBehaviour {
 
     public InemBehaviour(Agent agent, MessageTemplate msgTemp) {
@@ -19,11 +21,16 @@ public class InemBehaviour extends VehicleBehaviour {
     @Override
     public ACLMessage handleCfp(ACLMessage cfp) {
         ACLMessage vehicleReply = cfp.createReply();
-        vehicleReply.setPerformative(ACLMessage.PROPOSE);
-        try {
-            vehicleReply.setContentObject(new InformStatus(distance,occupied));
-        } catch (IOException e) {
-            e.printStackTrace();
+        if (!occupied) {
+            vehicleReply.setPerformative(ACLMessage.PROPOSE);
+            try {
+                vehicleReply.setContentObject(new InformStatus(distance,occupied));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }else{
+            vehicleReply.setPerformative(ACLMessage.REFUSE);
+            vehicleReply.setContent(IS_OCCUPIED);
         }
         return vehicleReply;
     }

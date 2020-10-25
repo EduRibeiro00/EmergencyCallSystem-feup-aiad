@@ -5,6 +5,7 @@ import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import jade.proto.ContractNetResponder;
 import utils.AgentTypes.AgentType;
+import static Messages.Messages.*;
 
 import java.util.concurrent.ThreadLocalRandom;
 
