@@ -1,6 +1,7 @@
 package behaviours;
 
 import Messages.InformStatus;
+import agents.ControlTowerAgent;
 import jade.core.Agent;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.UnreadableException;
@@ -24,19 +25,23 @@ public class ControlTowerBehaviour extends ContractNetInitiator {
     private  ACLMessage bestVehicleMsg;
     private List<ACLMessage> otherVehicleMsgs = new ArrayList<>();
     private int numberVehicles;
+    private ControlTowerAgent agent;
+    private int priority = 0;
 
-    public ControlTowerBehaviour(Agent agent, ACLMessage cfp, EmergencyType emergencyType,int numberVehicles) {
+    public ControlTowerBehaviour(ControlTowerAgent agent, ACLMessage cfp, EmergencyType emergencyType, int numberVehicles,int priority) {
         super(agent, cfp);
         resetControlTowerInfo();
         this.emergencyType = emergencyType;
         this.numberVehicles = numberVehicles;
-
+        this.agent = agent;
+        this.priority = priority;
     }
 
     private void resetControlTowerInfo() {
         this.bestDistance = -1;
         this.emergencyType = null;
         otherVehicleMsgs.clear();
+
     }
 
     @Override
@@ -86,7 +91,10 @@ public class ControlTowerBehaviour extends ContractNetInitiator {
         if (bestDistance == -1 || bestVehicleMsg == null)  return;
 
         if(acceptedVehicles < numberVehicles){
+            this.priority++;
             System.out.println("There are not enough free vehicles!!\n");
+            agent.handleAccident(emergencyType,numberVehicles-acceptedVehicles,this.priority);
+            return;
         }
 
         sendRejectMsgs(acceptances);

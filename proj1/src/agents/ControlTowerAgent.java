@@ -6,6 +6,7 @@ import jade.core.Agent;
 import jade.domain.FIPANames;
 import jade.lang.acl.ACLMessage;
 import  utils.Emergencies.EmergencyType;
+import utils.EmergencyAgent;
 
 public class ControlTowerAgent extends Agent {
 
@@ -31,12 +32,12 @@ public class ControlTowerAgent extends Agent {
         ACLMessage cfp = new ACLMessage(ACLMessage.CFP);
         addCorrespondingVehicles(cfp,emergencyType,priority);
         cfp.setProtocol(FIPANames.InteractionProtocol.FIPA_CONTRACT_NET);
-        addBehaviour(new ControlTowerBehaviour(this, cfp, emergencyType,numberVehicles));
+        addBehaviour(new ControlTowerBehaviour(this, cfp, emergencyType,numberVehicles,priority));
     }
 
     private void addCorrespondingVehicles(ACLMessage cfp,EmergencyType emergencyType,int priority){
         for (VehicleAgent vehicle : vehicleAgents) {
-            if(ControlTowerBehaviour.isCompatible(emergencyType,vehicle.getType(),priority)){
+            if (vehicle.getType() == EmergencyAgent.emergencyAgent.get(emergencyType).get(priority)){
                 cfp.addReceiver(new AID(vehicle.getVehicleName(), AID.ISLOCALNAME));
             }
         }
