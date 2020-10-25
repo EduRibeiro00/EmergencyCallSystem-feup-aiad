@@ -21,7 +21,7 @@ public class ControlTowerBehaviour extends ContractNetInitiator {
 
     private int bestDistance;
     private EmergencyType emergencyType;
-    private ACLMessage bestVehicleMsg;
+    private  ACLMessage bestVehicleMsg;
     private List<ACLMessage> otherVehicleMsgs = new ArrayList<>();
     private int numberVehicles;
 
@@ -42,6 +42,7 @@ public class ControlTowerBehaviour extends ContractNetInitiator {
     @Override
     protected void handleAllResponses(Vector responses, Vector acceptances) {
 
+        int acceptedVehicles = 0;
         for (Object response : responses) {
             ACLMessage vehicleMsg = (ACLMessage) response;
             int distance = 0;
@@ -59,6 +60,7 @@ public class ControlTowerBehaviour extends ContractNetInitiator {
                                             ", distance = " +
                                             distance
                             );
+                            acceptedVehicles++;
                         }
                         break;
                     case (ACLMessage.REFUSE):
@@ -82,6 +84,10 @@ public class ControlTowerBehaviour extends ContractNetInitiator {
         }
 
         if (bestDistance == -1 || bestVehicleMsg == null)  return;
+
+        if(acceptedVehicles < numberVehicles){
+            System.out.println("There are not enough free vehicles!!\n");
+        }
 
         sendRejectMsgs(acceptances);
         sendAcceptMsg(acceptances);
@@ -110,7 +116,7 @@ public class ControlTowerBehaviour extends ContractNetInitiator {
         acceptances.add(towerReply);
     }
 
-    public static boolean isCompatible(EmergencyType emergencyType, AgentTypes.AgentType agentType){
+    public static boolean isCompatible(EmergencyType emergencyType, AgentTypes.AgentType agentType,int priority){
 
         if (emergencyType == null) return false;
         switch (emergencyType){
