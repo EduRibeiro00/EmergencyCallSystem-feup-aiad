@@ -93,6 +93,8 @@ public class ControlTowerBehaviour extends ContractNetInitiator {
         if(acceptedVehicles < numberVehicles){
             this.priority++;
             System.out.println("There are not enough free vehicles!!\n");
+            if (priority > 2) return;
+            System.out.println("Recruiting vehicles from next type");
             agent.handleAccident(emergencyType,numberVehicles-acceptedVehicles,this.priority);
             return;
         }
