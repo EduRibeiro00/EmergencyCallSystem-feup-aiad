@@ -21,16 +21,24 @@ public class ControlTowerAgent extends Agent {
 
     }
 
-    private void addVehicles(VehicleAgent[] args,ACLMessage cfp) {
-        for (VehicleAgent vehicle : args) {
+    private void addVehicles(ACLMessage cfp) {
+        for (VehicleAgent vehicle : vehicleAgents) {
             cfp.addReceiver(new AID(vehicle.getVehicleName(), AID.ISLOCALNAME));
         }
     }
 
     public void handleAccident(EmergencyType emergencyType,int numberVehicles){
         ACLMessage cfp = new ACLMessage(ACLMessage.CFP);
-        addVehicles(vehicleAgents,cfp);
+        addCorrespondingVehicles(cfp,emergencyType);
         cfp.setProtocol(FIPANames.InteractionProtocol.FIPA_CONTRACT_NET);
         addBehaviour(new ControlTowerBehaviour(this, cfp, emergencyType,numberVehicles));
+    }
+
+    private void addCorrespondingVehicles(ACLMessage cfp,EmergencyType emergencyType){
+        for (VehicleAgent vehicle : vehicleAgents) {
+            if(ControlTowerBehaviour.isCompatible(emergencyType,vehicle.getType())){
+                cfp.addReceiver(new AID(vehicle.getVehicleName(), AID.ISLOCALNAME));
+            }
+        }
     }
 }

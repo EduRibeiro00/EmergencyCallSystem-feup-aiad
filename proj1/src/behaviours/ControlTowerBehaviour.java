@@ -103,7 +103,7 @@ public class ControlTowerBehaviour extends ContractNetInitiator {
         acceptances.add(towerReply);
     }
 
-    private boolean isCompatible(EmergencyType emergencyType, AgentTypes.AgentType agentType){
+    public static boolean isCompatible(EmergencyType emergencyType, AgentTypes.AgentType agentType){
 
         if (emergencyType == null) return false;
         switch (emergencyType){

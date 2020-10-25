@@ -16,7 +16,7 @@ public class MainAgent extends Agent {
         ContainerController container = rt.createAgentContainer(p);
 
         try {
-            VehicleAgent[] vehicles = createVehicles(1,1,1);
+            VehicleAgent[] vehicles = createVehicles(2,2,2);
             startVehicles(vehicles,container);
 
             ControlTowerAgent controlTowerAgent = new ControlTowerAgent(vehicles);
