@@ -29,6 +29,7 @@ public class ControlTowerBehaviour extends ContractNetInitiator {
         super(agent, cfp);
         resetControlTowerInfo();
         this.emergencyType = emergencyType;
+        this.numberVehicles = numberVehicles;
 
     }
 
@@ -44,14 +45,15 @@ public class ControlTowerBehaviour extends ContractNetInitiator {
         for (Object response : responses) {
             ACLMessage vehicleMsg = (ACLMessage) response;
             int distance = 0;
-            AgentTypes.AgentType agentType = null;
+            boolean occupied = false;
+
             try {
                 Object content = vehicleMsg.getContentObject();
                 switch (vehicleMsg.getPerformative()){
                     case (ACLMessage.PROPOSE):
                         if(content instanceof InformStatus){
                             distance = ((InformStatus) content).getDistance();
-                            agentType = ((InformStatus) content).getType();
+                            occupied = ((InformStatus) content).isOccupied();
                             System.out.println(
                                     "Received message from vehicle " +
                                             vehicleMsg.getSender().getLocalName() +
@@ -64,7 +66,7 @@ public class ControlTowerBehaviour extends ContractNetInitiator {
                 e.printStackTrace();
             }
 
-            if ((bestDistance == -1 || bestDistance > distance) && isCompatible(emergencyType,agentType)) {
+            if ((bestDistance == -1 || bestDistance > distance) && !occupied) {
                 bestDistance = distance;
                 if (bestVehicleMsg != null) otherVehicleMsgs.add(bestVehicleMsg);
 

@@ -22,7 +22,7 @@ public class PoliceBehaviour extends VehicleBehaviour {
         ACLMessage vehicleReply = cfp.createReply();
         vehicleReply.setPerformative(ACLMessage.PROPOSE);
         try {
-            vehicleReply.setContentObject(new InformStatus(distance,getAgentType()));
+            vehicleReply.setContentObject(new InformStatus(distance,occupied));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -31,12 +31,14 @@ public class PoliceBehaviour extends VehicleBehaviour {
 
     @Override
     public void handleRejectProposal(ACLMessage cfp, ACLMessage propose, ACLMessage reject) {
-        System.out.println("Tower did not accept my distance of " + distance);
+        if(occupied) System.out.println("Tower did not accept because I was occupied");
+        else System.out.println("Tower did not accept my distance of " + distance);
     }
 
     @Override
     public ACLMessage handleAcceptProposal(ACLMessage cfp, ACLMessage propose, ACLMessage accept) {
         System.out.println("Tower accepted my distance of " + distance + "!!");
+        occupied = true;
         return null;
     }
 

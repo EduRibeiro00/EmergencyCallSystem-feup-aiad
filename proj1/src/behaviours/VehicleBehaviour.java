@@ -13,6 +13,7 @@ public abstract class VehicleBehaviour extends ContractNetResponder {
     protected static int MIN_DISTANCE = 1;
     protected static int MAX_DISTANCE = 100;
     protected int distance;
+    protected boolean occupied = false;
 
     public VehicleBehaviour(Agent agent, MessageTemplate msgTemp) {
         super(agent, msgTemp);

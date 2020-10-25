@@ -16,14 +16,15 @@ public class MainAgent extends Agent {
         ContainerController container = rt.createAgentContainer(p);
 
         try {
-            VehicleAgent[] vehicles = createVehicles(2,2,2);
+            VehicleAgent[] vehicles = createVehicles(0,2,0);
             startVehicles(vehicles,container);
 
             ControlTowerAgent controlTowerAgent = new ControlTowerAgent(vehicles);
             AgentController controlTower = container.acceptNewAgent("tower", controlTowerAgent);
 
             controlTowerAgent.handleAccident(Fire,2);
-            controlTowerAgent.handleAccident(Accident,2);
+            controlTowerAgent.handleAccident(Fire,2);
+            //controlTowerAgent.handleAccident(Accident,2);
             controlTower.start();
         } catch (StaleProxyException e) {
             e.printStackTrace();

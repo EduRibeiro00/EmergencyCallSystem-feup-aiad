@@ -5,14 +5,13 @@ import utils.AgentTypes.AgentType;
 
 public class InformStatus implements java.io.Serializable {
     private int distance;
-    private AgentType type;
     private boolean occupied = false;
 
 
 
-    public InformStatus(int distance, AgentType type ) {
+    public InformStatus(int distance,boolean occupied) {
         this.distance = distance;
-        this.type = type;
+        this.occupied = occupied;
     }
     
     public int getDistance() {
@@ -23,11 +22,11 @@ public class InformStatus implements java.io.Serializable {
         this.distance = distance;
     }
 
-    public AgentType getType() {
-        return type;
+    public boolean isOccupied() {
+        return occupied;
     }
 
-    public void setType(AgentType type) {
-        this.type = type;
+    public void setOccupied(boolean occupied) {
+        this.occupied = occupied;
     }
 }
