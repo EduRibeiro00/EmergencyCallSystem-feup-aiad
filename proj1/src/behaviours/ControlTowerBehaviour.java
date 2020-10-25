@@ -23,8 +23,9 @@ public class ControlTowerBehaviour extends ContractNetInitiator {
     private EmergencyType emergencyType;
     private ACLMessage bestVehicleMsg;
     private List<ACLMessage> otherVehicleMsgs = new ArrayList<>();
+    private int numberVehicles;
 
-    public ControlTowerBehaviour(Agent agent, ACLMessage cfp, EmergencyType emergencyType) {
+    public ControlTowerBehaviour(Agent agent, ACLMessage cfp, EmergencyType emergencyType,int numberVehicles) {
         super(agent, cfp);
         resetControlTowerInfo();
         this.emergencyType = emergencyType;

@@ -6,6 +6,7 @@ import utils.AgentTypes.AgentType;
 public class InformStatus implements java.io.Serializable {
     private int distance;
     private AgentType type;
+    private boolean occupied = false;
 
 
 

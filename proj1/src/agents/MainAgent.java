@@ -16,10 +16,14 @@ public class MainAgent extends Agent {
         ContainerController container = rt.createAgentContainer(p);
 
         try {
-            VehicleAgent[] vehicles = createVehicles(3,3,3);
-            System.out.println("Emeregency type: " + Fire + "\n");
+            VehicleAgent[] vehicles = createVehicles(1,1,1);
             startVehicles(vehicles,container);
-            AgentController controlTower = container.acceptNewAgent("tower", new ControlTowerAgent(vehicles, Fire));
+
+            ControlTowerAgent controlTowerAgent = new ControlTowerAgent(vehicles);
+            AgentController controlTower = container.acceptNewAgent("tower", controlTowerAgent);
+
+            controlTowerAgent.handleAccident(Fire,2);
+            controlTowerAgent.handleAccident(Accident,2);
             controlTower.start();
         } catch (StaleProxyException e) {
             e.printStackTrace();
@@ -60,8 +64,4 @@ public class MainAgent extends Agent {
             }
         }
     }
-
-
-
-
 }
