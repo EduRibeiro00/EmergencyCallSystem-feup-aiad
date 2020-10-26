@@ -8,7 +8,7 @@ public class InformStatus implements java.io.Serializable {
     public InformStatus(Point coordinates) {
         this.coordinates = coordinates;
     }
-    
+
     public Point getCoordinates() {
         return coordinates;
     }

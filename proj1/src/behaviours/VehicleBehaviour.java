@@ -5,10 +5,10 @@ import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import jade.proto.ContractNetResponder;
 import messages.InformStatus;
+import messages.Messages;
 import utils.Point;
 import utils.VehicleType;
 import java.io.IOException;
-import static messages.Messages.IS_OCCUPIED;
 
 public abstract class VehicleBehaviour extends ContractNetResponder {
     protected Point coordinates;
@@ -25,7 +25,7 @@ public abstract class VehicleBehaviour extends ContractNetResponder {
         ACLMessage vehicleReply = cfp.createReply();
         if (occupied) {
             vehicleReply.setPerformative(ACLMessage.REFUSE);
-            vehicleReply.setContent(IS_OCCUPIED);
+            vehicleReply.setContent(Messages.IS_OCCUPIED);
         }else {
             vehicleReply.setPerformative(ACLMessage.PROPOSE);
             try {

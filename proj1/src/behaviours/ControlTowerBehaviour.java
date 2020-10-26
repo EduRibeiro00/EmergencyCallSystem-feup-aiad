@@ -54,10 +54,11 @@ public class ControlTowerBehaviour extends ContractNetInitiator {
                             distance = ((InformStatus) content).getCoordinates().getDistance(emergency.getCoordinates());
                             System.out.println(
                                 "Received message from vehicle " +
-                                        vehicleMsg.getSender().getLocalName() +
-                                        ", distance = " +
-                                        distance
+                                vehicleMsg.getSender().getLocalName() +
+                                ", distance = " +
+                                distance
                             );
+                            acceptedVehicles++;
                         }
                         break;
                     case (ACLMessage.REFUSE):
