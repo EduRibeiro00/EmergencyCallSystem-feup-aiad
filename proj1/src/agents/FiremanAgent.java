@@ -8,6 +8,7 @@ public class FiremanAgent extends VehicleAgent {
     public FiremanAgent(String name) {
         super(name);
     }
+
     @Override
     protected void setup() {
         addBehaviour(new FiremanBehaviour(this, getMt()));

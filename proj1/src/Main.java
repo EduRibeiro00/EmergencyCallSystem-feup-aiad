@@ -26,12 +26,17 @@ public class Main {
             VehicleAgent[] vehicles = createVehicles(2,2,2);
             startVehicles(vehicles, container);
 
-            ControlTowerAgent controlTowerAgent = new ControlTowerAgent(vehicles);
-            AgentController controlTower = container.acceptNewAgent("tower", controlTowerAgent);
+            ControlTowerAgent controlTowerAgent = new ControlTowerAgent("tower", vehicles);
+            AgentController controlTower = container.acceptNewAgent(controlTowerAgent.getControlTowerName(), controlTowerAgent);
 
-            createAndHandleEmergencies(controlTowerAgent);
+            //createAndHandleEmergencies(controlTowerAgent);
 
             controlTower.start();
+
+            ClientAgent clientAgent = new ClientAgent("Johnny", controlTowerAgent);
+            AgentController client = container.acceptNewAgent(clientAgent.getClientName(), clientAgent);
+
+            client.start();
         } catch (StaleProxyException e) {
             e.printStackTrace();
         }

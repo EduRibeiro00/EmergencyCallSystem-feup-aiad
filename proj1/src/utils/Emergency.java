@@ -1,6 +1,6 @@
 package utils;
 
-public class Emergency {
+public class Emergency implements java.io.Serializable {
     private EmergencyType emergencyType;
     private Point coordinates;
     private int numberVehicles;
