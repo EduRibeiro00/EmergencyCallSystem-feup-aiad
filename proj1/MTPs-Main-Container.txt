@@ -1,1 +1,1 @@
-http://monchai-XPS-15-9570:7778/acc
+http://air-de-eduardo.lan:7778/acc
