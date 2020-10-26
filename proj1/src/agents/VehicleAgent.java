@@ -3,6 +3,7 @@ package agents;
 import jade.core.Agent;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
+import utils.AgentTypes;
 
 public abstract class VehicleAgent extends Agent {
 
@@ -24,4 +25,8 @@ public abstract class VehicleAgent extends Agent {
     public String getVehicleName() {
         return vehicleName;
     }
+
+    public abstract AgentTypes.AgentType getType();
+
+
 }

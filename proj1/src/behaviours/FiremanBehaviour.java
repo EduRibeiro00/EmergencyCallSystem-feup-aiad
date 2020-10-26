@@ -10,6 +10,9 @@ import utils.AgentTypes;
 import java.io.IOException;
 import java.util.concurrent.ThreadLocalRandom;
 
+import static Messages.Messages.IS_OCCUPIED;
+
+
 public class FiremanBehaviour extends VehicleBehaviour {
 
     public FiremanBehaviour(Agent agent, MessageTemplate msgTemp) {
@@ -19,22 +22,30 @@ public class FiremanBehaviour extends VehicleBehaviour {
     @Override
     public ACLMessage handleCfp(ACLMessage cfp) {
         ACLMessage vehicleReply = cfp.createReply();
-        vehicleReply.setPerformative(ACLMessage.PROPOSE);
-        try {
-            vehicleReply.setContentObject(new InformStatus(distance,getAgentType()));
-        } catch (IOException e) {
-            e.printStackTrace();
+        if (!occupied) {
+            vehicleReply.setPerformative(ACLMessage.PROPOSE);
+            try {
+                vehicleReply.setContentObject(new InformStatus(distance,occupied));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }else{
+            vehicleReply.setPerformative(ACLMessage.REFUSE);
+            vehicleReply.setContent(IS_OCCUPIED);
         }
         return vehicleReply;
+
     }
 
     @Override
     public void handleRejectProposal(ACLMessage cfp, ACLMessage propose, ACLMessage reject) {
-        System.out.println("Tower did not accept my distance of " + distance);
+        if(occupied) System.out.println("Tower did not accept because I was occupied");
+        else System.out.println("Tower did not accept my distance of " + distance);
     }
 
     @Override
     public ACLMessage handleAcceptProposal(ACLMessage cfp, ACLMessage propose, ACLMessage accept) {
+        occupied = true;
         System.out.println("Tower accepted my distance of " + distance + "!!");
         return null;
     }
