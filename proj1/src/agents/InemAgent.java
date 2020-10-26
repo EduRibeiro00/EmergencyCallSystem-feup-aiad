@@ -1,7 +1,7 @@
 package agents;
 
 import behaviours.InemBehaviour;
-import utils.AgentTypes;
+import utils.VehicleType;
 
 public class InemAgent extends VehicleAgent {
 
@@ -15,5 +15,5 @@ public class InemAgent extends VehicleAgent {
     }
 
     @Override
-    public AgentTypes.AgentType getType() {return AgentTypes.AgentType.INEM; }
+    public VehicleType getType() {return VehicleType.INEM; }
 }

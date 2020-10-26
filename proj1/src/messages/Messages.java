@@ -1,4 +1,4 @@
-package Messages;
+package messages;
 
 public class Messages {
     public static String REJECT_VEHICLE = "Will not recruit this vehicle";

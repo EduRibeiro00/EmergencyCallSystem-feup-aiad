@@ -4,33 +4,53 @@ import jade.core.Agent;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import jade.proto.ContractNetResponder;
-import utils.AgentTypes.AgentType;
-import static Messages.Messages.*;
-
-import java.util.concurrent.ThreadLocalRandom;
+import messages.InformStatus;
+import messages.Messages;
+import utils.Point;
+import utils.VehicleType;
+import java.io.IOException;
 
 public abstract class VehicleBehaviour extends ContractNetResponder {
-
-    protected static int MIN_DISTANCE = 1;
-    protected static int MAX_DISTANCE = 100;
-    protected int distance;
+    protected Point coordinates;
     protected boolean occupied = false;
 
     public VehicleBehaviour(Agent agent, MessageTemplate msgTemp) {
         super(agent, msgTemp);
-        distance = ThreadLocalRandom.current().nextInt(MIN_DISTANCE, MAX_DISTANCE + 1);
-
-
+        coordinates = Point.genRandomPoint();
+        System.out.println(getVehicleType() + " created at coordinates " + coordinates);
     }
 
     @Override
-    public abstract ACLMessage handleCfp(ACLMessage cfp);
+    public ACLMessage handleCfp(ACLMessage cfp) {
+        ACLMessage vehicleReply = cfp.createReply();
+        if (occupied) {
+            vehicleReply.setPerformative(ACLMessage.REFUSE);
+            vehicleReply.setContent(Messages.IS_OCCUPIED);
+        }else {
+            vehicleReply.setPerformative(ACLMessage.PROPOSE);
+            try {
+                vehicleReply.setContentObject(new InformStatus(coordinates));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return vehicleReply;
+    }
 
     @Override
-    public abstract void handleRejectProposal(ACLMessage cfp, ACLMessage propose, ACLMessage reject);
+    public void handleRejectProposal(ACLMessage cfp, ACLMessage propose, ACLMessage reject) {
+        if(occupied) System.out.println("Tower did not accept because I was occupied");
+        else System.out.println("Tower refused my service; my location is " + coordinates);
+    }
 
+    // TODO: ao ser alocado a uma emergencia, mudar coordenadas do veiculo para a emergencia e passado um bocado desocupar (tendo em conta a distancia)
     @Override
-    public abstract ACLMessage handleAcceptProposal(ACLMessage cfp, ACLMessage propose, ACLMessage accept) ;
+    public ACLMessage handleAcceptProposal(ACLMessage cfp, ACLMessage propose, ACLMessage accept) {
+        System.out.println("Tower selected me for the emergency! My location is " + coordinates);
+        occupied = true;
+        return null;
+    }
 
-    public abstract AgentType getAgentType();
+    public abstract VehicleType getVehicleType();
 }

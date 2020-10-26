@@ -1,10 +1,7 @@
 package agents;
 
 import behaviours.FiremanBehaviour;
-import behaviours.InemBehaviour;
-import jade.lang.acl.ACLMessage;
-import jade.lang.acl.MessageTemplate;
-import utils.AgentTypes;
+import utils.VehicleType;
 
 public class FiremanAgent extends VehicleAgent {
 
@@ -17,5 +14,5 @@ public class FiremanAgent extends VehicleAgent {
     }
 
     @Override
-    public AgentTypes.AgentType getType() {return AgentTypes.AgentType.FIREMAN;}
+    public VehicleType getType() {return VehicleType.FIREMAN;}
 }

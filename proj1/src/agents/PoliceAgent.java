@@ -1,10 +1,7 @@
 package agents;
 
-import behaviours.InemBehaviour;
 import behaviours.PoliceBehaviour;
-import jade.lang.acl.ACLMessage;
-import jade.lang.acl.MessageTemplate;
-import utils.AgentTypes;
+import utils.VehicleType;
 
 public class PoliceAgent extends VehicleAgent {
 
@@ -18,5 +15,5 @@ public class PoliceAgent extends VehicleAgent {
     }
 
     @Override
-    public AgentTypes.AgentType getType() {return AgentTypes.AgentType.POLICE;}
+    public VehicleType getType() {return VehicleType.POLICE;}
 }

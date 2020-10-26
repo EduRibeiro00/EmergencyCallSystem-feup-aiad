@@ -3,13 +3,12 @@ package agents;
 import jade.core.Agent;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
-import utils.AgentTypes;
+import utils.VehicleType;
 
 public abstract class VehicleAgent extends Agent {
 
     private String vehicleName;
     private static MessageTemplate mt = MessageTemplate.MatchPerformative(ACLMessage.CFP);
-
 
     public VehicleAgent(String name) {
         this.vehicleName = name;
@@ -26,7 +25,7 @@ public abstract class VehicleAgent extends Agent {
         return vehicleName;
     }
 
-    public abstract AgentTypes.AgentType getType();
+    public abstract VehicleType getType();
 
 
 }
