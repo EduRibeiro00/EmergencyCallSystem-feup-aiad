@@ -5,6 +5,7 @@ import jade.core.AID;
 import jade.core.Agent;
 import jade.domain.FIPANames;
 import jade.lang.acl.ACLMessage;
+import logs.LoggerHelper;
 import utils.Emergency;
 import utils.EmergencyVehiclePriorities;
 import utils.VehicleType;
@@ -26,7 +27,7 @@ public class ControlTowerAgent extends Agent {
     }
 
     public void handleEmergency(Emergency emergency) {
-        System.out.println("Received new emergency: ");
+        LoggerHelper.get().logReceivedEmergency(emergency);
         handleEmergency(emergency, emergency.getNumberVehicles() ,0);
     }
 
@@ -43,7 +44,7 @@ public class ControlTowerAgent extends Agent {
 
         // no more vehicles available
         if (priority >= vehiclePriorities.size()) {
-            System.out.println("There are not enough free vehicles!!\n");
+            LoggerHelper.get().logNotEnoughVehicles(emergency);
             return;
         }
 

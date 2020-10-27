@@ -1,5 +1,6 @@
 package behaviours;
 
+import logs.LoggerHelper;
 import messages.InformStatus;
 import agents.ControlTowerAgent;
 import jade.lang.acl.ACLMessage;
@@ -7,6 +8,7 @@ import jade.lang.acl.UnreadableException;
 import jade.proto.ContractNetInitiator;
 import messages.Messages;
 import utils.Emergency;
+import utils.Point;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,18 +53,18 @@ public class ControlTowerBehaviour extends ContractNetInitiator {
                         Object content = vehicleMsg.getContentObject();
                         if(content instanceof InformStatus) {
                             // calc distance between vehicle and emergency
-                            distance = ((InformStatus) content).getCoordinates().getDistance(emergency.getCoordinates());
-                            System.out.println(
-                                "Received message from vehicle " +
-                                vehicleMsg.getSender().getLocalName() +
-                                ", distance = " +
+                            Point vehicleCoords = ((InformStatus) content).getCoordinates();
+                            distance = vehicleCoords.getDistance(emergency.getCoordinates());
+                            LoggerHelper.get().logReceiveVehiclePropose(
+                                vehicleMsg.getSender().getLocalName(),
+                                vehicleCoords,
                                 distance
                             );
                             acceptedVehicles++;
                         }
                         break;
                     case (ACLMessage.REFUSE):
-                        System.out.println(vehicleMsg.getSender().getLocalName() + " was occupied");
+                        LoggerHelper.get().logReceiveVehicleRefuse(vehicleMsg.getSender().getLocalName());
                         otherVehicleMsgs.add(vehicleMsg);
                         continue;
                 }
@@ -87,7 +89,7 @@ public class ControlTowerBehaviour extends ContractNetInitiator {
         sendAcceptMsg(acceptances);
 
         if(acceptedVehicles < numberVehicles) {
-            System.out.println("Will try to recruit vehicles from next type");
+            LoggerHelper.get().logInfo("Tower - will try to recruit vehicles from next type");
             this.priority++;
             agent.handleEmergency(emergency, numberVehicles - acceptedVehicles, this.priority);
         }
@@ -103,11 +105,9 @@ public class ControlTowerBehaviour extends ContractNetInitiator {
     }
 
     private void sendAcceptMsg(Vector acceptances) {
-        System.out.println(
-            "Going to accept vehicle " +
-            bestVehicleMsg.getSender().getLocalName() +
-            ", distance = " +
-            bestDistance
+        LoggerHelper.get().logAcceptVehicle(
+                bestVehicleMsg.getSender().getLocalName(),
+                bestDistance
         );
 
         ACLMessage towerReply = bestVehicleMsg.createReply();
