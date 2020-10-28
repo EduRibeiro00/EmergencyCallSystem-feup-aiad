@@ -5,6 +5,7 @@ import jade.core.Runtime;
 import jade.wrapper.AgentController;
 import jade.wrapper.ContainerController;
 import jade.wrapper.StaleProxyException;
+import logs.LoggerHelper;
 import utils.Emergency;
 import utils.EmergencyType;
 import utils.Point;
@@ -28,6 +29,7 @@ public class Main {
 
             ControlTowerAgent controlTowerAgent = new ControlTowerAgent(vehicles);
             AgentController controlTower = container.acceptNewAgent("tower", controlTowerAgent);
+            LoggerHelper.get().logInfo("START - Started control tower");
 
             createAndHandleEmergencies(controlTowerAgent);
 
@@ -51,7 +53,9 @@ public class Main {
         ));
     }
 
-    private static VehicleAgent[] createVehicles(int numberInem, int numberFire, int numberPolice){
+    private static VehicleAgent[] createVehicles(int numberInem, int numberFire, int numberPolice) {
+        LoggerHelper.get().logCreateVehicles(numberInem, numberFire, numberPolice);
+
         int total = numberFire + numberInem + numberPolice;
         VehicleAgent[] vehicles  = new VehicleAgent[total];
 
@@ -73,7 +77,7 @@ public class Main {
         return vehicles;
     }
 
-    private static void startVehicles(VehicleAgent[] vehicleAgents, ContainerController container){
+    private static void startVehicles(VehicleAgent[] vehicleAgents, ContainerController container) {
         for (VehicleAgent vehicleAgent : vehicleAgents){
             AgentController vehicle = null;
             try {
