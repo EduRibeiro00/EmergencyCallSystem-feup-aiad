@@ -4,6 +4,7 @@ import jade.core.Agent;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import jade.proto.ContractNetResponder;
+import logs.LoggerHelper;
 import messages.InformStatus;
 import messages.Messages;
 import utils.Point;
@@ -17,11 +18,16 @@ public abstract class VehicleBehaviour extends ContractNetResponder {
     public VehicleBehaviour(Agent agent, MessageTemplate msgTemp) {
         super(agent, msgTemp);
         coordinates = Point.genRandomPoint();
-        System.out.println(getVehicleType() + " created at coordinates " + coordinates);
+        LoggerHelper.get().logStartVehicle(
+                this.myAgent.getLocalName(),
+                getVehicleType(),
+                coordinates
+        );
     }
 
     @Override
     public ACLMessage handleCfp(ACLMessage cfp) {
+        LoggerHelper.get().logHandleCfp(this.myAgent.getLocalName());
         ACLMessage vehicleReply = cfp.createReply();
         if (occupied) {
             vehicleReply.setPerformative(ACLMessage.REFUSE);
@@ -40,16 +46,22 @@ public abstract class VehicleBehaviour extends ContractNetResponder {
 
     @Override
     public void handleRejectProposal(ACLMessage cfp, ACLMessage propose, ACLMessage reject) {
-        if(occupied) System.out.println("Tower did not accept because I was occupied");
-        else System.out.println("Tower refused my service; my location is " + coordinates);
+        if(occupied)
+            LoggerHelper.get().logRejectProposalOccupied(this.myAgent.getLocalName());
+        else
+            LoggerHelper.get().logRejectProposal(this.myAgent.getLocalName(), coordinates);
     }
 
     // TODO: ao ser alocado a uma emergencia, mudar coordenadas do veiculo para a emergencia e passado um bocado desocupar (tendo em conta a distancia)
     @Override
     public ACLMessage handleAcceptProposal(ACLMessage cfp, ACLMessage propose, ACLMessage accept) {
-        System.out.println("Tower selected me for the emergency! My location is " + coordinates);
+        LoggerHelper.get().logAcceptProposal(this.myAgent.getLocalName(), coordinates);
         occupied = true;
         return null;
+    }
+
+    public Point getCoordinates() {
+        return coordinates;
     }
 
     public abstract VehicleType getVehicleType();
