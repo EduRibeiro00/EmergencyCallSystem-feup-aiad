@@ -28,32 +28,14 @@ public class Main {
 
             ControlTowerAgent controlTowerAgent = new ControlTowerAgent("tower", vehicles);
             AgentController controlTower = container.acceptNewAgent(controlTowerAgent.getControlTowerName(), controlTowerAgent);
-
-            //createAndHandleEmergencies(controlTowerAgent);
-
             controlTower.start();
 
-            ClientAgent clientAgent = new ClientAgent("Johnny", controlTowerAgent);
+            ClientAgent clientAgent = new ClientAgent("johnny", controlTowerAgent);
             AgentController client = container.acceptNewAgent(clientAgent.getClientName(), clientAgent);
-
             client.start();
         } catch (StaleProxyException e) {
             e.printStackTrace();
         }
-    }
-
-    private static void createAndHandleEmergencies(ControlTowerAgent controlTowerAgent) {
-        controlTowerAgent.handleEmergency(new Emergency(
-                EmergencyType.FIRE,
-                Point.genRandomPoint(),
-                1
-        ));
-
-        controlTowerAgent.handleEmergency(new Emergency(
-                EmergencyType.ACCIDENT,
-                Point.genRandomPoint(),
-                3
-        ));
     }
 
     private static VehicleAgent[] createVehicles(int numberInem, int numberFire, int numberPolice){

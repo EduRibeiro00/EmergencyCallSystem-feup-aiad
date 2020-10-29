@@ -39,9 +39,6 @@ public class ControlTowerAgent extends Agent {
         addCorrespondingVehicles(cfp, emergency, priority);
         cfp.setProtocol(FIPANames.InteractionProtocol.FIPA_CONTRACT_NET);
 
-
-        //addBehaviour(new ControlTowerBehaviour(this, cfp, emergency, numberVehicles, priority));
-
         this.behaviour.dispatch(cfp, emergency, numberVehicles, priority);
     }
 
