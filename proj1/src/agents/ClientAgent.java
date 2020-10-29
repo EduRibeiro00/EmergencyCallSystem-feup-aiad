@@ -5,6 +5,7 @@ import jade.core.Agent;
 
 public class ClientAgent extends Agent {
 
+    private final int SECONDS_BETWEEN_CALLS = 5;
     private String clientName;
     private ControlTowerAgent controlTower;
 
@@ -15,7 +16,12 @@ public class ClientAgent extends Agent {
 
     @Override
     protected void setup() {
-        addBehaviour(new EmergencyCallBehaviour(this, 5000, controlTower.getControlTowerName()));
+        addBehaviour(new EmergencyCallBehaviour(
+        this,
+            SECONDS_BETWEEN_CALLS * 1000,
+                controlTower.getControlTowerName()
+            )
+        );
     }
 
     public String getClientName() {

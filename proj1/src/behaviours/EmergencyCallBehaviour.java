@@ -2,7 +2,6 @@ package behaviours;
 
 import agents.ClientAgent;
 import jade.core.AID;
-import jade.core.Agent;
 import jade.core.behaviours.TickerBehaviour;
 import jade.lang.acl.ACLMessage;
 import utils.Emergency;
@@ -23,7 +22,6 @@ public class EmergencyCallBehaviour extends TickerBehaviour {
         super(clientAgent, period);
         this.agent = clientAgent;
         this.targetAgentName = targetAgentName;
-        System.out.println("TARGET: " + targetAgentName);
     }
 
     @Override
@@ -31,8 +29,12 @@ public class EmergencyCallBehaviour extends TickerBehaviour {
         ACLMessage request = new ACLMessage(ACLMessage.INFORM);
         request.addReceiver(new AID(targetAgentName, AID.ISLOCALNAME));
 
-        EmergencyType randomEmergencyType = EmergencyType.values()[new Random().nextInt(EmergencyType.values().length)];
-        Emergency emergency = new Emergency(randomEmergencyType, Point.genRandomPoint(), 1);
+        Emergency emergency = new Emergency(
+                getRandomEmergencyType(),
+                Point.genRandomPoint(),
+                getRandomNumberOfVehicles()
+        );
+
         try {
             request.setContentObject(emergency);
         } catch (IOException e) {
@@ -40,6 +42,16 @@ public class EmergencyCallBehaviour extends TickerBehaviour {
         }
 
         agent.send(request);
-        System.out.println("SENT MESSAGE!");
+    }
+
+    private EmergencyType getRandomEmergencyType() {
+        int numEmergencyTypes = EmergencyType.values().length;
+        int randomIndex = new Random().nextInt(numEmergencyTypes);
+        return EmergencyType.values()[randomIndex];
+    }
+
+    private int getRandomNumberOfVehicles() {
+        int randomNumber = new Random().nextInt(MAX_NUM_VEHICLES + MIN_NUM_VEHICLES) - MIN_NUM_VEHICLES;
+        return randomNumber;
     }
 }
