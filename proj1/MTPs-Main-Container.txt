@@ -1,1 +1,1 @@
-http://air-de-eduardo.lan:7778/acc
+http://thinkpad:7778/acc
