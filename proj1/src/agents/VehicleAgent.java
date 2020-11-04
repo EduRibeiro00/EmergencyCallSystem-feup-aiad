@@ -7,7 +7,7 @@ import utils.VehicleType;
 
 public abstract class VehicleAgent extends Agent {
 
-    private String vehicleName;
+    private final String vehicleName;
     private static MessageTemplate mt = MessageTemplate.MatchPerformative(ACLMessage.CFP);
 
     public VehicleAgent(String name) {
@@ -26,6 +26,4 @@ public abstract class VehicleAgent extends Agent {
     }
 
     public abstract VehicleType getType();
-
-
 }
