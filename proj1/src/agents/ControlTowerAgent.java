@@ -1,33 +1,35 @@
 package agents;
 
 import behaviours.ControlTowerBehaviour;
-import jade.core.AID;
 import jade.core.Agent;
+import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.domain.FIPANames;
 import jade.lang.acl.ACLMessage;
 import logs.LoggerHelper;
-import utils.Emergency;
-import utils.EmergencyVehiclePriorities;
-import utils.VehicleType;
+import messages.TowerRequest;
+import utils.*;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
-// TODO: instead of the tower having the vehicle agents, the vehicles should be registered in the DF for the tower to access
 public class ControlTowerAgent extends Agent {
+    private static final String DF_NAME = "control-tower";
 
-    private String controlTowerName;
-    private VehicleAgent[] vehicleAgents;
     private ControlTowerBehaviour behaviour;
 
-    public ControlTowerAgent(String controlTowerName, VehicleAgent[] vehicleAgents) {
-        this.controlTowerName = controlTowerName;
-        this.vehicleAgents = vehicleAgents;
+    public ControlTowerAgent() {
         this.behaviour = new ControlTowerBehaviour(this);
     }
 
     @Override
     protected void setup() {
+        DFUtils.registerInDF(this, DF_NAME);
         addBehaviour(this.behaviour);
+    }
+
+    @Override
+    protected void takeDown() {
+        DFUtils.deregisterFromDF(this);
     }
 
     public void handleEmergency(Emergency emergency) {
@@ -37,31 +39,43 @@ public class ControlTowerAgent extends Agent {
 
     public void handleEmergency(Emergency emergency, int numberVehicles, int priority) {
         ACLMessage cfp = new ACLMessage(ACLMessage.CFP);
-        addCorrespondingVehicles(cfp, emergency, priority);
+        if (!addCorrespondingVehicles(cfp, emergency, numberVehicles, priority)) return;
         cfp.setProtocol(FIPANames.InteractionProtocol.FIPA_CONTRACT_NET);
+        try {
+            cfp.setContentObject(new TowerRequest(emergency.getCoordinates()));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         this.behaviour.dispatch(cfp, emergency, numberVehicles, priority);
     }
 
-    private void addCorrespondingVehicles(ACLMessage cfp, Emergency emergency, int priority) {
+    private boolean addCorrespondingVehicles(ACLMessage cfp, Emergency emergency, int numberVehicles, int priority) {
         ArrayList<VehicleType> vehiclePriorities =
                 EmergencyVehiclePriorities.vehiclePriorities.get(emergency.getEmergencyType());
 
         // no more vehicles available
         if (priority >= vehiclePriorities.size()) {
             LoggerHelper.get().logNotEnoughVehicles(emergency);
-            return;
+            return false;
+        }
+    
+        VehicleType vehicleType = vehiclePriorities.get(priority);
+        DFAgentDescription[] vehicles = DFUtils.fetchFromDF(this, vehicleType.getDFName());
+        // no vehicles of a certain type
+        if (vehicles == null || vehicles.length < 1) {
+            LoggerHelper.get().logInfo("Tower - no vehicles; will try to recruit vehicles from next type");
+            this.handleEmergency(emergency, numberVehicles, ++priority);
+            return false;
         }
 
-        for (VehicleAgent vehicle : vehicleAgents) {
-            if (vehicle.getType() == EmergencyVehiclePriorities.vehiclePriorities.get(emergency.getEmergencyType()).get(priority)){
-                cfp.addReceiver(new AID(vehicle.getVehicleName(), AID.ISLOCALNAME));
-                System.out.println("VEHICLE NAME: " + vehicle.getVehicleName());
-            }
+        for (DFAgentDescription vehicle : vehicles) {
+            cfp.addReceiver(vehicle.getName());
         }
+        return true;
     }
 
-    public String getControlTowerName() {
-        return this.controlTowerName;
+    public static String getDFName() {
+        return DF_NAME;
     }
 }

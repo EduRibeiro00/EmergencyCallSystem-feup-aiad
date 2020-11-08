@@ -58,6 +58,12 @@ public class LoggerHelper {
                 "Inem=" + numberInem + ", firemen=" + numberFire + ", police=" + numberPolice + ")");
     }
 
+    public void logCreatedEmergency(Emergency emergency) {
+        logger.info(
+                "Client has sent to tower emergency: " + emergency
+        );
+    };
+
     public void logReceivedEmergency(Emergency emergency) {
         logger.info (
                 "Tower received emergency: " + emergency
@@ -101,12 +107,11 @@ public class LoggerHelper {
         );
     }
 
-    public void logReceiveVehiclePropose(String vehicleName, Point coordinates, double distance) {
+    public void logReceiveVehiclePropose(String vehicleName, double value) {
         logger.info(
                 "Tower - Received propose from vehicle " +
                 vehicleName +
-                ", at coordinates " + coordinates +
-                "; distance = " + distance
+                "; value = " + value
         );
     }
 

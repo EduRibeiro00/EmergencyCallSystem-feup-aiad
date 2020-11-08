@@ -3,9 +3,11 @@ package behaviours;
 import jade.core.Agent;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
+import jade.lang.acl.UnreadableException;
 import jade.proto.ContractNetResponder;
 import logs.LoggerHelper;
-import messages.InformStatus;
+import messages.TowerRequest;
+import messages.VehicleResponse;
 import messages.Messages;
 import utils.Point;
 import utils.VehicleType;
@@ -34,8 +36,23 @@ public abstract class VehicleBehaviour extends ContractNetResponder {
             vehicleReply.setContent(Messages.IS_OCCUPIED);
         }else {
             vehicleReply.setPerformative(ACLMessage.PROPOSE);
+            double value = 0;
             try {
-                vehicleReply.setContentObject(new InformStatus(coordinates));
+                Point emergencyCoords = ((TowerRequest) cfp.getContentObject()).getCoordinates();
+                value = coordinates.getDistance(emergencyCoords);
+                // the higher the value, the better the vehicle is to go to the emergency.
+                // value = -distance; if distance = 0, value is max.
+                if (value == 0)
+                    value = Integer.MAX_VALUE;
+                else
+                    value = -value;
+
+            } catch (UnreadableException e) {
+                e.printStackTrace();
+            }
+
+            try {
+                vehicleReply.setContentObject(new VehicleResponse(value));
             } catch (IOException e) {
                 e.printStackTrace();
             }

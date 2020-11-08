@@ -1,6 +1,7 @@
 package agents;
 
 import behaviours.InemBehaviour;
+import behaviours.VehicleBehaviour;
 import utils.VehicleType;
 
 public class InemAgent extends VehicleAgent {
@@ -10,10 +11,10 @@ public class InemAgent extends VehicleAgent {
     }
 
     @Override
-    protected void setup() {
-        addBehaviour(new InemBehaviour(this, getMt()));
-    }
+    public VehicleType getType() {return VehicleType.INEM; }
 
     @Override
-    public VehicleType getType() {return VehicleType.INEM; }
+    protected VehicleBehaviour getVehicleBehaviour() {
+        return new InemBehaviour(this, getMt());
+    }
 }

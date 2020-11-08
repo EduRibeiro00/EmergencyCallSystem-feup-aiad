@@ -1,29 +1,27 @@
 package behaviours;
 
 import logs.LoggerHelper;
-import messages.InformStatus;
+import messages.VehicleResponse;
 import agents.ControlTowerAgent;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.UnreadableException;
 import jade.proto.ContractNetInitiator;
 import messages.Messages;
 import utils.Emergency;
-import utils.Point;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
-// TODO: instead of adding a behaviour per emergency, make this behaviour cyclic and handle a queue of emergencies
 public class EmergencyDispatcherBehaviour extends ContractNetInitiator {
 
-    private double bestDistance;
+    private double bestValue;
     private Emergency emergency;
     private int numberVehicles;
     private  ACLMessage bestVehicleMsg;
     private List<ACLMessage> otherVehicleMsgs = new ArrayList<>();
     private ControlTowerAgent agent;
-    private int priority = 0;
+    private int priority;
 
     public EmergencyDispatcherBehaviour(ControlTowerAgent agent, ACLMessage cfp, Emergency emergency, int numberVehicles, int priority) {
         super(agent, cfp);
@@ -35,7 +33,7 @@ public class EmergencyDispatcherBehaviour extends ContractNetInitiator {
     }
 
     private void resetControlTowerInfo() {
-        this.bestDistance = -1.0;
+        this.bestValue = Integer.MIN_VALUE;
         this.emergency = null;
         otherVehicleMsgs.clear();
     }
@@ -45,20 +43,17 @@ public class EmergencyDispatcherBehaviour extends ContractNetInitiator {
         int acceptedVehicles = 0;
         for (Object response : responses) {
             ACLMessage vehicleMsg = (ACLMessage) response;
-            double distance = 0;
+            double value = 0;
 
             try {
                 switch (vehicleMsg.getPerformative()){
                     case (ACLMessage.PROPOSE):
                         Object content = vehicleMsg.getContentObject();
-                        if(content instanceof InformStatus) {
-                            // calc distance between vehicle and emergency
-                            Point vehicleCoords = ((InformStatus) content).getCoordinates();
-                            distance = vehicleCoords.getDistance(emergency.getCoordinates());
+                        if(content instanceof VehicleResponse) {
+                            value = ((VehicleResponse) content).getValue();
                             LoggerHelper.get().logReceiveVehiclePropose(
                                     vehicleMsg.getSender().getLocalName(),
-                                    vehicleCoords,
-                                    distance
+                                    value
                             );
                             acceptedVehicles++;
                         }
@@ -73,8 +68,8 @@ public class EmergencyDispatcherBehaviour extends ContractNetInitiator {
             }
 
             // TODO: falta selecionar os x melhores veiculos para irem la; por agora estamos so a selecionar o melhor
-            if ((bestDistance < 0 || bestDistance > distance)) {
-                bestDistance = distance;
+            if (value > bestValue) {
+                bestValue = value;
                 if (bestVehicleMsg != null)
                     otherVehicleMsgs.add(bestVehicleMsg);
 
@@ -83,7 +78,7 @@ public class EmergencyDispatcherBehaviour extends ContractNetInitiator {
             else otherVehicleMsgs.add(vehicleMsg);
         }
 
-        if (bestDistance < 0 || bestVehicleMsg == null)  return;
+        if (bestVehicleMsg == null) return;
 
         sendRejectMsgs(acceptances);
         sendAcceptMsg(acceptances);
@@ -107,7 +102,7 @@ public class EmergencyDispatcherBehaviour extends ContractNetInitiator {
     private void sendAcceptMsg(Vector acceptances) {
         LoggerHelper.get().logAcceptVehicle(
                 bestVehicleMsg.getSender().getLocalName(),
-                bestDistance
+                bestValue
         );
 
         ACLMessage towerReply = bestVehicleMsg.createReply();
