@@ -5,7 +5,7 @@ import jade.core.Agent;
 
 public class ClientAgent extends Agent {
 
-    private final int SECONDS_BETWEEN_CALLS = 10;
+    private final int SECONDS_BETWEEN_CALLS = 5;
     private String clientName;
     private ControlTowerAgent controlTower;
 

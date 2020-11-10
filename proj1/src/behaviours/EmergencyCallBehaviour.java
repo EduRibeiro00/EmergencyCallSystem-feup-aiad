@@ -15,6 +15,8 @@ public class EmergencyCallBehaviour extends TickerBehaviour {
 
     private final int MIN_NUM_VEHICLES = 1;
     private final int MAX_NUM_VEHICLES = 3;
+    private final int MIN_DURATION= 15000;
+    private final int MAX_DURATION = 20000;
     private String targetAgentName;
     private ClientAgent agent;
 
@@ -32,8 +34,8 @@ public class EmergencyCallBehaviour extends TickerBehaviour {
         Emergency emergency = new Emergency(
                 getRandomEmergencyType(),
                 Point.genRandomPoint(),
-                getRandomNumberOfVehicles()
-        );
+                getRandomNumberOfVehicles(),
+                getRandomAccidentDuration());
 
         try {
             request.setContentObject(emergency);
@@ -52,6 +54,10 @@ public class EmergencyCallBehaviour extends TickerBehaviour {
 
     private int getRandomNumberOfVehicles() {
         int randomNumber = new Random().nextInt(MAX_NUM_VEHICLES + MIN_NUM_VEHICLES) - MIN_NUM_VEHICLES;
+        return randomNumber;
+    }
+    private int getRandomAccidentDuration() {
+        int randomNumber = new Random().nextInt(MAX_DURATION - MIN_DURATION) + MIN_DURATION;
         return randomNumber;
     }
 }

@@ -3,8 +3,10 @@ package behaviours;
 import jade.core.Agent;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
+import jade.lang.acl.UnreadableException;
 import jade.proto.ContractNetResponder;
 import logs.LoggerHelper;
+import messages.AcceptVehicle;
 import messages.InformStatus;
 import messages.Messages;
 import utils.Point;
@@ -14,7 +16,7 @@ import java.io.IOException;
 public abstract class VehicleBehaviour extends ContractNetResponder {
     protected Point coordinates;
     protected boolean occupied = false;
-    protected static final int DURATION = 20 * 1000;
+    protected int duration = 0;
     private long activatedAt = Long.MAX_VALUE;
 
     public VehicleBehaviour(Agent agent, MessageTemplate msgTemp) {
@@ -33,7 +35,7 @@ public abstract class VehicleBehaviour extends ContractNetResponder {
         ACLMessage vehicleReply = cfp.createReply();
         if (occupied) {
             long activeFor = System.currentTimeMillis() - activatedAt;
-            if(activeFor>=0 && activeFor>=DURATION){
+            if(activeFor>=0 && activeFor>=duration){
                 accpetCfp(vehicleReply);
                 occupied = false;
                 activatedAt = Long.MAX_VALUE;
@@ -61,6 +63,26 @@ public abstract class VehicleBehaviour extends ContractNetResponder {
     // TODO: ao ser alocado a uma emergencia, mudar coordenadas do veiculo para a emergencia e passado um bocado desocupar (tendo em conta a distancia)
     @Override
     public ACLMessage handleAcceptProposal(ACLMessage cfp, ACLMessage propose, ACLMessage accept) {
+
+        if (accept.getPerformative() == ACLMessage.ACCEPT_PROPOSAL) {
+            try {
+                Object content = accept.getContentObject();
+                if(content instanceof AcceptVehicle){
+
+                    AcceptVehicle acceptVehicleMsg = (AcceptVehicle) content;
+                    duration = acceptVehicleMsg.getAccidentDuration();
+                    coordinates = acceptVehicleMsg.getCoordinates();
+                    System.out.println("Vehicle will be occupied for:" + duration/1000 + " seconds" );
+
+
+                }
+            } catch (UnreadableException e) {
+                e.printStackTrace();
+            }
+
+        }
+
+
         LoggerHelper.get().logAcceptProposal(this.myAgent.getLocalName(), coordinates);
         occupied = true;
         activatedAt = System.currentTimeMillis();
