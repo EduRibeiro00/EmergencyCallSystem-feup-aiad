@@ -96,9 +96,9 @@ public class LoggerHelper {
     }
 
     public void logHandleCfp(String vehicleName) {
-        logger.info(
+        /*logger.info(
                 vehicleName + " - received CFP from tower"
-        );
+        );*/
     }
 
     public void logReceiveVehiclePropose(String vehicleName, Point coordinates, double distance) {

@@ -14,6 +14,8 @@ import java.io.IOException;
 public abstract class VehicleBehaviour extends ContractNetResponder {
     protected Point coordinates;
     protected boolean occupied = false;
+    protected static final int DURATION = 20 * 1000;
+    private long activatedAt = Long.MAX_VALUE;
 
     public VehicleBehaviour(Agent agent, MessageTemplate msgTemp) {
         super(agent, msgTemp);
@@ -30,15 +32,19 @@ public abstract class VehicleBehaviour extends ContractNetResponder {
         LoggerHelper.get().logHandleCfp(this.myAgent.getLocalName());
         ACLMessage vehicleReply = cfp.createReply();
         if (occupied) {
-            vehicleReply.setPerformative(ACLMessage.REFUSE);
-            vehicleReply.setContent(Messages.IS_OCCUPIED);
-        }else {
-            vehicleReply.setPerformative(ACLMessage.PROPOSE);
-            try {
-                vehicleReply.setContentObject(new InformStatus(coordinates));
-            } catch (IOException e) {
-                e.printStackTrace();
+            long activeFor = System.currentTimeMillis() - activatedAt;
+            if(activeFor>=0 && activeFor>=DURATION){
+                accpetCfp(vehicleReply);
+                occupied = false;
+                activatedAt = Long.MAX_VALUE;
+                //So começar a contagem quando ele é aceite
+                //activatedAt = System.currentTimeMillis();
+            }else {
+                vehicleReply.setPerformative(ACLMessage.REFUSE);
+                vehicleReply.setContent(Messages.IS_OCCUPIED);
             }
+        }else {
+            accpetCfp(vehicleReply);
         }
 
         return vehicleReply;
@@ -57,11 +63,21 @@ public abstract class VehicleBehaviour extends ContractNetResponder {
     public ACLMessage handleAcceptProposal(ACLMessage cfp, ACLMessage propose, ACLMessage accept) {
         LoggerHelper.get().logAcceptProposal(this.myAgent.getLocalName(), coordinates);
         occupied = true;
+        activatedAt = System.currentTimeMillis();
         return null;
     }
 
     public Point getCoordinates() {
         return coordinates;
+    }
+
+    protected void accpetCfp(ACLMessage vehicleReply){
+        vehicleReply.setPerformative(ACLMessage.PROPOSE);
+        try {
+            vehicleReply.setContentObject(new InformStatus(coordinates));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public abstract VehicleType getVehicleType();
