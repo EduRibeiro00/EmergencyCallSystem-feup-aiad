@@ -60,7 +60,7 @@ public abstract class VehicleBehaviour extends ContractNetResponder {
             LoggerHelper.get().logRejectProposal(this.myAgent.getLocalName(), coordinates);
     }
 
-    // TODO: ao ser alocado a uma emergencia, mudar coordenadas do veiculo para a emergencia e passado um bocado desocupar (tendo em conta a distancia)
+
     @Override
     public ACLMessage handleAcceptProposal(ACLMessage cfp, ACLMessage propose, ACLMessage accept) {
 
@@ -70,7 +70,7 @@ public abstract class VehicleBehaviour extends ContractNetResponder {
                 if(content instanceof AcceptVehicle){
 
                     AcceptVehicle acceptVehicleMsg = (AcceptVehicle) content;
-                    duration = acceptVehicleMsg.getAccidentDuration();
+                    duration = acceptVehicleMsg.getAccidentDuration() ; // + distance/10 * 1000 // TODO: Quando for o veiculo a calcular a distancia adicionar aqui
                     coordinates = acceptVehicleMsg.getCoordinates();
                     System.out.println("Vehicle will be occupied for:" + duration/1000 + " seconds" );
 
