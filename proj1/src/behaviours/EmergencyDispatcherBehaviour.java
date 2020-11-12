@@ -1,8 +1,8 @@
 package behaviours;
 
 import logs.LoggerHelper;
+import messages.VehicleResponse;
 import messages.AcceptVehicle;
-import messages.InformStatus;
 import agents.ControlTowerAgent;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.UnreadableException;
@@ -10,7 +10,6 @@ import jade.proto.ContractNetInitiator;
 import messages.Messages;
 import utils.Candidate;
 import utils.Emergency;
-import utils.Point;
 
 import java.util.*;
 import java.io.IOException;
@@ -18,17 +17,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
-// TODO: instead of adding a behaviour per emergency, make this behaviour cyclic and handle a queue of emergencies
 public class EmergencyDispatcherBehaviour extends ContractNetInitiator {
 
-    private double bestDistance;
+    private double bestValue;
     private Emergency emergency;
     private int numberVehicles;
     private List<ACLMessage> bestVehicleMsgs = new ArrayList<>();
     private List<ACLMessage> otherVehicleMsgs = new ArrayList<>();
     private ControlTowerAgent agent;
-    private int priority = 0;
     private PriorityQueue<Candidate> candidateQueue;
+    private int priority;
 
     public EmergencyDispatcherBehaviour(ControlTowerAgent agent, ACLMessage cfp, Emergency emergency, int numberVehicles, int priority) {
         super(agent, cfp);
@@ -40,11 +38,11 @@ public class EmergencyDispatcherBehaviour extends ContractNetInitiator {
     }
 
     private void resetControlTowerInfo() {
-        this.bestDistance = -1.0;
+        this.bestValue = Integer.MIN_VALUE;
         this.emergency = null;
         this.candidateQueue = new PriorityQueue<>((c1, c2) -> {
-            if (c1.getDistance() < c2.getDistance()) return -1;
-            if (c1.getDistance() > c2.getDistance()) return 1;
+            if (c1.getValue() < c2.getValue()) return -1;
+            if (c1.getValue() > c2.getValue()) return 1;
             return 0;
         });
         this.bestVehicleMsgs.clear();
@@ -57,23 +55,20 @@ public class EmergencyDispatcherBehaviour extends ContractNetInitiator {
 
         for (Object response : responses) {
             ACLMessage vehicleMsg = (ACLMessage) response;
-            double distance = 0;
+            double value = 0;
 
             try {
                 switch (vehicleMsg.getPerformative()){
                     case (ACLMessage.PROPOSE):
                         Object content = vehicleMsg.getContentObject();
-                        if(content instanceof InformStatus) {
-                            // calc distance between vehicle and emergency
-                            Point vehicleCoords = ((InformStatus) content).getCoordinates();
-                            distance = vehicleCoords.getDistance(emergency.getCoordinates());
+                        if(content instanceof VehicleResponse) {
+                            value = ((VehicleResponse) content).getValue();
                             LoggerHelper.get().logReceiveVehiclePropose(
                                     vehicleMsg.getSender().getLocalName(),
-                                    vehicleCoords,
-                                    distance
+                                    value
                             );
                             acceptedVehicles++;
-                            candidateQueue.add(new Candidate(distance, vehicleMsg));
+                            candidateQueue.add(new Candidate(value, vehicleMsg));
                         }
                         break;
                     case (ACLMessage.REFUSE):
@@ -84,7 +79,6 @@ public class EmergencyDispatcherBehaviour extends ContractNetInitiator {
             } catch (UnreadableException e) {
                 e.printStackTrace();
             }
-
         }
 
         while(candidateQueue.peek() != null && bestVehicleMsgs.size() < numberVehicles) {
@@ -116,7 +110,7 @@ public class EmergencyDispatcherBehaviour extends ContractNetInitiator {
         for (ACLMessage bestVehicleMsg : bestVehicleMsgs) {
             LoggerHelper.get().logAcceptVehicle(
                     bestVehicleMsg.getSender().getLocalName(),
-                    bestDistance
+                    bestValue
             );
 
             ACLMessage towerReply = bestVehicleMsg.createReply();

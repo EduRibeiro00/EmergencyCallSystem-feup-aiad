@@ -14,6 +14,4 @@ public class FiremanBehaviour extends VehicleBehaviour {
     public VehicleType getVehicleType() {
         return VehicleType.FIREMAN;
     }
-
-
 }

@@ -1,6 +1,7 @@
 package agents;
 
 import behaviours.FiremanBehaviour;
+import behaviours.VehicleBehaviour;
 import utils.VehicleType;
 
 public class FiremanAgent extends VehicleAgent {
@@ -10,10 +11,10 @@ public class FiremanAgent extends VehicleAgent {
     }
 
     @Override
-    protected void setup() {
-        addBehaviour(new FiremanBehaviour(this, getMt()));
-    }
+    public VehicleType getType() {return VehicleType.FIREMAN;}
 
     @Override
-    public VehicleType getType() {return VehicleType.FIREMAN;}
+    protected VehicleBehaviour getVehicleBehaviour() {
+        return new FiremanBehaviour(this, getMt());
+    }
 }

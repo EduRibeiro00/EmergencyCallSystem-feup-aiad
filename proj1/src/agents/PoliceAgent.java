@@ -1,6 +1,7 @@
 package agents;
 
 import behaviours.PoliceBehaviour;
+import behaviours.VehicleBehaviour;
 import utils.VehicleType;
 
 public class PoliceAgent extends VehicleAgent {
@@ -10,10 +11,10 @@ public class PoliceAgent extends VehicleAgent {
     }
 
     @Override
-    protected void setup() {
-        addBehaviour(new PoliceBehaviour(this, getMt()));
-    }
+    public VehicleType getType() { return VehicleType.POLICE; }
 
     @Override
-    public VehicleType getType() {return VehicleType.POLICE;}
+    protected VehicleBehaviour getVehicleBehaviour() {
+        return new PoliceBehaviour(this, getMt());
+    }
 }

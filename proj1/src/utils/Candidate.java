@@ -3,16 +3,16 @@ package utils;
 import jade.lang.acl.ACLMessage;
 
 public class Candidate {
-    private double distance;
+    private double value;
     private ACLMessage message;
 
-    public Candidate(double distance, ACLMessage message) {
-        this.distance = distance;
+    public Candidate(double value, ACLMessage message) {
+        this.value = value;
         this.message = message;
     }
 
-    public double getDistance() {
-        return distance;
+    public double getValue() {
+        return value;
     }
 
     public ACLMessage getMessage() {

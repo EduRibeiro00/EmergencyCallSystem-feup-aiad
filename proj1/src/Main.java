@@ -27,12 +27,12 @@ public class Main {
             VehicleAgent[] vehicles = createVehicles(2,2,2);
             startVehicles(vehicles, container);
 
-            ControlTowerAgent controlTowerAgent = new ControlTowerAgent("tower", vehicles);
-            AgentController controlTower = container.acceptNewAgent(controlTowerAgent.getControlTowerName(), controlTowerAgent);
+            ControlTowerAgent controlTowerAgent = new ControlTowerAgent();
+            AgentController controlTower = container.acceptNewAgent(ControlTowerAgent.getDFName(), controlTowerAgent);
             LoggerHelper.get().logInfo("START - Started control tower");
             controlTower.start();
 
-            ClientAgent clientAgent = new ClientAgent("johnny", controlTowerAgent);
+            ClientAgent clientAgent = new ClientAgent("johnny", ControlTowerAgent.getDFName());
             AgentController client = container.acceptNewAgent(clientAgent.getClientName(), clientAgent);
             LoggerHelper.get().logInfo("CLIENT - Started client " + clientAgent.getClientName());
             client.start();

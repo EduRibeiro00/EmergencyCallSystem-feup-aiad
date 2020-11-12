@@ -1,13 +1,15 @@
 package agents;
 
+import behaviours.VehicleBehaviour;
 import jade.core.Agent;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
+import utils.DFUtils;
 import utils.VehicleType;
 
 public abstract class VehicleAgent extends Agent {
 
-    private String vehicleName;
+    private final String vehicleName;
     private static MessageTemplate mt = MessageTemplate.MatchPerformative(ACLMessage.CFP);
 
     public VehicleAgent(String name) {
@@ -19,7 +21,16 @@ public abstract class VehicleAgent extends Agent {
     }
 
     @Override
-    protected abstract void setup();
+    protected void setup() {
+        addBehaviour(getVehicleBehaviour());
+        DFUtils.registerInDF(this, getType().getDFName());
+    }
+
+    @Override
+    protected void takeDown() {
+        DFUtils.deregisterFromDF(this);
+    }
+
 
     public String getVehicleName() {
         return vehicleName;
@@ -27,5 +38,5 @@ public abstract class VehicleAgent extends Agent {
 
     public abstract VehicleType getType();
 
-
+    protected abstract VehicleBehaviour getVehicleBehaviour();
 }

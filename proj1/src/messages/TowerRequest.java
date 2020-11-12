@@ -2,10 +2,10 @@ package messages;
 
 import utils.Point;
 
-public class InformStatus implements java.io.Serializable {
+public class TowerRequest implements java.io.Serializable {
     private Point coordinates;
 
-    public InformStatus(Point coordinates) {
+    public TowerRequest(Point coordinates) {
         this.coordinates = coordinates;
     }
 
