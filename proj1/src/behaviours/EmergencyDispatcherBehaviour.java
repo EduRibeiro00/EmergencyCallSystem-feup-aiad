@@ -19,7 +19,7 @@ public class EmergencyDispatcherBehaviour extends ContractNetInitiator {
     private double bestDistance;
     private Emergency emergency;
     private int numberVehicles;
-    private List<ACLMessage> bestVehicleMsgs;
+    private List<ACLMessage> bestVehicleMsgs = new ArrayList<>();
     private List<ACLMessage> otherVehicleMsgs = new ArrayList<>();
     private ControlTowerAgent agent;
     private int priority = 0;
@@ -45,8 +45,8 @@ public class EmergencyDispatcherBehaviour extends ContractNetInitiator {
                 return 0;
             }
         });
-        bestVehicleMsgs.clear();
-        otherVehicleMsgs.clear();
+        this.bestVehicleMsgs.clear();
+        this.otherVehicleMsgs.clear();
     }
 
     @Override
@@ -88,9 +88,8 @@ public class EmergencyDispatcherBehaviour extends ContractNetInitiator {
         while(candidateQueue.peek() != null && bestVehicleMsgs.size() < numberVehicles) {
             Candidate currentCandidate = candidateQueue.peek();
             candidateQueue.remove(currentCandidate);
-            
+            bestVehicleMsgs.add(currentCandidate.getMessage());
         }
-
 
         sendRejectMsgs(acceptances);
         sendAcceptMsg(acceptances);
@@ -112,14 +111,16 @@ public class EmergencyDispatcherBehaviour extends ContractNetInitiator {
     }
 
     private void sendAcceptMsg(Vector acceptances) {
-        LoggerHelper.get().logAcceptVehicle(
-                bestVehicleMsg.getSender().getLocalName(),
-                bestDistance
-        );
+        for (ACLMessage bestVehicleMsg : bestVehicleMsgs) {
+            LoggerHelper.get().logAcceptVehicle(
+                    bestVehicleMsg.getSender().getLocalName(),
+                    bestDistance
+            );
 
-        ACLMessage towerReply = bestVehicleMsg.createReply();
-        towerReply.setPerformative(ACLMessage.ACCEPT_PROPOSAL);
-        towerReply.setContent(Messages.ACCEPT_VEHICLE);
-        acceptances.add(towerReply);
+            ACLMessage towerReply = bestVehicleMsg.createReply();
+            towerReply.setPerformative(ACLMessage.ACCEPT_PROPOSAL);
+            towerReply.setContent(Messages.ACCEPT_VEHICLE);
+            acceptances.add(towerReply);
+        }
     }
 }

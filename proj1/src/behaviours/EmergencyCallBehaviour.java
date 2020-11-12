@@ -10,6 +10,7 @@ import utils.Point;
 
 import java.io.IOException;
 import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class EmergencyCallBehaviour extends TickerBehaviour {
 
@@ -51,7 +52,7 @@ public class EmergencyCallBehaviour extends TickerBehaviour {
     }
 
     private int getRandomNumberOfVehicles() {
-        int randomNumber = new Random().nextInt(MAX_NUM_VEHICLES + MIN_NUM_VEHICLES) - MIN_NUM_VEHICLES;
+        int randomNumber = ThreadLocalRandom.current().nextInt(MIN_NUM_VEHICLES, MAX_NUM_VEHICLES + 1);
         return randomNumber;
     }
 }
