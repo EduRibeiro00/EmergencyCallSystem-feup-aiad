@@ -8,8 +8,10 @@ import jade.lang.acl.ACLMessage;
 import jade.lang.acl.UnreadableException;
 import jade.proto.ContractNetInitiator;
 import messages.Messages;
+import utils.Candidate;
 import utils.Emergency;
 
+import java.util.*;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -20,9 +22,10 @@ public class EmergencyDispatcherBehaviour extends ContractNetInitiator {
     private double bestValue;
     private Emergency emergency;
     private int numberVehicles;
-    private  ACLMessage bestVehicleMsg;
+    private List<ACLMessage> bestVehicleMsgs = new ArrayList<>();
     private List<ACLMessage> otherVehicleMsgs = new ArrayList<>();
     private ControlTowerAgent agent;
+    private PriorityQueue<Candidate> candidateQueue;
     private int priority;
 
     public EmergencyDispatcherBehaviour(ControlTowerAgent agent, ACLMessage cfp, Emergency emergency, int numberVehicles, int priority) {
@@ -37,12 +40,19 @@ public class EmergencyDispatcherBehaviour extends ContractNetInitiator {
     private void resetControlTowerInfo() {
         this.bestValue = Integer.MIN_VALUE;
         this.emergency = null;
-        otherVehicleMsgs.clear();
+        this.candidateQueue = new PriorityQueue<>((c1, c2) -> {
+            if (c1.getValue() < c2.getValue()) return -1;
+            if (c1.getValue() > c2.getValue()) return 1;
+            return 0;
+        });
+        this.bestVehicleMsgs.clear();
+        this.otherVehicleMsgs.clear();
     }
 
     @Override
     protected void handleAllResponses(Vector responses, Vector acceptances) {
         int acceptedVehicles = 0;
+
         for (Object response : responses) {
             ACLMessage vehicleMsg = (ACLMessage) response;
             double value = 0;
@@ -58,6 +68,7 @@ public class EmergencyDispatcherBehaviour extends ContractNetInitiator {
                                     value
                             );
                             acceptedVehicles++;
+                            candidateQueue.add(new Candidate(value, vehicleMsg));
                         }
                         break;
                     case (ACLMessage.REFUSE):
@@ -68,19 +79,13 @@ public class EmergencyDispatcherBehaviour extends ContractNetInitiator {
             } catch (UnreadableException e) {
                 e.printStackTrace();
             }
-
-            // TODO: falta selecionar os x melhores veiculos para irem la; por agora estamos so a selecionar o melhor
-            if (value > bestValue) {
-                bestValue = value;
-                if (bestVehicleMsg != null)
-                    otherVehicleMsgs.add(bestVehicleMsg);
-
-                bestVehicleMsg = vehicleMsg;
-            }
-            else otherVehicleMsgs.add(vehicleMsg);
         }
 
-        if (bestVehicleMsg == null) return;
+        while(candidateQueue.peek() != null && bestVehicleMsgs.size() < numberVehicles) {
+            Candidate currentCandidate = candidateQueue.peek();
+            candidateQueue.remove(currentCandidate);
+            bestVehicleMsgs.add(currentCandidate.getMessage());
+        }
 
         sendRejectMsgs(acceptances);
         sendAcceptMsg(acceptances);
@@ -102,19 +107,21 @@ public class EmergencyDispatcherBehaviour extends ContractNetInitiator {
     }
 
     private void sendAcceptMsg(Vector acceptances) {
-        LoggerHelper.get().logAcceptVehicle(
-                bestVehicleMsg.getSender().getLocalName(),
-                bestValue
-        );
+        for (ACLMessage bestVehicleMsg : bestVehicleMsgs) {
+            LoggerHelper.get().logAcceptVehicle(
+                    bestVehicleMsg.getSender().getLocalName(),
+                    bestValue
+            );
 
-        ACLMessage towerReply = bestVehicleMsg.createReply();
-        towerReply.setPerformative(ACLMessage.ACCEPT_PROPOSAL);
-        //towerReply.setContent(Messages.ACCEPT_VEHICLE);
-        try {
-            towerReply.setContentObject(new AcceptVehicle(emergency.getCoordinates(),emergency.getDuration()));
-        } catch (IOException e) {
-            e.printStackTrace();
+            ACLMessage towerReply = bestVehicleMsg.createReply();
+            towerReply.setPerformative(ACLMessage.ACCEPT_PROPOSAL);
+            //towerReply.setContent(Messages.ACCEPT_VEHICLE);
+            try {
+                towerReply.setContentObject(new AcceptVehicle(emergency.getCoordinates(),emergency.getDuration()));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            acceptances.add(towerReply);
         }
-        acceptances.add(towerReply);
     }
 }

@@ -5,9 +5,9 @@ public class VehicleResponse implements java.io.Serializable {
     private final int NUMBER_EMPLOYEES_FACTOR = 3;
 
 
-    public VehicleResponse(double distanceValue,int numberVehicles) {
-        this.value = distanceValue + NUMBER_EMPLOYEES_FACTOR *  numberVehicles; //TODO determinar coeficiente?
-        System.out.println("Distance value " + String.valueOf(distanceValue) + " Number vehicles " + numberVehicles);
+    public VehicleResponse(double distanceValue,int numberEmployees) {
+        this.value = distanceValue + NUMBER_EMPLOYEES_FACTOR *  numberEmployees; //TODO determinar coeficiente?
+        System.out.println("Distance value " + distanceValue + " Number employees " + numberEmployees);
     }
 
     public double getValue() {
