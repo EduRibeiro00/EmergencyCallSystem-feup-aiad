@@ -37,13 +37,10 @@ public class EmergencyDispatcherBehaviour extends ContractNetInitiator {
     private void resetControlTowerInfo() {
         this.bestDistance = -1.0;
         this.emergency = null;
-        this.candidateQueue = new PriorityQueue<>(new Comparator<Candidate>() {
-            @Override
-            public int compare(Candidate c1, Candidate c2) {
-                if (c1.getDistance() < c2.getDistance()) return -1;
-                if (c1.getDistance() > c2.getDistance()) return 1;
-                return 0;
-            }
+        this.candidateQueue = new PriorityQueue<>((c1, c2) -> {
+            if (c1.getDistance() < c2.getDistance()) return -1;
+            if (c1.getDistance() > c2.getDistance()) return 1;
+            return 0;
         });
         this.bestVehicleMsgs.clear();
         this.otherVehicleMsgs.clear();
