@@ -3,8 +3,10 @@ package behaviours;
 import jade.core.Agent;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
+import jade.lang.acl.UnreadableException;
 import jade.proto.ContractNetResponder;
 import logs.LoggerHelper;
+import messages.AcceptVehicle;
 import messages.InformStatus;
 import messages.Messages;
 import utils.Point;
@@ -14,6 +16,8 @@ import java.io.IOException;
 public abstract class VehicleBehaviour extends ContractNetResponder {
     protected Point coordinates;
     protected boolean occupied = false;
+    protected int duration = 0;
+    private long activatedAt = Long.MAX_VALUE;
 
     public VehicleBehaviour(Agent agent, MessageTemplate msgTemp) {
         super(agent, msgTemp);
@@ -30,15 +34,19 @@ public abstract class VehicleBehaviour extends ContractNetResponder {
         LoggerHelper.get().logHandleCfp(this.myAgent.getLocalName());
         ACLMessage vehicleReply = cfp.createReply();
         if (occupied) {
-            vehicleReply.setPerformative(ACLMessage.REFUSE);
-            vehicleReply.setContent(Messages.IS_OCCUPIED);
-        }else {
-            vehicleReply.setPerformative(ACLMessage.PROPOSE);
-            try {
-                vehicleReply.setContentObject(new InformStatus(coordinates));
-            } catch (IOException e) {
-                e.printStackTrace();
+            long activeFor = System.currentTimeMillis() - activatedAt;
+            if(activeFor>=0 && activeFor>=duration){
+                accpetCfp(vehicleReply);
+                occupied = false;
+                activatedAt = Long.MAX_VALUE;
+                //So começar a contagem quando ele é aceite
+                //activatedAt = System.currentTimeMillis();
+            }else {
+                vehicleReply.setPerformative(ACLMessage.REFUSE);
+                vehicleReply.setContent(Messages.IS_OCCUPIED);
             }
+        }else {
+            accpetCfp(vehicleReply);
         }
 
         return vehicleReply;
@@ -52,16 +60,46 @@ public abstract class VehicleBehaviour extends ContractNetResponder {
             LoggerHelper.get().logRejectProposal(this.myAgent.getLocalName(), coordinates);
     }
 
-    // TODO: ao ser alocado a uma emergencia, mudar coordenadas do veiculo para a emergencia e passado um bocado desocupar (tendo em conta a distancia)
+
     @Override
     public ACLMessage handleAcceptProposal(ACLMessage cfp, ACLMessage propose, ACLMessage accept) {
+
+        if (accept.getPerformative() == ACLMessage.ACCEPT_PROPOSAL) {
+            try {
+                Object content = accept.getContentObject();
+                if(content instanceof AcceptVehicle){
+
+                    AcceptVehicle acceptVehicleMsg = (AcceptVehicle) content;
+                    duration = acceptVehicleMsg.getAccidentDuration() ; // + distance/10 * 1000 // TODO: Quando for o veiculo a calcular a distancia adicionar aqui
+                    coordinates = acceptVehicleMsg.getCoordinates();
+                    System.out.println("Vehicle will be occupied for:" + duration/1000 + " seconds" );
+
+
+                }
+            } catch (UnreadableException e) {
+                e.printStackTrace();
+            }
+
+        }
+
+
         LoggerHelper.get().logAcceptProposal(this.myAgent.getLocalName(), coordinates);
         occupied = true;
+        activatedAt = System.currentTimeMillis();
         return null;
     }
 
     public Point getCoordinates() {
         return coordinates;
+    }
+
+    protected void accpetCfp(ACLMessage vehicleReply){
+        vehicleReply.setPerformative(ACLMessage.PROPOSE);
+        try {
+            vehicleReply.setContentObject(new InformStatus(coordinates));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public abstract VehicleType getVehicleType();

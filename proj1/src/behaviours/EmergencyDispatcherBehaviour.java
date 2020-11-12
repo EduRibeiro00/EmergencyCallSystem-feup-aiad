@@ -1,6 +1,7 @@
 package behaviours;
 
 import logs.LoggerHelper;
+import messages.AcceptVehicle;
 import messages.InformStatus;
 import agents.ControlTowerAgent;
 import jade.lang.acl.ACLMessage;
@@ -10,6 +11,7 @@ import messages.Messages;
 import utils.Emergency;
 import utils.Point;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
@@ -112,7 +114,12 @@ public class EmergencyDispatcherBehaviour extends ContractNetInitiator {
 
         ACLMessage towerReply = bestVehicleMsg.createReply();
         towerReply.setPerformative(ACLMessage.ACCEPT_PROPOSAL);
-        towerReply.setContent(Messages.ACCEPT_VEHICLE);
+        //towerReply.setContent(Messages.ACCEPT_VEHICLE);
+        try {
+            towerReply.setContentObject(new AcceptVehicle(emergency.getCoordinates(),emergency.getDuration()));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         acceptances.add(towerReply);
     }
 }
