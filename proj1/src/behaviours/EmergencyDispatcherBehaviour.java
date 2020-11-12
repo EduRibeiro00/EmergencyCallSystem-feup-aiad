@@ -7,12 +7,11 @@ import jade.lang.acl.ACLMessage;
 import jade.lang.acl.UnreadableException;
 import jade.proto.ContractNetInitiator;
 import messages.Messages;
+import utils.Candidate;
 import utils.Emergency;
 import utils.Point;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Vector;
+import java.util.*;
 
 // TODO: instead of adding a behaviour per emergency, make this behaviour cyclic and handle a queue of emergencies
 public class EmergencyDispatcherBehaviour extends ContractNetInitiator {
@@ -20,10 +19,11 @@ public class EmergencyDispatcherBehaviour extends ContractNetInitiator {
     private double bestDistance;
     private Emergency emergency;
     private int numberVehicles;
-    private  ACLMessage bestVehicleMsg;
+    private List<ACLMessage> bestVehicleMsgs;
     private List<ACLMessage> otherVehicleMsgs = new ArrayList<>();
     private ControlTowerAgent agent;
     private int priority = 0;
+    private PriorityQueue<Candidate> candidateQueue;
 
     public EmergencyDispatcherBehaviour(ControlTowerAgent agent, ACLMessage cfp, Emergency emergency, int numberVehicles, int priority) {
         super(agent, cfp);
@@ -37,12 +37,22 @@ public class EmergencyDispatcherBehaviour extends ContractNetInitiator {
     private void resetControlTowerInfo() {
         this.bestDistance = -1.0;
         this.emergency = null;
+        this.candidateQueue = new PriorityQueue<>(new Comparator<Candidate>() {
+            @Override
+            public int compare(Candidate c1, Candidate c2) {
+                if (c1.getDistance() < c2.getDistance()) return -1;
+                if (c1.getDistance() > c2.getDistance()) return 1;
+                return 0;
+            }
+        });
+        bestVehicleMsgs.clear();
         otherVehicleMsgs.clear();
     }
 
     @Override
     protected void handleAllResponses(Vector responses, Vector acceptances) {
         int acceptedVehicles = 0;
+
         for (Object response : responses) {
             ACLMessage vehicleMsg = (ACLMessage) response;
             double distance = 0;
@@ -61,6 +71,7 @@ public class EmergencyDispatcherBehaviour extends ContractNetInitiator {
                                     distance
                             );
                             acceptedVehicles++;
+                            candidateQueue.add(new Candidate(distance, vehicleMsg));
                         }
                         break;
                     case (ACLMessage.REFUSE):
@@ -72,18 +83,14 @@ public class EmergencyDispatcherBehaviour extends ContractNetInitiator {
                 e.printStackTrace();
             }
 
-            // TODO: falta selecionar os x melhores veiculos para irem la; por agora estamos so a selecionar o melhor
-            if ((bestDistance < 0 || bestDistance > distance)) {
-                bestDistance = distance;
-                if (bestVehicleMsg != null)
-                    otherVehicleMsgs.add(bestVehicleMsg);
-
-                bestVehicleMsg = vehicleMsg;
-            }
-            else otherVehicleMsgs.add(vehicleMsg);
         }
 
-        if (bestDistance < 0 || bestVehicleMsg == null)  return;
+        while(candidateQueue.peek() != null && bestVehicleMsgs.size() < numberVehicles) {
+            Candidate currentCandidate = candidateQueue.peek();
+            candidateQueue.remove(currentCandidate);
+            
+        }
+
 
         sendRejectMsgs(acceptances);
         sendAcceptMsg(acceptances);
