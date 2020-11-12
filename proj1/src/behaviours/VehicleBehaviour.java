@@ -12,14 +12,20 @@ import messages.Messages;
 import utils.Point;
 import utils.VehicleType;
 import java.io.IOException;
+import java.util.concurrent.ThreadLocalRandom;
 
 public abstract class VehicleBehaviour extends ContractNetResponder {
     protected Point coordinates;
     protected boolean occupied = false;
+    protected int numberEmployees;
+    protected final int MIN_NUM_EMPLOYEES= 1;
+    protected final int MAX_NUM_EMPLOYEES= 6;
 
     public VehicleBehaviour(Agent agent, MessageTemplate msgTemp) {
         super(agent, msgTemp);
         coordinates = Point.genRandomPoint();
+        numberEmployees = getRandomNumberEmployees();
+
         LoggerHelper.get().logStartVehicle(
                 this.myAgent.getLocalName(),
                 getVehicleType(),
@@ -52,7 +58,7 @@ public abstract class VehicleBehaviour extends ContractNetResponder {
             }
 
             try {
-                vehicleReply.setContentObject(new VehicleResponse(value));
+                vehicleReply.setContentObject(new VehicleResponse(value,numberEmployees));
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -82,4 +88,8 @@ public abstract class VehicleBehaviour extends ContractNetResponder {
     }
 
     public abstract VehicleType getVehicleType();
+
+    private int getRandomNumberEmployees() {
+        return ThreadLocalRandom.current().nextInt(MIN_NUM_EMPLOYEES, MAX_NUM_EMPLOYEES + 1);
+    }
 }
