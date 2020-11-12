@@ -10,11 +10,11 @@ import utils.DFUtils;
 public class ClientAgent extends Agent {
 
     private static final int SECONDS_BETWEEN_CALLS = 5;
+    private static final int MAX_NUMBER_TRIES = 3;
 
     private String clientName;
     private String towerDFName;
     private AID controlTowerID;
-    private static int MAX_NUMBER_TRIES = 3;
 
     public ClientAgent(String clientName, String towerDFName) {
         this.clientName = clientName;
@@ -24,35 +24,31 @@ public class ClientAgent extends Agent {
     @Override
     protected void setup() {
         int numberOfTries = 0;
-        while (numberOfTries<MAX_NUMBER_TRIES){
-
+        while (numberOfTries < MAX_NUMBER_TRIES){
             DFAgentDescription[] tower = DFUtils.fetchFromDF(this, this.towerDFName);
-
             if (tower == null || tower.length < 1) {
                 numberOfTries++;
                 continue;
             }
 
             this.controlTowerID = tower[0].getName();
-
-            addBehaviour(new EmergencyCallBehaviour(
-                            this,
-                            SECONDS_BETWEEN_CALLS * 1000,
-                            controlTowerID
-                    )
+            addBehaviour(
+                new EmergencyCallBehaviour(
+                    this,
+                    SECONDS_BETWEEN_CALLS * 1000,
+                    controlTowerID
+                )
             );
             break;
 
         }
 
-        if(numberOfTries>=MAX_NUMBER_TRIES){
+        if(numberOfTries >= MAX_NUMBER_TRIES){
             LoggerHelper.get().logError(
                     "[DF ERROR] - Client could not fetch control tower from the DF"
             );
             System.exit(-1);
         }
-
-
     }
 
     public String getClientName() {
