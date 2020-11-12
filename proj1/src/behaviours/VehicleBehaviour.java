@@ -8,6 +8,7 @@ import jade.proto.ContractNetResponder;
 import logs.LoggerHelper;
 import messages.TowerRequest;
 import messages.VehicleResponse;
+import messages.AcceptVehicle;
 import messages.Messages;
 import utils.Point;
 import utils.VehicleType;
@@ -20,6 +21,8 @@ public abstract class VehicleBehaviour extends ContractNetResponder {
     protected int numberEmployees;
     protected final int MIN_NUM_EMPLOYEES= 1;
     protected final int MAX_NUM_EMPLOYEES= 6;
+    protected int duration = 0;
+    private long activatedAt = Long.MAX_VALUE;
 
     public VehicleBehaviour(Agent agent, MessageTemplate msgTemp) {
         super(agent, msgTemp);
@@ -38,10 +41,59 @@ public abstract class VehicleBehaviour extends ContractNetResponder {
         LoggerHelper.get().logHandleCfp(this.myAgent.getLocalName());
         ACLMessage vehicleReply = cfp.createReply();
         if (occupied) {
-            vehicleReply.setPerformative(ACLMessage.REFUSE);
-            vehicleReply.setContent(Messages.IS_OCCUPIED);
+            long activeFor = System.currentTimeMillis() - activatedAt;
+            if(activeFor>=0 && activeFor>=duration){
+                acceptCfp(vehicleReply, cfp);
+                occupied = false;
+                activatedAt = Long.MAX_VALUE;
+            } else {
+                vehicleReply.setPerformative(ACLMessage.REFUSE);
+                vehicleReply.setContent(Messages.IS_OCCUPIED);
+            }
         }else {
-            vehicleReply.setPerformative(ACLMessage.PROPOSE);
+            acceptCfp(vehicleReply, cfp);
+        }
+        
+        return vehicleReply;
+    }
+
+
+    @Override
+    public void handleRejectProposal(ACLMessage cfp, ACLMessage propose, ACLMessage reject) {
+        if(occupied)
+            LoggerHelper.get().logRejectProposalOccupied(this.myAgent.getLocalName());
+        else
+            LoggerHelper.get().logRejectProposal(this.myAgent.getLocalName(), coordinates);
+    }
+
+
+    @Override
+    public ACLMessage handleAcceptProposal(ACLMessage cfp, ACLMessage propose, ACLMessage accept) {
+
+        if (accept.getPerformative() == ACLMessage.ACCEPT_PROPOSAL) {
+            try {
+                Object content = accept.getContentObject();
+                if(content instanceof AcceptVehicle){
+                    AcceptVehicle acceptVehicleMsg = (AcceptVehicle) content;
+                    double distance = coordinates.getDistance(acceptVehicleMsg.getCoordinates());
+                    duration = (acceptVehicleMsg.getAccidentDuration() + (int) distance / 10) * 1000;
+                    coordinates = acceptVehicleMsg.getCoordinates();
+                    System.out.println("Vehicle will be occupied for:" + duration/1000 + " seconds");
+                }
+            } catch (UnreadableException e) {
+                e.printStackTrace();
+            }
+
+        }
+
+        LoggerHelper.get().logAcceptProposal(this.myAgent.getLocalName(), coordinates);
+        occupied = true;
+        activatedAt = System.currentTimeMillis();
+        return null;
+    }
+
+    protected void acceptCfp(ACLMessage vehicleReply, ACLMessage cfp){
+        vehicleReply.setPerformative(ACLMessage.PROPOSE);
             double value = 0;
             try {
                 Point emergencyCoords = ((TowerRequest) cfp.getContentObject()).getCoordinates();
@@ -62,29 +114,6 @@ public abstract class VehicleBehaviour extends ContractNetResponder {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-        }
-
-        return vehicleReply;
-    }
-
-    @Override
-    public void handleRejectProposal(ACLMessage cfp, ACLMessage propose, ACLMessage reject) {
-        if(occupied)
-            LoggerHelper.get().logRejectProposalOccupied(this.myAgent.getLocalName());
-        else
-            LoggerHelper.get().logRejectProposal(this.myAgent.getLocalName(), coordinates);
-    }
-
-    // TODO: ao ser alocado a uma emergencia, mudar coordenadas do veiculo para a emergencia e passado um bocado desocupar (tendo em conta a distancia)
-    @Override
-    public ACLMessage handleAcceptProposal(ACLMessage cfp, ACLMessage propose, ACLMessage accept) {
-        LoggerHelper.get().logAcceptProposal(this.myAgent.getLocalName(), coordinates);
-        occupied = true;
-        return null;
-    }
-
-    public Point getCoordinates() {
-        return coordinates;
     }
 
     public abstract VehicleType getVehicleType();
