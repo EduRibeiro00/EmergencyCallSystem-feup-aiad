@@ -74,7 +74,6 @@ public abstract class VehicleBehaviour extends ContractNetResponder {
             } catch (UnreadableException e) {
                 e.printStackTrace();
             }
-
         }
 
         return vehicleReply;
@@ -111,15 +110,16 @@ public abstract class VehicleBehaviour extends ContractNetResponder {
 
             fuel -= calculateFuel(distance);
             if(fuel < 0) fuel = 0;
-
-            if(fuel < SPARE_FUEL_LEVEL) {
-                refueledAt = System.currentTimeMillis() + duration;
-            }
         }
-
 
         LoggerHelper.get().logAcceptProposal(this.myAgent.getLocalName(), coordinates);
         occupied = true;
+
+        if(fuel < SPARE_FUEL_LEVEL) {
+            refueledAt = System.currentTimeMillis() + duration;
+            LoggerHelper.get().logNeedRefuel(this.myAgent.getLocalName(), fuel);
+        }
+
         activatedAt = System.currentTimeMillis();
         return null;
     }

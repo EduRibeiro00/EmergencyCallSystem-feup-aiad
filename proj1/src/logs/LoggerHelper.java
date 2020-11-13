@@ -124,6 +124,12 @@ public class LoggerHelper {
         );
     }
 
+    public void logNeedRefuel(String vehicleName, int fuel) {
+        logger.info(
+                vehicleName + " - Will need to refuel after emergency... Fuel after helping: " + fuel
+        );
+    }
+
     public void logHandleCfp(String vehicleName) {
         logger.info(
                 vehicleName + " - received CFP from tower"
