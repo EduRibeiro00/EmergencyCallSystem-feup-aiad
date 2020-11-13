@@ -40,7 +40,6 @@ public class ClientAgent extends Agent {
                 )
             );
             break;
-
         }
 
         if(numberOfTries >= MAX_NUMBER_TRIES){

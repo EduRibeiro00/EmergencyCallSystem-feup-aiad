@@ -104,6 +104,7 @@ public abstract class VehicleBehaviour extends ContractNetResponder {
 
         if(content instanceof AcceptVehicle){
             AcceptVehicle acceptVehicleMsg = (AcceptVehicle) content;
+            LoggerHelper.get().logAcceptProposal(this.myAgent.getLocalName(), coordinates);
             double distance = coordinates.getDistance(acceptVehicleMsg.getCoordinates());
             duration = (acceptVehicleMsg.getAccidentDuration() + (int) distance / 10) * 1000;
             coordinates = acceptVehicleMsg.getCoordinates();
@@ -117,8 +118,6 @@ public abstract class VehicleBehaviour extends ContractNetResponder {
             }
         }
 
-
-        LoggerHelper.get().logAcceptProposal(this.myAgent.getLocalName(), coordinates);
         occupied = true;
         activatedAt = System.currentTimeMillis();
         return null;
