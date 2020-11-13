@@ -115,7 +115,7 @@ public class EmergencyDispatcherBehaviour extends ContractNetInitiator {
 
             ACLMessage towerReply = bestVehicleMsg.createReply();
             towerReply.setPerformative(ACLMessage.ACCEPT_PROPOSAL);
-            //towerReply.setContent(Messages.ACCEPT_VEHICLE);
+            towerReply.setContent(Messages.ACCEPT_VEHICLE);
             try {
                 towerReply.setContentObject(new AcceptVehicle(emergency.getCoordinates(),emergency.getDuration()));
             } catch (IOException e) {

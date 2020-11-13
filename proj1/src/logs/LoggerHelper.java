@@ -6,6 +6,7 @@ import utils.Point;
 import utils.VehicleType;
 
 import java.io.IOException;
+import java.util.Date;
 import java.util.logging.*;
 
 public class LoggerHelper {
@@ -30,10 +31,19 @@ public class LoggerHelper {
         logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
         logger.setLevel(Level.INFO);
         FileHandler fileTxt = new FileHandler(FILEPATH);
+        fileTxt.setFormatter(new SimpleFormatter(){
+            private static final String format = "[%1$tF %1$tT] [%2$-7s] %3$s %n";
 
-        // create a TXT formatter
-        SimpleFormatter formatterTxt = new SimpleFormatter();
-        fileTxt.setFormatter(formatterTxt);
+            @Override
+            public synchronized String format(LogRecord lr) {
+                return String.format(format,
+                        new Date(lr.getMillis()),
+                        lr.getLevel().getLocalizedName(),
+                        lr.getMessage()
+                );
+            }
+        });
+
         logger.addHandler(fileTxt);
 
         logger.info("--------------- STARTED NEW EXECUTION ---------------");
