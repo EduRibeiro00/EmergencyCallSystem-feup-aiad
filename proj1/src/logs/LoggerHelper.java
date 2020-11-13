@@ -89,6 +89,13 @@ public class LoggerHelper {
         );
     }
 
+
+    public void logRejectProposalRefueling(String vehicleName) {
+        logger.info(
+                vehicleName + " - Tower did not accept because I was refueling"
+        );
+    }
+
     public void logRejectProposal(String vehicleName, Point coordinates) {
         logger.info(
                 vehicleName + " - Tower refused my service; my location is " + coordinates
