@@ -1,6 +1,5 @@
 package logs;
 
-import behaviours.VehicleBehaviour;
 import utils.Emergency;
 import utils.Point;
 import utils.VehicleType;
@@ -28,15 +27,16 @@ public class LoggerHelper {
     }
 
     private LoggerHelper() throws IOException {
-        logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
+        logger = Logger.getLogger(LoggerHelper.class.getName());
+        logger.setUseParentHandlers(false);
         logger.setLevel(Level.INFO);
         FileHandler fileTxt = new FileHandler(FILEPATH);
         fileTxt.setFormatter(new SimpleFormatter(){
-            private static final String format = "[%1$tF %1$tT] [%2$-7s] %3$s %n";
 
             @Override
             public synchronized String format(LogRecord lr) {
-                return String.format(format,
+                return String.format(
+                        "[%1$tF %1$tT] [%2$-7s] %3$s %n",
                         new Date(lr.getMillis()),
                         lr.getLevel().getLocalizedName(),
                         lr.getMessage()
@@ -45,7 +45,6 @@ public class LoggerHelper {
         });
 
         logger.addHandler(fileTxt);
-
         logger.info("--------------- STARTED NEW EXECUTION ---------------");
     }
 

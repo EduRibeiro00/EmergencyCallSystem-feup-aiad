@@ -16,11 +16,12 @@ import java.io.IOException;
 import java.util.concurrent.ThreadLocalRandom;
 
 public abstract class VehicleBehaviour extends ContractNetResponder {
-    protected final int MIN_NUM_EMPLOYEES= 1;
-    protected final int MAX_NUM_EMPLOYEES= 6;
-    protected final int SPARE_FUEL_LEVEL = 10;
-    protected final int REFUEL_DURATION = 20000;
-    protected final double EMPLOYEE_MULTIPLIER = 0.1;
+    protected static final int MIN_NUM_EMPLOYEES= 1;
+    protected static final int MAX_NUM_EMPLOYEES= 6;
+    protected static final int SPARE_FUEL_LEVEL = 10;
+    protected static final int REFUEL_DURATION = 20000;
+    protected static final double EMPLOYEE_MULTIPLIER = 0.1;
+
     protected Point coordinates;
     protected int numberEmployees;
     protected int fuel;
