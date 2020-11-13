@@ -124,9 +124,27 @@ public class LoggerHelper {
         );
     }
 
+    public void logOccupied(String vehicleName, int duration) {
+        logger.info(
+                vehicleName + " - Will be occupied for " + duration + " seconds"
+        );
+    }
+
+    public void logUnoccupied(String vehicleName) {
+        logger.info(
+                vehicleName + " - Done with previous emergency, free for new one"
+        );
+    }
+
     public void logNeedRefuel(String vehicleName, int fuel) {
         logger.info(
-                vehicleName + " - Will need to refuel after emergency... Fuel after helping: " + fuel
+                vehicleName + " - Going to refuel: " + fuel + " remaining"
+        );
+    }
+
+    public void logDoneRefuel(String vehicleName) {
+        logger.info(
+                vehicleName + " - Done refueling"
         );
     }
 
@@ -150,12 +168,12 @@ public class LoggerHelper {
         );
     }
 
-    public void logAcceptVehicle(String vehicleName, double distance) {
+    public void logAcceptVehicle(String vehicleName, double value) {
         logger.info(
                 "Tower - Going to accept vehicle " +
                 vehicleName +
-                ", distance = " +
-                distance
+                ", value = " +
+                value
         );
     }
 }

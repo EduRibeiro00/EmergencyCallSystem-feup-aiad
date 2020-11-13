@@ -13,7 +13,10 @@ import messages.Messages;
 import utils.Point;
 import utils.VehicleType;
 import java.io.IOException;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public abstract class VehicleBehaviour extends ContractNetResponder {
     protected static final int MIN_NUM_EMPLOYEES= 1;
@@ -25,18 +28,23 @@ public abstract class VehicleBehaviour extends ContractNetResponder {
     protected Point coordinates;
     protected int numberEmployees;
     protected int fuel;
-    protected boolean occupied = false;
-    protected boolean refueling = false;
     protected int duration = 0;
-    private long activatedAt = Long.MAX_VALUE;
-    private long refueledAt = Long.MAX_VALUE;
     private int consecutiveRejections = 0;
+
+    protected AtomicBoolean occupied;
+    protected AtomicBoolean refueling;
+    private ScheduledThreadPoolExecutor executor;
 
     public VehicleBehaviour(Agent agent, MessageTemplate msgTemp) {
         super(agent, msgTemp);
         coordinates = Point.genRandomPoint();
         numberEmployees = getRandomNumberEmployees();
         fuel = getMaxFuel();
+        duration = 0;
+        consecutiveRejections = 0;
+        occupied = new AtomicBoolean(false);
+        refueling = new AtomicBoolean(false);
+        executor = new ScheduledThreadPoolExecutor(2);
 
         LoggerHelper.get().logStartVehicle(
                 this.myAgent.getLocalName(),
@@ -50,14 +58,11 @@ public abstract class VehicleBehaviour extends ContractNetResponder {
         LoggerHelper.get().logHandleCfp(this.myAgent.getLocalName());
         ACLMessage vehicleReply = cfp.createReply();
 
-        updateOccupied();
-        updateRefueling();
-
-        if(occupied) {
+        if(occupied.get()) {
             vehicleReply.setPerformative(ACLMessage.REFUSE);
             vehicleReply.setContent(Messages.IS_OCCUPIED);
         }
-        else if(refueling) {
+        else if(refueling.get()) {
             vehicleReply.setPerformative(ACLMessage.REFUSE);
             vehicleReply.setContent(Messages.IS_REFUELING);
         } else {
@@ -82,9 +87,9 @@ public abstract class VehicleBehaviour extends ContractNetResponder {
 
     @Override
     public void handleRejectProposal(ACLMessage cfp, ACLMessage propose, ACLMessage reject) {
-        if(occupied)
+        if(occupied.get())
             LoggerHelper.get().logRejectProposalOccupied(this.myAgent.getLocalName());
-        else if(refueling)
+        else if(refueling.get())
             LoggerHelper.get().logRejectProposalRefueling(this.myAgent.getLocalName());
         else
             LoggerHelper.get().logRejectProposal(this.myAgent.getLocalName(), coordinates);
@@ -103,24 +108,25 @@ public abstract class VehicleBehaviour extends ContractNetResponder {
 
         if(content instanceof AcceptVehicle){
             AcceptVehicle acceptVehicleMsg = (AcceptVehicle) content;
+            LoggerHelper.get().logAcceptProposal(this.myAgent.getLocalName(), coordinates);
+
             double distance = coordinates.getDistance(acceptVehicleMsg.getCoordinates());
-            duration = (acceptVehicleMsg.getAccidentDuration() + (int) distance / 10) * 1000;
+            int duration = (acceptVehicleMsg.getAccidentDuration() + (int) (distance * 0.1));
+            
             coordinates = acceptVehicleMsg.getCoordinates();
-            System.out.println("Vehicle will be occupied for:" + duration/1000 + " seconds");
+            LoggerHelper.get().logOccupied(this.myAgent.getLocalName(), duration/1000);
 
             fuel -= calculateFuel(distance);
             if(fuel < 0) fuel = 0;
+
+            occupied.set(true);
+            executor.schedule(
+                    this::updateOccupied,
+                    duration,
+                    TimeUnit.MILLISECONDS
+            );
         }
 
-        LoggerHelper.get().logAcceptProposal(this.myAgent.getLocalName(), coordinates);
-        occupied = true;
-
-        if(fuel < SPARE_FUEL_LEVEL) {
-            refueledAt = System.currentTimeMillis() + duration;
-            LoggerHelper.get().logNeedRefuel(this.myAgent.getLocalName(), fuel);
-        }
-
-        activatedAt = System.currentTimeMillis();
         return null;
     }
 
@@ -149,23 +155,26 @@ public abstract class VehicleBehaviour extends ContractNetResponder {
     }
 
     protected void updateOccupied() {
-        long currentTime = System.currentTimeMillis();
-        long activeFor = currentTime - activatedAt;
-        if(activeFor>=0 && activeFor>=duration) {
-            occupied = false;
-            activatedAt = Long.MAX_VALUE;
+        occupied.set(false);
+        LoggerHelper.get().logUnoccupied(this.myAgent.getLocalName());
+
+        if(fuel < SPARE_FUEL_LEVEL) {
+            refueling.set(true);
+            executor.schedule(
+                    this::updateRefueling,
+                    REFUEL_DURATION,
+                    TimeUnit.MILLISECONDS
+            );
+
+            LoggerHelper.get().logNeedRefuel(this.myAgent.getLocalName(), fuel);
         }
     }
 
     protected void updateRefueling() {
-        long currentTime = System.currentTimeMillis();
-        long refueledFor = currentTime - refueledAt;
-        if(refueledFor>=0 && refueledFor>=REFUEL_DURATION) {
-            refueling = false;
-            refueledAt = Long.MAX_VALUE;
-        } else if(refueledAt < Long.MAX_VALUE && !occupied) {
-            refueling = true;
-        }
+        refueling.set(false);
+        fuel = getMaxFuel();
+
+        LoggerHelper.get().logDoneRefuel(this.myAgent.getLocalName());
     }
 
     protected int calculateFuel(double distance) {
