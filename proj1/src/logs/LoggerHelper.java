@@ -99,6 +99,25 @@ public class LoggerHelper {
         );
     }
 
+    public void logAlreadyOccupied(String vehicleName) {
+        logger.info(
+                vehicleName + " - Can't accept emergency because I am occupied"
+        );
+    }
+
+
+    public void logRefueling(String vehicleName) {
+        logger.info(
+                vehicleName + " - Can't accept emergency because I am refueling"
+        );
+    }
+
+    public void logFuelInsuf(String vehicleName) {
+        logger.info(
+                vehicleName + " - Can't accept emergency because I don't have enough fuel for it"
+        );
+    }
+
     public void logRejectProposalOccupied(String vehicleName) {
         logger.info(
                 vehicleName + " - Tower did not accept because I was occupied"
@@ -112,6 +131,7 @@ public class LoggerHelper {
         );
     }
 
+
     public void logRejectProposal(String vehicleName, Point coordinates) {
         logger.info(
                 vehicleName + " - Tower refused my service; my location is " + coordinates
@@ -124,15 +144,15 @@ public class LoggerHelper {
         );
     }
 
-    public void logOccupied(String vehicleName, int duration) {
+    public void logOccupied(String vehicleName, double duration) {
         logger.info(
                 vehicleName + " - Will be occupied for " + duration + " seconds"
         );
     }
 
-    public void logUnoccupied(String vehicleName) {
+    public void logUnoccupied(String vehicleName, int fuel) {
         logger.info(
-                vehicleName + " - Done with previous emergency, free for new one"
+                vehicleName + " - Done with previous emergency! Remaining fuel: " + fuel
         );
     }
 
@@ -142,9 +162,9 @@ public class LoggerHelper {
         );
     }
 
-    public void logDoneRefuel(String vehicleName) {
+    public void logDoneRefuel(String vehicleName, int fuel) {
         logger.info(
-                vehicleName + " - Done refueling"
+                vehicleName + " - Done refueling: " + fuel + " filled up"
         );
     }
 

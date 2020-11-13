@@ -5,8 +5,9 @@ import jade.lang.acl.MessageTemplate;
 import utils.VehicleType;
 
 public class FiremanBehaviour extends VehicleBehaviour {
-    private final int MAX_FUEL = 1500;
-    private final int FUEL_RATE = 6;
+    private static final int MAX_FUEL = 1500;
+    private static final int SPARE_FUEL_LEVEL = 200;
+    private static final int FUEL_RATE = 6;
 
     public FiremanBehaviour(Agent agent, MessageTemplate msgTemp) {
         super(agent, msgTemp);
@@ -25,5 +26,10 @@ public class FiremanBehaviour extends VehicleBehaviour {
     @Override
     protected int getFuelRate() {
         return FUEL_RATE;
+    }
+
+    @Override
+    protected int getSpareFuelLevel() {
+        return SPARE_FUEL_LEVEL;
     }
 }

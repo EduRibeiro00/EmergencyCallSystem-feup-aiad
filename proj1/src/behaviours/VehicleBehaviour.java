@@ -21,15 +21,14 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public abstract class VehicleBehaviour extends ContractNetResponder {
     protected static final int MIN_NUM_EMPLOYEES= 1;
     protected static final int MAX_NUM_EMPLOYEES= 6;
-    protected static final int SPARE_FUEL_LEVEL = 10;
+    protected static final int MAX_CONSECUTIVE_REJECTIONS = 3;
     protected static final int REFUEL_DURATION = 20000;
     protected static final double EMPLOYEE_MULTIPLIER = 0.1;
 
     protected Point coordinates;
     protected int numberEmployees;
     protected int fuel;
-    protected int duration = 0;
-    private int consecutiveRejections = 0;
+    private int consecutiveRejections;
 
     protected AtomicBoolean occupied;
     protected AtomicBoolean refueling;
@@ -37,11 +36,11 @@ public abstract class VehicleBehaviour extends ContractNetResponder {
 
     public VehicleBehaviour(Agent agent, MessageTemplate msgTemp) {
         super(agent, msgTemp);
+
+        consecutiveRejections = 0;
         coordinates = Point.genRandomPoint();
         numberEmployees = getRandomNumberEmployees();
         fuel = getMaxFuel();
-        duration = 0;
-        consecutiveRejections = 0;
         occupied = new AtomicBoolean(false);
         refueling = new AtomicBoolean(false);
         executor = new ScheduledThreadPoolExecutor(2);
@@ -61,10 +60,14 @@ public abstract class VehicleBehaviour extends ContractNetResponder {
         if(occupied.get()) {
             vehicleReply.setPerformative(ACLMessage.REFUSE);
             vehicleReply.setContent(Messages.IS_OCCUPIED);
+            consecutiveRejections++;
+            LoggerHelper.get().logAlreadyOccupied(this.myAgent.getLocalName());
         }
         else if(refueling.get()) {
             vehicleReply.setPerformative(ACLMessage.REFUSE);
             vehicleReply.setContent(Messages.IS_REFUELING);
+            consecutiveRejections++;
+            LoggerHelper.get().logRefueling(this.myAgent.getLocalName());
         } else {
             try {
                 Point emergencyCoords = ((TowerRequest) cfp.getContentObject()).getCoordinates();
@@ -73,12 +76,18 @@ public abstract class VehicleBehaviour extends ContractNetResponder {
                 if(calculateFuel(distance) > fuel) {
                     vehicleReply.setPerformative(ACLMessage.REFUSE);
                     vehicleReply.setContent(Messages.NOT_ENOUGH_FUEL);
+                    consecutiveRejections++;
+                    LoggerHelper.get().logFuelInsuf(this.myAgent.getLocalName());
                 } else {
                     acceptCfp(vehicleReply, cfp);
                 }
             } catch (UnreadableException e) {
                 e.printStackTrace();
             }
+        }
+
+        if(consecutiveRejections >= MAX_CONSECUTIVE_REJECTIONS) {
+            startRefueling();
         }
 
         return vehicleReply;
@@ -111,22 +120,15 @@ public abstract class VehicleBehaviour extends ContractNetResponder {
             LoggerHelper.get().logAcceptProposal(this.myAgent.getLocalName(), coordinates);
 
             double distance = coordinates.getDistance(acceptVehicleMsg.getCoordinates());
-            int duration = (acceptVehicleMsg.getAccidentDuration() + (int) (distance * 0.1));
-            
+            int duration = (acceptVehicleMsg.getAccidentDuration() + (int) Math.round(distance * 0.1));
+
             coordinates = acceptVehicleMsg.getCoordinates();
-            LoggerHelper.get().logOccupied(this.myAgent.getLocalName(), duration/1000);
+            fuel = (fuel-=calculateFuel(distance)) < 0 ? 0 : fuel;
 
-            fuel -= calculateFuel(distance);
-            if(fuel < 0) fuel = 0;
-
-            occupied.set(true);
-            executor.schedule(
-                    this::updateOccupied,
-                    duration,
-                    TimeUnit.MILLISECONDS
-            );
+            startEmergency(duration);
         }
 
+        consecutiveRejections = 0;
         return null;
     }
 
@@ -154,19 +156,34 @@ public abstract class VehicleBehaviour extends ContractNetResponder {
             }
     }
 
+    protected void startEmergency(int duration) {
+        occupied.set(true);
+        executor.schedule(
+                this::updateOccupied,
+                duration,
+                TimeUnit.MILLISECONDS
+        );
+
+        LoggerHelper.get().logOccupied(this.myAgent.getLocalName(), duration/1000);
+    }
+
+    protected void startRefueling() {
+        refueling.set(true);
+        executor.schedule(
+                this::updateRefueling,
+                REFUEL_DURATION,
+                TimeUnit.MILLISECONDS
+        );
+
+        LoggerHelper.get().logNeedRefuel(this.myAgent.getLocalName(), fuel);
+    }
+
     protected void updateOccupied() {
         occupied.set(false);
-        LoggerHelper.get().logUnoccupied(this.myAgent.getLocalName());
+        LoggerHelper.get().logUnoccupied(this.myAgent.getLocalName(), fuel);
 
-        if(fuel < SPARE_FUEL_LEVEL) {
-            refueling.set(true);
-            executor.schedule(
-                    this::updateRefueling,
-                    REFUEL_DURATION,
-                    TimeUnit.MILLISECONDS
-            );
-
-            LoggerHelper.get().logNeedRefuel(this.myAgent.getLocalName(), fuel);
+        if(fuel < getSpareFuelLevel()) {
+            startRefueling();
         }
     }
 
@@ -174,7 +191,7 @@ public abstract class VehicleBehaviour extends ContractNetResponder {
         refueling.set(false);
         fuel = getMaxFuel();
 
-        LoggerHelper.get().logDoneRefuel(this.myAgent.getLocalName());
+        LoggerHelper.get().logDoneRefuel(this.myAgent.getLocalName(), fuel);
     }
 
     protected int calculateFuel(double distance) {
@@ -190,4 +207,6 @@ public abstract class VehicleBehaviour extends ContractNetResponder {
     protected abstract int getMaxFuel();
 
     protected abstract int getFuelRate();
+
+    protected abstract int getSpareFuelLevel();
 }
