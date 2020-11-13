@@ -30,8 +30,8 @@ public class LoggerHelper {
         logger = Logger.getLogger(LoggerHelper.class.getName());
         logger.setUseParentHandlers(false);
         logger.setLevel(Level.INFO);
-        FileHandler fileTxt = new FileHandler(FILEPATH);
-        fileTxt.setFormatter(new SimpleFormatter(){
+
+        SimpleFormatter formatter = new SimpleFormatter(){
 
             @Override
             public synchronized String format(LogRecord lr) {
@@ -42,9 +42,16 @@ public class LoggerHelper {
                         lr.getMessage()
                 );
             }
-        });
+        };
 
+        FileHandler fileTxt = new FileHandler(FILEPATH);
+        fileTxt.setFormatter(formatter);
         logger.addHandler(fileTxt);
+
+        ConsoleHandler cs = new ConsoleHandler();
+        cs.setFormatter(formatter);
+        logger.addHandler(cs);
+
         logger.info("--------------- STARTED NEW EXECUTION ---------------");
     }
 
@@ -118,9 +125,9 @@ public class LoggerHelper {
     }
 
     public void logHandleCfp(String vehicleName) {
-        /*logger.info(
+        logger.info(
                 vehicleName + " - received CFP from tower"
-        );*/
+        );
     }
 
     public void logReceiveVehiclePropose(String vehicleName, double value) {
