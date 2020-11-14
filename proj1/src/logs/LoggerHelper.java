@@ -1,11 +1,11 @@
 package logs;
 
-import behaviours.VehicleBehaviour;
 import utils.Emergency;
 import utils.Point;
 import utils.VehicleType;
 
 import java.io.IOException;
+import java.util.Date;
 import java.util.logging.*;
 
 public class LoggerHelper {
@@ -27,14 +27,30 @@ public class LoggerHelper {
     }
 
     private LoggerHelper() throws IOException {
-        logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
+        logger = Logger.getLogger(LoggerHelper.class.getName());
+        logger.setUseParentHandlers(false);
         logger.setLevel(Level.INFO);
-        FileHandler fileTxt = new FileHandler(FILEPATH);
 
-        // create a TXT formatter
-        SimpleFormatter formatterTxt = new SimpleFormatter();
-        fileTxt.setFormatter(formatterTxt);
+        SimpleFormatter formatter = new SimpleFormatter(){
+
+            @Override
+            public synchronized String format(LogRecord lr) {
+                return String.format(
+                        "[%1$tF %1$tT] [%2$-7s] %3$s %n",
+                        new Date(lr.getMillis()),
+                        lr.getLevel().getLocalizedName(),
+                        lr.getMessage()
+                );
+            }
+        };
+
+        FileHandler fileTxt = new FileHandler(FILEPATH);
+        fileTxt.setFormatter(formatter);
         logger.addHandler(fileTxt);
+
+        ConsoleHandler cs = new ConsoleHandler();
+        cs.setFormatter(formatter);
+        logger.addHandler(cs);
 
         logger.info("--------------- STARTED NEW EXECUTION ---------------");
     }
@@ -83,11 +99,38 @@ public class LoggerHelper {
         );
     }
 
+    public void logAlreadyOccupied(String vehicleName) {
+        logger.info(
+                vehicleName + " - Can't accept emergency because I am occupied"
+        );
+    }
+
+
+    public void logRefueling(String vehicleName) {
+        logger.info(
+                vehicleName + " - Can't accept emergency because I am refueling"
+        );
+    }
+
+    public void logFuelInsuf(String vehicleName) {
+        logger.info(
+                vehicleName + " - Can't accept emergency because I don't have enough fuel for it"
+        );
+    }
+
     public void logRejectProposalOccupied(String vehicleName) {
         logger.info(
                 vehicleName + " - Tower did not accept because I was occupied"
         );
     }
+
+
+    public void logRejectProposalRefueling(String vehicleName) {
+        logger.info(
+                vehicleName + " - Tower did not accept because I was refueling"
+        );
+    }
+
 
     public void logRejectProposal(String vehicleName, Point coordinates) {
         logger.info(
@@ -101,10 +144,47 @@ public class LoggerHelper {
         );
     }
 
+    public void logOccupied(String vehicleName, double duration) {
+        logger.info(
+                vehicleName + " - Will be occupied for " + duration + " seconds"
+        );
+    }
+
+    public void logEmployeeChange(String vehicleName, int numberEmployees) {
+        logger.info(
+                vehicleName + " - Changed number employees to " + numberEmployees
+        );
+    }
+
+    public void logRejectedConsecutiveMax(String vehicleName, int maxConsecutiveRejections) {
+        logger.info(
+                vehicleName + " - Rejected max number of consecutive emergencies:  " + maxConsecutiveRejections
+        );
+    }
+
+    public void logUnoccupied(String vehicleName, int fuel, int numberEmployees) {
+        logger.info(
+                vehicleName + " - Done with previous emergency! " +
+                        "Remaining fuel: " + fuel + "; Employees = " + numberEmployees
+        );
+    }
+
+    public void logNeedRefuel(String vehicleName, int fuel) {
+        logger.info(
+                vehicleName + " - Going to refuel: " + fuel + " remaining"
+        );
+    }
+
+    public void logDoneRefuel(String vehicleName, int fuel) {
+        logger.info(
+                vehicleName + " - Done refueling: " + fuel + " filled up"
+        );
+    }
+
     public void logHandleCfp(String vehicleName) {
-        /*logger.info(
+        logger.info(
                 vehicleName + " - received CFP from tower"
-        );*/
+        );
     }
 
     public void logReceiveVehiclePropose(String vehicleName, double value) {
@@ -121,12 +201,12 @@ public class LoggerHelper {
         );
     }
 
-    public void logAcceptVehicle(String vehicleName, double distance) {
+    public void logAcceptVehicle(String vehicleName, double value) {
         logger.info(
                 "Tower - Going to accept vehicle " +
                 vehicleName +
-                ", distance = " +
-                distance
+                ", value = " +
+                value
         );
     }
 }
