@@ -213,7 +213,7 @@ public class LoggerHelper {
 
     public void logMaxRetriesEmergency(Emergency emergency, int maxTries) {
         logger.warning(
-                "Tower - "
+                "Tower - Surpassed the max number of tries (" + maxTries + ") for emergency" + emergency
         );
     }
 }

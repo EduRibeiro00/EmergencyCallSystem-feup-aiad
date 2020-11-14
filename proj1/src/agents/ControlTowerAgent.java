@@ -40,7 +40,7 @@ public class ControlTowerAgent extends Agent {
 
     public void handleEmergency(Emergency emergency) {
         LoggerHelper.get().logReceivedEmergency(emergency);
-        handleEmergency(emergency, emergency.getNumberVehicles() ,0, 0);
+        handleEmergency(emergency, emergency.getNumberVehicles() ,0, 1);
     }
 
     public void handleEmergency(Emergency emergency, int numberVehicles, int priority, int numTries) {

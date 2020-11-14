@@ -65,7 +65,6 @@ public class EmergencyDispatcherBehaviour extends ContractNetInitiator {
                         break;
                     case (ACLMessage.REFUSE):
                         LoggerHelper.get().logReceiveVehicleRefuse(vehicleMsg.getSender().getLocalName());
-                        rejectMsgs.add(vehicleMsg);
                 }
             } catch (UnreadableException e) {
                 e.printStackTrace();
@@ -96,7 +95,16 @@ public class EmergencyDispatcherBehaviour extends ContractNetInitiator {
             LoggerHelper.get().logInfo("Tower - will try to recruit vehicles from next type");
             agent.handleEmergency(emergency, numberVehicles - acceptedVehicles, this.priority + 1, this.numTries);
         }
+    }
 
+    @Override
+    protected void handleInform(ACLMessage inform) {
+        // System.out.println("Agent " + inform.getSender().getName() + " successfully performed the requested action");
+    }
+
+    @Override
+    protected void handleAllResultNotifications(Vector resultNotifications) {
+        // System.out.println("LOOOOOOOOL");
         agent.getMainBehaviour().removeSubBehaviour(this);
     }
 
