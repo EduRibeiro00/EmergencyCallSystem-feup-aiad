@@ -49,7 +49,6 @@ public class DFUtils {
         sd.setType(serviceName);
         template.addServices(sd);
         try {
-            System.out.println(agent.getDefaultDF());
             return DFService.search(agent, template);
         }
         catch (FIPAException fe) {

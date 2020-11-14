@@ -26,13 +26,15 @@ public class EmergencyDispatcherBehaviour extends ContractNetInitiator {
     private final ControlTowerAgent agent;
     private final PriorityQueue<Candidate> candidateQueue;
     private final int priority;
+    private final int numTries;
 
-    public EmergencyDispatcherBehaviour(ControlTowerAgent agent, ACLMessage cfp, Emergency emergency, int numberVehicles, int priority) {
+    public EmergencyDispatcherBehaviour(ControlTowerAgent agent, ACLMessage cfp, Emergency emergency, int numberVehicles, int priority, int numTries) {
         super(agent, cfp);
         this.emergency = emergency;
         this.numberVehicles = numberVehicles;
         this.agent = agent;
         this.priority = priority;
+        this.numTries = numTries;
 
         this.acceptMsgs = new ArrayList<>();
         this.rejectMsgs = new ArrayList<>();
@@ -63,7 +65,6 @@ public class EmergencyDispatcherBehaviour extends ContractNetInitiator {
                         break;
                     case (ACLMessage.REFUSE):
                         LoggerHelper.get().logReceiveVehicleRefuse(vehicleMsg.getSender().getLocalName());
-                        rejectMsgs.add(vehicleMsg);
                 }
             } catch (UnreadableException e) {
                 e.printStackTrace();
@@ -75,6 +76,7 @@ public class EmergencyDispatcherBehaviour extends ContractNetInitiator {
             if (currentCandidate == null) break;
 
             LoggerHelper.get().logAcceptVehicle(
+                    emergency.getId(),
                     currentCandidate.getMessage().getSender().getLocalName(),
                     currentCandidate.getValue()
             );
@@ -91,9 +93,22 @@ public class EmergencyDispatcherBehaviour extends ContractNetInitiator {
         sendAcceptMsgs(acceptances);
 
         if(acceptedVehicles < numberVehicles) {
-            LoggerHelper.get().logInfo("Tower - will try to recruit vehicles from next type");
-            agent.handleEmergency(emergency, numberVehicles - acceptedVehicles, this.priority + 1);
+            LoggerHelper.get().logInfo(
+                    (LoggerHelper.get().simpleLog() ?
+                            (LoggerHelper.get().getIDOut(emergency.getId())) : "")+
+                            "Tower - will try to recruit vehicles from next type");
+            agent.handleEmergency(emergency, numberVehicles - acceptedVehicles, this.priority + 1, numTries);
         }
+    }
+
+    @Override
+    protected void handleInform(ACLMessage inform) {
+        agent.getMainBehaviour().removeSubBehaviour(this);
+    }
+
+    @Override
+    protected void handleAllResultNotifications(Vector resultNotifications) {
+        agent.getMainBehaviour().removeSubBehaviour(this);
     }
 
     private void sendRejectMsgs(Vector acceptances) {

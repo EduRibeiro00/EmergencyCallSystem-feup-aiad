@@ -5,10 +5,8 @@ import agents.ControlTowerAgent;
 import jade.lang.acl.ACLMessage;
 import utils.Emergency;
 
-// TODO: distance calcs and other metrics should be on the side of the vehicle, not on the control tower
 public class ControlTowerBehaviour extends ParallelBehaviour {
-
-    private ControlTowerAgent agent;
+    private final ControlTowerAgent agent;
 
     public ControlTowerBehaviour(ControlTowerAgent controlTowerAgent) {
         super(WHEN_ALL);
@@ -16,13 +14,14 @@ public class ControlTowerBehaviour extends ParallelBehaviour {
         addSubBehaviour(new EmergencyReceiverBehaviour(this.agent));
     }
 
-    public void dispatch(ACLMessage cfp, Emergency emergency, int numberVehicles, int priority) {
+    public void dispatch(ACLMessage cfp, Emergency emergency, int numberVehicles, int priority, int numTries) {
         addSubBehaviour(
             new EmergencyDispatcherBehaviour(
                 this.agent,
                 cfp, emergency,
                 numberVehicles,
-                priority
+                priority,
+                numTries
             )
         );
     }

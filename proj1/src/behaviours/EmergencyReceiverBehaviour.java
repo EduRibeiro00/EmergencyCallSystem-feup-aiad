@@ -9,7 +9,7 @@ import utils.Emergency;
 
 public class EmergencyReceiverBehaviour extends CyclicBehaviour {
 
-    private ControlTowerAgent agent;
+    private final ControlTowerAgent agent;
 
     public EmergencyReceiverBehaviour(ControlTowerAgent controlTowerAgent) {
         this.agent = controlTowerAgent;
@@ -27,9 +27,7 @@ public class EmergencyReceiverBehaviour extends CyclicBehaviour {
                     Emergency emergency = (Emergency) content;
                     this.agent.handleEmergency(emergency);
                 }
-            } catch (UnreadableException e) {
-                e.printStackTrace();
-            }
+            } catch (UnreadableException ignore) {}
         } else {
             block();
         }

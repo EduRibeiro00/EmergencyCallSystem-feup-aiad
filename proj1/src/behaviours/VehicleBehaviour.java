@@ -13,6 +13,7 @@ import messages.Messages;
 import utils.Point;
 import utils.VehicleType;
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
@@ -119,7 +120,6 @@ public abstract class VehicleBehaviour extends ContractNetResponder {
 
     @Override
     public ACLMessage handleAcceptProposal(ACLMessage cfp, ACLMessage propose, ACLMessage accept) {
-
         Object content = null;
         try {
             content = accept.getContentObject();
@@ -140,7 +140,10 @@ public abstract class VehicleBehaviour extends ContractNetResponder {
             startEmergency(duration);
         }
 
-        return null;
+        ACLMessage informReply = accept.createReply();
+        informReply.setPerformative(ACLMessage.INFORM);
+
+        return informReply;
     }
 
     protected void acceptCfp(ACLMessage vehicleReply, ACLMessage cfp){
@@ -159,7 +162,8 @@ public abstract class VehicleBehaviour extends ContractNetResponder {
 
     protected double calcVehicleValue(double distance) {
         // value is influenced by distance to the emergency, number of employees in the vehicle and the fuel left in the car
-        return (distance * DISTANCE_MULTIPLIER) + (numberEmployees * EMPLOYEE_MULTIPLIER) + (fuel * FUEL_MULTIPLIER);
+        double value = (distance * DISTANCE_MULTIPLIER) + (numberEmployees * EMPLOYEE_MULTIPLIER) + (fuel * FUEL_MULTIPLIER);
+        return Math.round(value * 1000.0) / 1000.0;
     }
 
     protected int calcFuelForTrip(double distance) {

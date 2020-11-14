@@ -6,6 +6,7 @@ import jade.wrapper.AgentController;
 import jade.wrapper.ContainerController;
 import jade.wrapper.StaleProxyException;
 import logs.LoggerHelper;
+import utils.Arguments;
 import utils.Emergency;
 import utils.EmergencyType;
 import utils.Point;
@@ -19,6 +20,8 @@ public class Main {
      * @param args Command line arguments
      */
     public static void main(String[] args) {
+        boolean deterministic = Arguments.parseArguments(args);
+
         Runtime rt = Runtime.instance();
         Profile p = new ProfileImpl();
         ContainerController container = rt.createAgentContainer(p);
@@ -32,9 +35,10 @@ public class Main {
             LoggerHelper.get().logInfo("START - Started control tower");
             controlTower.start();
 
-            ClientAgent clientAgent = new ClientAgent("johnny", ControlTowerAgent.getDFName());
+            ClientAgent clientAgent = new ClientAgent("johnny", ControlTowerAgent.getDFName(), deterministic);
             AgentController client = container.acceptNewAgent(clientAgent.getClientName(), clientAgent);
-            LoggerHelper.get().logInfo("CLIENT - Started client " + clientAgent.getClientName());
+            String deterministicInfo = deterministic ? "deterministic" : "random";
+            LoggerHelper.get().logInfo("CLIENT - Started " + deterministicInfo + " client " + clientAgent.getClientName());
             client.start();
         } catch (StaleProxyException e) {
             e.printStackTrace();
