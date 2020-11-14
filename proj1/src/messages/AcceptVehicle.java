@@ -4,7 +4,7 @@ import utils.Point;
 
 public class AcceptVehicle implements java.io.Serializable {
     private Point coordinates;
-    private int accidentDuration;
+    private int accidentDuration; // in ms
 
     public AcceptVehicle(Point coordinates, int accidentDuration) {
         this.coordinates = coordinates;

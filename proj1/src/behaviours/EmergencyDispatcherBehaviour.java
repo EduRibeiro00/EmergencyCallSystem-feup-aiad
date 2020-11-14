@@ -99,12 +99,11 @@ public class EmergencyDispatcherBehaviour extends ContractNetInitiator {
 
     @Override
     protected void handleInform(ACLMessage inform) {
-        // System.out.println("Agent " + inform.getSender().getName() + " successfully performed the requested action");
+        agent.getMainBehaviour().removeSubBehaviour(this);
     }
 
     @Override
     protected void handleAllResultNotifications(Vector resultNotifications) {
-        // System.out.println("LOOOOOOOOL");
         agent.getMainBehaviour().removeSubBehaviour(this);
     }
 

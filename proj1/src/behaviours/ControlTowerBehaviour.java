@@ -24,6 +24,5 @@ public class ControlTowerBehaviour extends ParallelBehaviour {
                 numTries
             )
         );
-        // System.out.println(this.getChildren());
     }
 }

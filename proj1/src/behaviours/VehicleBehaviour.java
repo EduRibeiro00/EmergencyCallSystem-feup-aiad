@@ -162,7 +162,8 @@ public abstract class VehicleBehaviour extends ContractNetResponder {
 
     protected double calcVehicleValue(double distance) {
         // value is influenced by distance to the emergency, number of employees in the vehicle and the fuel left in the car
-        return (distance * DISTANCE_MULTIPLIER) + (numberEmployees * EMPLOYEE_MULTIPLIER) + (fuel * FUEL_MULTIPLIER);
+        double value = (distance * DISTANCE_MULTIPLIER) + (numberEmployees * EMPLOYEE_MULTIPLIER) + (fuel * FUEL_MULTIPLIER);
+        return Math.round(value * 1000.0) / 1000.0;
     }
 
     protected int calcFuelForTrip(double distance) {
