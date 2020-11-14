@@ -95,8 +95,9 @@ public class EmergencyDispatcherBehaviour extends ContractNetInitiator {
         if(acceptedVehicles < numberVehicles) {
             LoggerHelper.get().logInfo("Tower - will try to recruit vehicles from next type");
             agent.handleEmergency(emergency, numberVehicles - acceptedVehicles, this.priority + 1, this.numTries);
-            agent.removeBehaviour(this);
         }
+
+        agent.getMainBehaviour().removeSubBehaviour(this);
     }
 
     private void sendRejectMsgs(Vector acceptances) {

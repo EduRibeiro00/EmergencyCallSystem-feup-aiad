@@ -27,9 +27,7 @@ public class EmergencyReceiverBehaviour extends CyclicBehaviour {
                     Emergency emergency = (Emergency) content;
                     this.agent.handleEmergency(emergency);
                 }
-            } catch (UnreadableException e) {
-                e.printStackTrace();
-            }
+            } catch (UnreadableException ignore) {}
         } else {
             block();
         }

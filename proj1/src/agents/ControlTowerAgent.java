@@ -97,4 +97,8 @@ public class ControlTowerAgent extends Agent {
     public static String getDFName() {
         return DF_NAME;
     }
+
+    public ControlTowerBehaviour getMainBehaviour() {
+        return behaviour;
+    }
 }
