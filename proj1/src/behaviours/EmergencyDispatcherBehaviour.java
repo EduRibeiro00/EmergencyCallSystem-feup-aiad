@@ -26,13 +26,15 @@ public class EmergencyDispatcherBehaviour extends ContractNetInitiator {
     private final ControlTowerAgent agent;
     private final PriorityQueue<Candidate> candidateQueue;
     private final int priority;
+    private final int numTries;
 
-    public EmergencyDispatcherBehaviour(ControlTowerAgent agent, ACLMessage cfp, Emergency emergency, int numberVehicles, int priority) {
+    public EmergencyDispatcherBehaviour(ControlTowerAgent agent, ACLMessage cfp, Emergency emergency, int numberVehicles, int priority, int numTries) {
         super(agent, cfp);
         this.emergency = emergency;
         this.numberVehicles = numberVehicles;
         this.agent = agent;
         this.priority = priority;
+        this.numTries = numTries;
 
         this.acceptMsgs = new ArrayList<>();
         this.rejectMsgs = new ArrayList<>();
@@ -92,7 +94,8 @@ public class EmergencyDispatcherBehaviour extends ContractNetInitiator {
 
         if(acceptedVehicles < numberVehicles) {
             LoggerHelper.get().logInfo("Tower - will try to recruit vehicles from next type");
-            agent.handleEmergency(emergency, numberVehicles - acceptedVehicles, this.priority + 1);
+            agent.handleEmergency(emergency, numberVehicles - acceptedVehicles, this.priority + 1, this.numTries);
+            agent.removeBehaviour(this);
         }
     }
 

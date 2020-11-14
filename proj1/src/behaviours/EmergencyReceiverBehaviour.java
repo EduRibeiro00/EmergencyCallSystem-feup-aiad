@@ -9,7 +9,7 @@ import utils.Emergency;
 
 public class EmergencyReceiverBehaviour extends CyclicBehaviour {
 
-    private ControlTowerAgent agent;
+    private final ControlTowerAgent agent;
 
     public EmergencyReceiverBehaviour(ControlTowerAgent controlTowerAgent) {
         this.agent = controlTowerAgent;

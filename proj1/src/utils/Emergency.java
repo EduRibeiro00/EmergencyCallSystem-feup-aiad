@@ -4,7 +4,7 @@ public class Emergency implements java.io.Serializable {
     private EmergencyType emergencyType;
     private Point coordinates;
     private int numberVehicles;
-    private int duration;
+    private int duration; // in ms
 
     public Emergency(EmergencyType emergencyType, Point coordinates, int numberVehicles, int duration) {
         this.emergencyType = emergencyType;
@@ -44,6 +44,7 @@ public class Emergency implements java.io.Serializable {
                 "emergencyType=" + emergencyType +
                 ", coordinates=" + coordinates +
                 ", numberVehicles=" + numberVehicles +
+                ", duration= " + duration + "ms" +
                 '}';
     }
 

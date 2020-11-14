@@ -210,4 +210,10 @@ public class LoggerHelper {
                 value
         );
     }
+
+    public void logMaxRetriesEmergency(Emergency emergency, int maxTries) {
+        logger.warning(
+                "Tower - "
+        );
+    }
 }
