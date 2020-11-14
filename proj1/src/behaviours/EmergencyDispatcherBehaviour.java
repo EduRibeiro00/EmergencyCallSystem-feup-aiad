@@ -76,6 +76,7 @@ public class EmergencyDispatcherBehaviour extends ContractNetInitiator {
             if (currentCandidate == null) break;
 
             LoggerHelper.get().logAcceptVehicle(
+                    emergency.getId(),
                     currentCandidate.getMessage().getSender().getLocalName(),
                     currentCandidate.getValue()
             );
@@ -92,8 +93,11 @@ public class EmergencyDispatcherBehaviour extends ContractNetInitiator {
         sendAcceptMsgs(acceptances);
 
         if(acceptedVehicles < numberVehicles) {
-            LoggerHelper.get().logInfo("Tower - will try to recruit vehicles from next type");
-            agent.handleEmergency(emergency, numberVehicles - acceptedVehicles, this.priority + 1, this.numTries);
+            LoggerHelper.get().logInfo(
+                    (LoggerHelper.get().simpleLog() ?
+                            (LoggerHelper.get().getIDOut(emergency.getId())) : "")+
+                            "Tower - will try to recruit vehicles from next type");
+            agent.handleEmergency(emergency, numberVehicles - acceptedVehicles, this.priority + 1);
         }
     }
 

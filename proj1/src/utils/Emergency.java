@@ -5,12 +5,19 @@ public class Emergency implements java.io.Serializable {
     private Point coordinates;
     private int numberVehicles;
     private int duration; // in ms
+    private static int  currentID = 0;
+
+
+
+    private int id = 0;
 
     public Emergency(EmergencyType emergencyType, Point coordinates, int numberVehicles, int duration) {
         this.emergencyType = emergencyType;
         this.coordinates = coordinates;
         this.numberVehicles = numberVehicles;
         this.duration = duration;
+        this.id = currentID;
+
     }
 
     public EmergencyType getEmergencyType() {
@@ -37,13 +44,20 @@ public class Emergency implements java.io.Serializable {
         this.numberVehicles = numberVehicles;
     }
 
+    public int getId() {return id;}
+
+    public void setId(int id) { this.id = id;}
+
+    public static void incrementID(){currentID++;}
+
     @Override
     public String toString() {
-        return "Emergency{" +
-                "emergencyType=" + emergencyType +
+        return "Emergency { " +
+                "id=" + id +
+                ", emergencyType=" + emergencyType +
                 ", coordinates=" + coordinates +
                 ", numberVehicles=" + numberVehicles +
-                ", duration= " + duration + "ms" +
+                ", duration=" + duration + "ms" +
                 '}';
     }
 
