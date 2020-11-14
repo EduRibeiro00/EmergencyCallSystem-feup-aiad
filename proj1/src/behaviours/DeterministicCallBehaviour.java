@@ -20,7 +20,7 @@ import java.util.regex.Pattern;
 
 public class DeterministicCallBehaviour extends SimpleBehaviour {
     private final String EMERGENCIES_FILE_PATH = System.getProperty("user.dir") + "/src/experiment/emergencies.gen";
-    private AID controlTowerID;
+    private final AID controlTowerID;
     private List<DeterministicEmergency> deterministicEmergencies;
     private boolean done;
 
