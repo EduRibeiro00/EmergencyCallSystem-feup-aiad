@@ -6,6 +6,7 @@ import jade.wrapper.AgentController;
 import jade.wrapper.ContainerController;
 import jade.wrapper.StaleProxyException;
 import logs.LoggerHelper;
+import utils.Arguments;
 import utils.Emergency;
 import utils.EmergencyType;
 import utils.Point;
@@ -19,10 +20,14 @@ public class Main {
      * @param args Command line arguments
      */
     public static void main(String[] args) {
+        if(!Arguments.parseArguments(args)){
+            System.out.println("Error parsing arguments");
+            return;
+        }
+
         Runtime rt = Runtime.instance();
         Profile p = new ProfileImpl();
         ContainerController container = rt.createAgentContainer(p);
-
         try {
             VehicleAgent[] vehicles = createVehicles(2,2,2);
             startVehicles(vehicles, container);

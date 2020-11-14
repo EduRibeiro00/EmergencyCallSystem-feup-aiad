@@ -12,6 +12,7 @@ import java.util.logging.*;
 public class LoggerHelper {
     private final static String FILEPATH = System.getProperty("user.dir") + "/src/logs/proj.log";
     private final Logger logger;
+    private boolean simpleFlag = false;
 
     private static LoggerHelper instance;
 
@@ -82,9 +83,11 @@ public class LoggerHelper {
     };
 
     public void logReceivedEmergency(Emergency emergency) {
-        logger.info (
-                "Tower received emergency: " + emergency
-        );
+        if(!simpleFlag){
+            logger.info (
+                    "Tower received emergency: " + emergency
+            );
+        }
     }
 
     public void logNotEnoughVehicles(Emergency emergency) {
@@ -101,105 +104,142 @@ public class LoggerHelper {
     }
 
     public void logAlreadyOccupied(String vehicleName) {
-        logger.info(
-                vehicleName + " - Can't accept emergency because I am occupied"
-        );
+        if(!simpleFlag) {
+            logger.info(
+                    vehicleName + " - Can't accept emergency because I am occupied"
+            );
+        }
     }
 
 
     public void logRefueling(String vehicleName) {
-        logger.info(
-                vehicleName + " - Can't accept emergency because I am refueling"
-        );
+        if(!simpleFlag) {
+            logger.info(
+                    vehicleName + " - Can't accept emergency because I am refueling"
+            );
+        }
     }
 
     public void logFuelInsuf(String vehicleName) {
-        logger.info(
-                vehicleName + " - Can't accept emergency because I don't have enough fuel for it"
-        );
+        if(!simpleFlag) {
+            logger.info(
+                    vehicleName + " - Can't accept emergency because I don't have enough fuel for it"
+            );
+        }
     }
 
     public void logRejectProposalOccupied(String vehicleName) {
-        logger.info(
-                vehicleName + " - Tower did not accept because I was occupied"
-        );
+        if(!simpleFlag) {
+            logger.info(
+                    vehicleName + " - Tower did not accept because I was occupied"
+            );
+        }
     }
 
 
     public void logRejectProposalRefueling(String vehicleName) {
-        logger.info(
-                vehicleName + " - Tower did not accept because I was refueling"
-        );
+        if(!simpleFlag) {
+            logger.info(
+                    vehicleName + " - Tower did not accept because I was refueling"
+            );
+        }
     }
 
 
     public void logRejectProposal(String vehicleName, Point coordinates) {
-        logger.info(
-                vehicleName + " - Tower refused my service; my location is " + coordinates
-        );
+        if(!simpleFlag) {
+            logger.info(
+                    vehicleName + " - Tower refused my service; my location is " + coordinates
+            );
+        }
+    }
+    public void logSendingCfpTo(String DFName) {
+        if(!simpleFlag) {
+            logInfo("Tower - sending cfp to " + DFName + " vehicles");
+        }
     }
 
     public void logAcceptProposal(String vehicleName, Point coordinates) {
-        logger.info(
-                vehicleName + " - Tower selected me for the emergency! My location is " + coordinates
-        );
+        if(!simpleFlag) {
+            logger.info(
+                    vehicleName + " - Tower selected me for the emergency! My location is " + coordinates
+            );
+        }
     }
 
     public void logOccupied(String vehicleName, double duration) {
-        logger.info(
-                vehicleName + " - Will be occupied for " + duration + " seconds"
-        );
+        if(!simpleFlag) {
+            logger.info(
+                    vehicleName + " - Will be occupied for " + duration + " seconds"
+            );
+        }
     }
 
     public void logEmployeeChange(String vehicleName, int numberEmployees) {
-        logger.info(
-                vehicleName + " - Changed number employees to " + numberEmployees
-        );
+        if(!simpleFlag) {
+            logger.info(
+                    vehicleName + " - Changed number employees to " + numberEmployees
+            );
+        }
     }
 
     public void logRejectedConsecutiveMax(String vehicleName, int maxConsecutiveRejections) {
-        logger.info(
-                vehicleName + " - Rejected max number of consecutive emergencies:  " + maxConsecutiveRejections
-        );
+        if(!simpleFlag) {
+            logger.info(
+                    vehicleName + " - Rejected max number of consecutive emergencies:  " + maxConsecutiveRejections
+            );
+        }
     }
 
     public void logUnoccupied(String vehicleName, int fuel, int numberEmployees) {
-        logger.info(
-                vehicleName + " - Done with previous emergency! " +
-                        "Remaining fuel: " + fuel + "; Employees = " + numberEmployees
-        );
+        if(!simpleFlag) {
+            logger.info(
+                    vehicleName + " - Done with previous emergency! " +
+                            "Remaining fuel: " + fuel + "; Employees = " + numberEmployees
+            );
+        }
     }
 
     public void logNeedRefuel(String vehicleName, int fuel) {
-        logger.info(
-                vehicleName + " - Going to refuel: " + fuel + " remaining"
-        );
+        if(!simpleFlag) {
+            logger.info(
+                    vehicleName + " - Going to refuel: " + fuel + " remaining"
+            );
+        }
     }
 
     public void logDoneRefuel(String vehicleName, int fuel) {
-        logger.info(
-                vehicleName + " - Done refueling: " + fuel + " filled up"
-        );
+        if(!simpleFlag) {
+            logger.info(
+                    vehicleName + " - Done refueling: " + fuel + " filled up"
+            );
+        }
     }
 
     public void logHandleCfp(String vehicleName) {
-        logger.info(
-                vehicleName + " - received CFP from tower"
-        );
+        if(!simpleFlag) {
+            logger.info(
+                    vehicleName + " - received CFP from tower"
+            );
+        }
     }
 
     public void logReceiveVehiclePropose(String vehicleName, double value) {
-        logger.info(
-                "Tower - Received propose from vehicle " +
-                vehicleName +
-                "; value = " + value
-        );
+        if(!simpleFlag) {
+            logger.info(
+                    "Tower - Received propose from vehicle " +
+                            vehicleName +
+                            "; value = " + value
+            );
+        }
     }
 
     public void logReceiveVehicleRefuse(String vehicleName) {
-        logger.info(
-            "Tower - " + vehicleName + " has refused"
-        );
+        if(!simpleFlag) {
+            logger.info(
+                    "Tower - " + vehicleName + " has refused"
+            );
+        }
     }
 
     public void logAcceptVehicle(String vehicleName, double value) {
@@ -209,5 +249,14 @@ public class LoggerHelper {
                 ", value = " +
                 value
         );
+    }
+
+    public boolean simpleLog() {
+        return simpleFlag;
+    }
+
+    public void showSimpleLog(){
+        System.out.println("Showing simplified output");
+        simpleFlag = true;
     }
 }
