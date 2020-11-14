@@ -69,6 +69,7 @@ public class ControlTowerAgent extends Agent {
             return false;
         }
 
+        LoggerHelper.get().logInfo("Tower - sending cfp to " + vehicleType.getDFName() + " vehicles");
         for (DFAgentDescription vehicle : vehicles) {
             cfp.addReceiver(vehicle.getName());
         }

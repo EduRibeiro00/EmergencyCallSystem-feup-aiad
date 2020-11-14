@@ -53,7 +53,7 @@ public abstract class VehicleBehaviour extends ContractNetResponder {
         LoggerHelper.get().logStartVehicle(
                 this.myAgent.getLocalName(),
                 getVehicleType(),
-                coordinates
+                this
         );
     }
 
@@ -151,7 +151,7 @@ public abstract class VehicleBehaviour extends ContractNetResponder {
 
             double value = this.calcVehicleValue(distance);
 
-            vehicleReply.setContentObject(new VehicleResponse(value,numberEmployees));
+            vehicleReply.setContentObject(new VehicleResponse(value));
         } catch (UnreadableException | IOException e) {
             e.printStackTrace();
         }
@@ -221,4 +221,13 @@ public abstract class VehicleBehaviour extends ContractNetResponder {
     protected abstract int getFuelRate();
 
     protected abstract int getSpareFuelLevel();
+
+    @Override
+    public String toString() {
+        return "Vehicle{" +
+                "coordinates=" + coordinates +
+                ", numberEmployees=" + numberEmployees +
+                ", fuel=" + fuel +
+                '}';
+    }
 }

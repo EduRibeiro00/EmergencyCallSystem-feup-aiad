@@ -2,12 +2,9 @@ package messages;
 
 public class VehicleResponse implements java.io.Serializable {
     private double value;
-    private final int NUMBER_EMPLOYEES_FACTOR = 3;
 
-
-    public VehicleResponse(double distanceValue,int numberEmployees) {
-        this.value = distanceValue + NUMBER_EMPLOYEES_FACTOR *  numberEmployees; //TODO determinar coeficiente?
-        System.out.println("Distance value " + distanceValue + " Number employees " + numberEmployees);
+    public VehicleResponse(double value) {
+        this.value = value;
     }
 
     public double getValue() {
