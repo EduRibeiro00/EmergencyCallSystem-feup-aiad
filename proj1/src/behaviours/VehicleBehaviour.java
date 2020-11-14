@@ -119,7 +119,6 @@ public abstract class VehicleBehaviour extends ContractNetResponder {
 
     @Override
     public ACLMessage handleAcceptProposal(ACLMessage cfp, ACLMessage propose, ACLMessage accept) {
-
         Object content = null;
         try {
             content = accept.getContentObject();
