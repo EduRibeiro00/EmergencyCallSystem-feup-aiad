@@ -3,8 +3,8 @@ package utils;
 import jade.lang.acl.ACLMessage;
 
 public class Candidate {
-    private double value;
-    private ACLMessage message;
+    private final double value;
+    private final ACLMessage message;
 
     public Candidate(double value, ACLMessage message) {
         this.value = value;

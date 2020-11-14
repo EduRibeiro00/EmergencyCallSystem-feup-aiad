@@ -1,5 +1,6 @@
 package logs;
 
+import behaviours.VehicleBehaviour;
 import utils.Emergency;
 import utils.Point;
 import utils.VehicleType;
@@ -92,10 +93,10 @@ public class LoggerHelper {
         );
     }
 
-    public void logStartVehicle(String vehicleName, VehicleType vehicleType, Point coordinates) {
+    public void logStartVehicle(String vehicleName, VehicleType vehicleType, VehicleBehaviour vehicle) {
         logger.info(
                 "VEHICLE - Name: " + vehicleName + "; " +
-                vehicleType + " created at coordinates " + coordinates
+                vehicleType + " - " + vehicle
         );
     }
 
@@ -197,7 +198,7 @@ public class LoggerHelper {
 
     public void logReceiveVehicleRefuse(String vehicleName) {
         logger.info(
-            "Tower - " + vehicleName + " was occupied"
+            "Tower - " + vehicleName + " has refused"
         );
     }
 

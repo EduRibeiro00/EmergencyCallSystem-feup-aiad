@@ -19,34 +19,26 @@ import java.util.Vector;
 
 public class EmergencyDispatcherBehaviour extends ContractNetInitiator {
 
-    private double bestValue;
-    private Emergency emergency;
-    private int numberVehicles;
-    private List<ACLMessage> bestVehicleMsgs = new ArrayList<>();
-    private List<ACLMessage> otherVehicleMsgs = new ArrayList<>();
-    private ControlTowerAgent agent;
-    private PriorityQueue<Candidate> candidateQueue;
-    private int priority;
+    private final Emergency emergency;
+    private final int numberVehicles;
+    private final List<ACLMessage> acceptMsgs;
+    private final List<ACLMessage> rejectMsgs;
+    private final ControlTowerAgent agent;
+    private final PriorityQueue<Candidate> candidateQueue;
+    private final int priority;
 
     public EmergencyDispatcherBehaviour(ControlTowerAgent agent, ACLMessage cfp, Emergency emergency, int numberVehicles, int priority) {
         super(agent, cfp);
-        resetControlTowerInfo();
         this.emergency = emergency;
         this.numberVehicles = numberVehicles;
         this.agent = agent;
         this.priority = priority;
-    }
 
-    private void resetControlTowerInfo() {
-        this.bestValue = Integer.MIN_VALUE;
-        this.emergency = null;
-        this.candidateQueue = new PriorityQueue<>((c1, c2) -> {
-            if (c1.getValue() < c2.getValue()) return -1;
-            if (c1.getValue() > c2.getValue()) return 1;
-            return 0;
-        });
-        this.bestVehicleMsgs.clear();
-        this.otherVehicleMsgs.clear();
+        this.acceptMsgs = new ArrayList<>();
+        this.rejectMsgs = new ArrayList<>();
+
+        // vehicle with highest value will be at the front of the queue
+        this.candidateQueue = new PriorityQueue<>(Comparator.comparingDouble(Candidate::getValue).reversed());
     }
 
     @Override
@@ -55,50 +47,57 @@ public class EmergencyDispatcherBehaviour extends ContractNetInitiator {
 
         for (Object response : responses) {
             ACLMessage vehicleMsg = (ACLMessage) response;
-            double value = 0;
 
             try {
                 switch (vehicleMsg.getPerformative()){
                     case (ACLMessage.PROPOSE):
                         Object content = vehicleMsg.getContentObject();
                         if(content instanceof VehicleResponse) {
-                            value = ((VehicleResponse) content).getValue();
+                            double value = ((VehicleResponse) content).getValue();
                             LoggerHelper.get().logReceiveVehiclePropose(
                                     vehicleMsg.getSender().getLocalName(),
                                     value
                             );
-                            acceptedVehicles++;
                             candidateQueue.add(new Candidate(value, vehicleMsg));
                         }
                         break;
                     case (ACLMessage.REFUSE):
                         LoggerHelper.get().logReceiveVehicleRefuse(vehicleMsg.getSender().getLocalName());
-                        otherVehicleMsgs.add(vehicleMsg);
-                        continue;
+                        rejectMsgs.add(vehicleMsg);
                 }
             } catch (UnreadableException e) {
                 e.printStackTrace();
             }
         }
 
-        while(candidateQueue.peek() != null && bestVehicleMsgs.size() < numberVehicles) {
-            Candidate currentCandidate = candidateQueue.peek();
-            candidateQueue.remove(currentCandidate);
-            bestVehicleMsgs.add(currentCandidate.getMessage());
+        while(acceptedVehicles < numberVehicles) {
+            Candidate currentCandidate = candidateQueue.poll();
+            if (currentCandidate == null) break;
+
+            LoggerHelper.get().logAcceptVehicle(
+                    currentCandidate.getMessage().getSender().getLocalName(),
+                    currentCandidate.getValue()
+            );
+
+            acceptMsgs.add(currentCandidate.getMessage());
+            acceptedVehicles++;
+        }
+
+        for (Candidate candidate : candidateQueue) {
+            rejectMsgs.add(candidate.getMessage());
         }
 
         sendRejectMsgs(acceptances);
-        sendAcceptMsg(acceptances);
+        sendAcceptMsgs(acceptances);
 
         if(acceptedVehicles < numberVehicles) {
             LoggerHelper.get().logInfo("Tower - will try to recruit vehicles from next type");
-            this.priority++;
-            agent.handleEmergency(emergency, numberVehicles - acceptedVehicles, this.priority);
+            agent.handleEmergency(emergency, numberVehicles - acceptedVehicles, this.priority + 1);
         }
     }
 
     private void sendRejectMsgs(Vector acceptances) {
-        for (ACLMessage vehicleMsg : otherVehicleMsgs) {
+        for (ACLMessage vehicleMsg : rejectMsgs) {
             ACLMessage towerReply = vehicleMsg.createReply();
             towerReply.setPerformative(ACLMessage.REJECT_PROPOSAL);
             towerReply.setContent(Messages.REJECT_VEHICLE);
@@ -106,18 +105,13 @@ public class EmergencyDispatcherBehaviour extends ContractNetInitiator {
         }
     }
 
-    private void sendAcceptMsg(Vector acceptances) {
-        for (ACLMessage bestVehicleMsg : bestVehicleMsgs) {
-            LoggerHelper.get().logAcceptVehicle(
-                    bestVehicleMsg.getSender().getLocalName(),
-                    bestValue
-            );
-
+    private void sendAcceptMsgs(Vector acceptances) {
+        for (ACLMessage bestVehicleMsg : acceptMsgs) {
             ACLMessage towerReply = bestVehicleMsg.createReply();
             towerReply.setPerformative(ACLMessage.ACCEPT_PROPOSAL);
             towerReply.setContent(Messages.ACCEPT_VEHICLE);
             try {
-                towerReply.setContentObject(new AcceptVehicle(emergency.getCoordinates(),emergency.getDuration()));
+                towerReply.setContentObject(new AcceptVehicle(emergency.getCoordinates(), emergency.getDuration()));
             } catch (IOException e) {
                 e.printStackTrace();
             }
