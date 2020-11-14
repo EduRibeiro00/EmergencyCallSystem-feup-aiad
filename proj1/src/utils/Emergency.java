@@ -11,7 +11,6 @@ public class Emergency implements java.io.Serializable {
         this.coordinates = coordinates;
         this.numberVehicles = numberVehicles;
         this.duration = duration;
-
     }
 
     public EmergencyType getEmergencyType() {

@@ -22,6 +22,7 @@ public class Main {
         Runtime rt = Runtime.instance();
         Profile p = new ProfileImpl();
         ContainerController container = rt.createAgentContainer(p);
+        boolean deterministic = args.length > 0 && (args[0].equals("-d") || args[0].equals("--deterministic"));
 
         try {
             VehicleAgent[] vehicles = createVehicles(2,2,2);
@@ -32,9 +33,10 @@ public class Main {
             LoggerHelper.get().logInfo("START - Started control tower");
             controlTower.start();
 
-            ClientAgent clientAgent = new ClientAgent("johnny", ControlTowerAgent.getDFName());
+            ClientAgent clientAgent = new ClientAgent("johnny", ControlTowerAgent.getDFName(), deterministic);
             AgentController client = container.acceptNewAgent(clientAgent.getClientName(), clientAgent);
-            LoggerHelper.get().logInfo("CLIENT - Started client " + clientAgent.getClientName());
+            String deterministicInfo = deterministic ? "deterministic" : "random";
+            LoggerHelper.get().logInfo("CLIENT - Started " + deterministicInfo + " client " + clientAgent.getClientName());
             client.start();
         } catch (StaleProxyException e) {
             e.printStackTrace();
