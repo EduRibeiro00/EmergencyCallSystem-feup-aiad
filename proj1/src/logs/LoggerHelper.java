@@ -150,9 +150,22 @@ public class LoggerHelper {
         );
     }
 
-    public void logUnoccupied(String vehicleName, int fuel) {
+    public void logEmployeeChange(String vehicleName, int numberEmployees) {
         logger.info(
-                vehicleName + " - Done with previous emergency! Remaining fuel: " + fuel
+                vehicleName + " - Changed number employees to " + numberEmployees
+        );
+    }
+
+    public void logRejectedConsecutiveMax(String vehicleName, int maxConsecutiveRejections) {
+        logger.info(
+                vehicleName + " - Rejected max number of consecutive emergencies:  " + maxConsecutiveRejections
+        );
+    }
+
+    public void logUnoccupied(String vehicleName, int fuel, int numberEmployees) {
+        logger.info(
+                vehicleName + " - Done with previous emergency! " +
+                        "Remaining fuel: " + fuel + "; Employees = " + numberEmployees
         );
     }
 
