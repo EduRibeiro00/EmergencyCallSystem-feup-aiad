@@ -12,7 +12,7 @@ import java.util.logging.*;
 public class LoggerHelper {
     private final static String FILEPATH = System.getProperty("user.dir") + "/src/logs/proj.log";
     private final Logger logger;
-    private boolean simpleFlag = false;
+    private static boolean simpleFlag = false;
 
     private static LoggerHelper instance;
 
@@ -37,6 +37,7 @@ public class LoggerHelper {
 
             @Override
             public synchronized String format(LogRecord lr) {
+                if(simpleFlag) return String.format("%s %n",lr.getMessage());
                 return String.format(
                         "[%1$tF %1$tT] [%2$-7s] %3$s %n",
                         new Date(lr.getMillis()),
@@ -255,7 +256,7 @@ public class LoggerHelper {
         return simpleFlag;
     }
 
-    public void showSimpleLog(){
+    public static void setSimpleLog(){
         System.out.println("Showing simplified output");
         simpleFlag = true;
     }

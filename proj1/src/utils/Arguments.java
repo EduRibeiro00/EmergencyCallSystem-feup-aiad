@@ -8,7 +8,7 @@ public class Arguments {
             return true;
         }else if(args.length == 1){
             if(args[0].equals("-simple")){
-                LoggerHelper.get().showSimpleLog();
+                LoggerHelper.setSimpleLog();
                 return true;
             } else return false;
 
