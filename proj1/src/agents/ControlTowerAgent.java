@@ -17,7 +17,7 @@ import java.util.concurrent.TimeUnit;
 public class ControlTowerAgent extends Agent {
     private static final String DF_NAME = "control-tower";
     private static final int EMERGENCY_MAX_TRIES = 3;
-    private static final int WAIT_BETWEEN_TRIES = 1000;
+    private static final int WAIT_BETWEEN_TRIES = 10000;
 
     private final ControlTowerBehaviour behaviour;
     private final ScheduledThreadPoolExecutor executor;
@@ -83,7 +83,7 @@ public class ControlTowerAgent extends Agent {
         // no vehicles of a certain type
         if (vehicles == null || vehicles.length < 1) {
             LoggerHelper.get().logInfo("[" +emergency.getId() + "] Tower - no vehicles; will try to recruit vehicles from next type");
-            this.handleEmergency(emergency, numberVehicles, ++priority);
+            this.handleEmergency(emergency, numberVehicles, priority + 1, numTries);
             return false;
         }
 

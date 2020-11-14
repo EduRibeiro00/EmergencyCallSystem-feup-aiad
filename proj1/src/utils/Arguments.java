@@ -3,19 +3,25 @@ package utils;
 import logs.LoggerHelper;
 
 public class Arguments {
-    public static boolean parseArguments(String args[]){
-        if(args.length == 0){
-            return true;
-        }else if(args.length == 1){
-            if(args[0].equals("-simple")){
-                LoggerHelper.setSimpleLog();
-                return true;
-            } else return false;
+    public static boolean parseArguments(String args[]) {
+        boolean deterministic = false;
+        for (String arg : args) {
+            switch (arg) {
+                case "-d":
+                case "--deterministic":
+                    deterministic = true;
+                    break;
 
+                case "-s":
+                case "--simple":
+                    LoggerHelper.setSimpleLog();
+                    break;
+
+                default:
+                    break;
+            }
         }
-        return false;
+
+        return deterministic;
     }
-
-
-
 }

@@ -85,13 +85,10 @@ public class LoggerHelper {
     };
 
     public void logReceivedEmergency(Emergency emergency) {
-
-            logger.info (
-                    (simpleFlag ? (getIDOut(emergency.getId())) : "")+
-                    "Tower received emergency: " + emergency
-            );
-
-
+        logger.info (
+                (simpleFlag ? (getIDOut(emergency.getId())) : "")+
+                "Tower received emergency: " + emergency
+        );
     }
 
     public void logNotEnoughVehicles(Emergency emergency) {
@@ -157,6 +154,7 @@ public class LoggerHelper {
             );
         }
     }
+
     public void logSendingCfpTo(String DFName) {
         if(!simpleFlag) {
             logInfo("Tower - sending cfp to " + DFName + " vehicles");
@@ -252,6 +250,12 @@ public class LoggerHelper {
                 vehicleName +
                 ", value = " +
                 value
+        );
+    }
+
+    public void logMaxRetriesEmergency(Emergency emergency, int maxTries) {
+        logger.warning(
+                "Tower - Surpassed the max number of tries (" + maxTries + ") for emergency" + emergency
         );
     }
 
