@@ -18,6 +18,7 @@ public class EmergencyCallBehaviour extends TickerBehaviour {
     private final int MIN_NUM_VEHICLES = 1;
     private final int MAX_NUM_VEHICLES = 3;
     private AID controlTowerID;
+    private int currentID = 0;
     private final int MIN_DURATION= 15000;
     private final int MAX_DURATION = 20000;
 
@@ -30,7 +31,7 @@ public class EmergencyCallBehaviour extends TickerBehaviour {
     protected void onTick() {
         ACLMessage request = new ACLMessage(ACLMessage.INFORM);
         request.addReceiver(controlTowerID);
-
+        Emergency.incrementID();
         Emergency emergency = new Emergency(
                 getRandomEmergencyType(),
                 Point.genRandomPoint(),

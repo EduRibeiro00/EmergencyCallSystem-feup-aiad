@@ -79,16 +79,19 @@ public class LoggerHelper {
 
     public void logCreatedEmergency(Emergency emergency) {
         logger.info(
+                (simpleFlag ? (getIDOut(emergency.getId())) : "")+
                 "Client has sent to tower emergency: " + emergency
         );
     };
 
     public void logReceivedEmergency(Emergency emergency) {
-        if(!simpleFlag){
+
             logger.info (
+                    (simpleFlag ? (getIDOut(emergency.getId())) : "")+
                     "Tower received emergency: " + emergency
             );
-        }
+
+
     }
 
     public void logNotEnoughVehicles(Emergency emergency) {
@@ -243,9 +246,9 @@ public class LoggerHelper {
         }
     }
 
-    public void logAcceptVehicle(String vehicleName, double value) {
+    public void logAcceptVehicle(int id, String vehicleName, double value) {
         logger.info(
-                "Tower - Going to accept vehicle " +
+                (simpleFlag ? (getIDOut(id)) : "")+ "Tower - Going to accept vehicle " +
                 vehicleName +
                 ", value = " +
                 value
@@ -255,6 +258,7 @@ public class LoggerHelper {
     public boolean simpleLog() {
         return simpleFlag;
     }
+    public String getIDOut(int id){ return "[" + id + "] ";}
 
     public static void setSimpleLog(){
         System.out.println("Showing simplified output");

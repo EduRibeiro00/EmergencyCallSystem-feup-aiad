@@ -64,7 +64,7 @@ public class ControlTowerAgent extends Agent {
         DFAgentDescription[] vehicles = DFUtils.fetchFromDF(this, vehicleType.getDFName());
         // no vehicles of a certain type
         if (vehicles == null || vehicles.length < 1) {
-            LoggerHelper.get().logInfo("Tower - no vehicles; will try to recruit vehicles from next type");
+            LoggerHelper.get().logInfo("[" +emergency.getId() + "] Tower - no vehicles; will try to recruit vehicles from next type");
             this.handleEmergency(emergency, numberVehicles, ++priority);
             return false;
         }
