@@ -1,5 +1,6 @@
 package agents;
 
+import behaviours.DeterministicCallBehaviour;
 import behaviours.EmergencyCallBehaviour;
 import jade.core.AID;
 import jade.core.Agent;
@@ -15,10 +16,12 @@ public class ClientAgent extends Agent {
     private String clientName;
     private String towerDFName;
     private AID controlTowerID;
+    private boolean deterministic;
 
-    public ClientAgent(String clientName, String towerDFName) {
+    public ClientAgent(String clientName, String towerDFName, boolean deterministic) {
         this.clientName = clientName;
         this.towerDFName = towerDFName;
+        this.deterministic = deterministic;
     }
 
     @Override
@@ -32,13 +35,22 @@ public class ClientAgent extends Agent {
             }
 
             this.controlTowerID = tower[0].getName();
-            addBehaviour(
-                new EmergencyCallBehaviour(
-                    this,
-                    SECONDS_BETWEEN_CALLS * 1000,
-                    controlTowerID
-                )
-            );
+
+            if(deterministic) {
+                addBehaviour(
+                        new DeterministicCallBehaviour(
+                                controlTowerID
+                        )
+                );
+            } else {
+                addBehaviour(
+                        new EmergencyCallBehaviour(
+                                this,
+                                SECONDS_BETWEEN_CALLS * 1000,
+                                controlTowerID
+                        )
+                );
+            }
             break;
         }
 
