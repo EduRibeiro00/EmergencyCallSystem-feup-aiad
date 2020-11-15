@@ -132,7 +132,7 @@ public abstract class VehicleBehaviour extends ContractNetResponder {
             LoggerHelper.get().logAcceptProposal(this.myAgent.getLocalName(), coordinates);
 
             double distance = coordinates.getDistance(acceptVehicleMsg.getCoordinates());
-            int duration = (acceptVehicleMsg.getAccidentDuration() + (int) Math.round(distance * 0.1));
+            int duration = (acceptVehicleMsg.getAccidentDuration() + (int) Math.round(distance) * 20);
 
             coordinates = acceptVehicleMsg.getCoordinates();
             fuel = (fuel -= calcFuelForTrip(distance)) < 0 ? 0 : fuel;
