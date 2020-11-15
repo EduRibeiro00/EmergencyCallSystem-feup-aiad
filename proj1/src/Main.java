@@ -27,7 +27,7 @@ public class Main {
         ContainerController container = rt.createAgentContainer(p);
 
         try {
-            VehicleAgent[] vehicles = createVehicles(2,2,2);
+            VehicleAgent[] vehicles = createVehicles(0,1,0);
             startVehicles(vehicles, container);
 
             ControlTowerAgent controlTowerAgent = new ControlTowerAgent();
