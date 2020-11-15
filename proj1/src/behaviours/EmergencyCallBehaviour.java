@@ -19,8 +19,8 @@ public class EmergencyCallBehaviour extends TickerBehaviour {
     private final int MAX_NUM_VEHICLES = 3;
     private AID controlTowerID;
     private int currentID = 0;
-    private final int MIN_DURATION= 15000;
-    private final int MAX_DURATION = 20000;
+    private final int MIN_DURATION= 2000;
+    private final int MAX_DURATION = 15000;
 
     public EmergencyCallBehaviour(ClientAgent clientAgent, long period, AID controlTowerID) {
         super(clientAgent, period);

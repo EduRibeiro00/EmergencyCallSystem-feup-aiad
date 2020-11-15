@@ -10,7 +10,7 @@ import utils.DFUtils;
 
 public class ClientAgent extends Agent {
 
-    private static final int SECONDS_BETWEEN_CALLS = 5;
+    private static final int SECONDS_BETWEEN_CALLS = 1;
     private static final int MAX_NUMBER_TRIES = 3;
 
     private String clientName;
