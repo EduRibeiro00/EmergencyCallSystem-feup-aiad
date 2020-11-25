@@ -3,7 +3,7 @@ package agents;
 import behaviours.DeterministicCallBehaviour;
 import behaviours.EmergencyCallBehaviour;
 import jade.core.AID;
-import jade.core.Agent;
+import sajas.core.Agent;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import logs.LoggerHelper;
 import utils.DFUtils;

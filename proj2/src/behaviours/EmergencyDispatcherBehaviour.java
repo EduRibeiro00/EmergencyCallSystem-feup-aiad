@@ -6,7 +6,7 @@ import messages.AcceptVehicle;
 import agents.ControlTowerAgent;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.UnreadableException;
-import jade.proto.ContractNetInitiator;
+import sajas.proto.ContractNetInitiator;
 import messages.Messages;
 import utils.Candidate;
 import utils.Emergency;

@@ -1,15 +1,12 @@
 import agents.*;
 import jade.core.Profile;
 import jade.core.ProfileImpl;
-import jade.core.Runtime;
-import jade.wrapper.AgentController;
-import jade.wrapper.ContainerController;
+import sajas.core.Runtime;
+import sajas.wrapper.AgentController;
+import sajas.wrapper.ContainerController;
 import jade.wrapper.StaleProxyException;
 import logs.LoggerHelper;
 import utils.Arguments;
-import utils.Emergency;
-import utils.EmergencyType;
-import utils.Point;
 
 /**
  * Main class for the program.

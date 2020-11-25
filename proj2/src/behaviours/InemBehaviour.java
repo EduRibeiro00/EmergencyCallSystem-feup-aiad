@@ -1,6 +1,6 @@
 package behaviours;
 
-import jade.core.Agent;
+import sajas.core.Agent;
 import jade.lang.acl.MessageTemplate;
 import utils.VehicleType;
 

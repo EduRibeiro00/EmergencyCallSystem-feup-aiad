@@ -1,10 +1,10 @@
 package behaviours;
 
-import jade.core.Agent;
+import sajas.core.Agent;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import jade.lang.acl.UnreadableException;
-import jade.proto.ContractNetResponder;
+import sajas.proto.ContractNetResponder;
 import logs.LoggerHelper;
 import messages.TowerRequest;
 import messages.VehicleResponse;
@@ -13,7 +13,6 @@ import messages.Messages;
 import utils.Point;
 import utils.VehicleType;
 import java.io.IOException;
-import java.text.DecimalFormat;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;

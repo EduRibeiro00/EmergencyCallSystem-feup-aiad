@@ -2,7 +2,7 @@ package behaviours;
 
 import jade.core.AID;
 import experiment.DeterministicEmergency;
-import jade.core.behaviours.SimpleBehaviour;
+import sajas.core.behaviours.SimpleBehaviour;
 import jade.lang.acl.ACLMessage;
 import logs.LoggerHelper;
 import utils.Emergency;

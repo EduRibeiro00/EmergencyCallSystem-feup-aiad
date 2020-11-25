@@ -1,6 +1,6 @@
 package behaviours;
 
-import jade.core.behaviours.ParallelBehaviour;
+import sajas.core.behaviours.ParallelBehaviour;
 import agents.ControlTowerAgent;
 import jade.lang.acl.ACLMessage;
 import utils.Emergency;

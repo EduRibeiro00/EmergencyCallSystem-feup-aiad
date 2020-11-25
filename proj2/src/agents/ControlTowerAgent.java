@@ -1,7 +1,7 @@
 package agents;
 
 import behaviours.ControlTowerBehaviour;
-import jade.core.Agent;
+import sajas.core.Agent;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.domain.FIPANames;
 import jade.lang.acl.ACLMessage;

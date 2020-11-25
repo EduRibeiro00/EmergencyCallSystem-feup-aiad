@@ -2,7 +2,7 @@ package behaviours;
 
 import agents.ClientAgent;
 import jade.core.AID;
-import jade.core.behaviours.TickerBehaviour;
+import sajas.core.behaviours.TickerBehaviour;
 import jade.lang.acl.ACLMessage;
 import logs.LoggerHelper;
 import utils.Emergency;
