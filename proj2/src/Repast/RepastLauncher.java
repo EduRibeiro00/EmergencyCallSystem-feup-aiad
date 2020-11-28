@@ -1,6 +1,4 @@
-package serviceConsumerProviderVis;
-
-import java.util.List;
+package Repast;
 
 import agents.*;
 import jade.core.Profile;
@@ -13,13 +11,12 @@ import jade.wrapper.StaleProxyException;
 
 import sajas.sim.repast3.Repast3Launcher;
 import uchicago.src.sim.engine.SimInit;
-import uchicago.src.sim.network.DefaultDrawableNode;
 
 public class RepastLauncher extends Repast3Launcher {
 
     private static final boolean BATCH_MODE = true;
-    private boolean SIMPLE = true;
-    private boolean DETERMINISTIC = true;
+    private int SIMPLE = 1;
+    private int DETERMINISTIC = 1;
 
     private boolean runInBatchMode;
 
@@ -27,6 +24,13 @@ public class RepastLauncher extends Repast3Launcher {
         super();
         this.runInBatchMode = runInBatchMode;
     }
+
+    @Override
+	public void setup() {
+		super.setup();
+
+
+	}
 
 
     @Override
@@ -117,7 +121,7 @@ public class RepastLauncher extends Repast3Launcher {
 
         SimInit init = new SimInit();
         init.setNumRuns(1);   // works only in batch mode
-        init.loadModel(new serviceConsumerProviderVis.RepastLauncher(runMode), null, runMode);
+        init.loadModel(new Repast.RepastLauncher(runMode), null, runMode);
     }
 
 }
