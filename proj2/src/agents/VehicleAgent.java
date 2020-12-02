@@ -22,8 +22,8 @@ public abstract class VehicleAgent extends Agent {
 
     @Override
     protected void setup() {
-        addBehaviour(getVehicleBehaviour());
         DFUtils.registerInDF(this, getType().getDFName());
+        addBehaviour(getVehicleBehaviour());
     }
 
     @Override

@@ -1,40 +1,73 @@
+package repast;
+
 import agents.*;
 import jade.core.Profile;
 import jade.core.ProfileImpl;
+import logs.LoggerHelper;
 import sajas.core.Runtime;
 import sajas.wrapper.AgentController;
 import sajas.wrapper.ContainerController;
 import jade.wrapper.StaleProxyException;
-import logs.LoggerHelper;
-import utils.Arguments;
 
-/**
- * Main class for the program.
- */
-public class Main {
-    /**
-     * Main function of the program.
-     * @param args Command line arguments
-     */
-    public static void main(String[] args) {
-        boolean deterministic = Arguments.parseArguments(args);
+import sajas.sim.repast3.Repast3Launcher;
+import uchicago.src.sim.engine.SimInit;
+
+public class RepastLauncher extends Repast3Launcher {
+
+    private static final boolean BATCH_MODE = true;
+    private int SIMPLE = 1;
+    private int DETERMINISTIC = 1;
+
+    private boolean runInBatchMode;
+
+    public RepastLauncher(boolean runInBatchMode) {
+        super();
+        this.runInBatchMode = runInBatchMode;
+    }
+
+    @Override
+	public void setup() {
+		super.setup();
+	}
+
+    @Override
+    public void begin() {
+        super.begin();
+    }
+
+    @Override
+    public String[] getInitParam() {
+        return new String[] {"SIMPLE", "DETERMINISTIC"};
+    }
+
+    @Override
+    public String getName() {
+        return "Emergency Service";
+    }
+
+    @Override
+    protected void launchJADE() {
+
+        //boolean deterministic = Arguments.parseArguments(args);
 
         Runtime rt = Runtime.instance();
         Profile p = new ProfileImpl();
-        ContainerController container = rt.createAgentContainer(p);
+        ContainerController container = rt.createMainContainer(p);
 
         try {
-            VehicleAgent[] vehicles = createVehicles(10,10,10);
-            startVehicles(vehicles, container);
-
             ControlTowerAgent controlTowerAgent = new ControlTowerAgent();
             AgentController controlTower = container.acceptNewAgent(ControlTowerAgent.getDFName(), controlTowerAgent);
             LoggerHelper.get().logInfo("START - Started control tower");
             controlTower.start();
 
-            ClientAgent clientAgent = new ClientAgent("johnny", ControlTowerAgent.getDFName(), deterministic);
+            VehicleAgent[] vehicles = createVehicles(10,10,10);
+            startVehicles(vehicles, container);
+
+            //ClientAgent clientAgent = new ClientAgent("johnny", ControlTowerAgent.getDFName(), deterministic);
+            ClientAgent clientAgent = new ClientAgent("johnny", ControlTowerAgent.getDFName(), true);
             AgentController client = container.acceptNewAgent(clientAgent.getClientName(), clientAgent);
-            String deterministicInfo = deterministic ? "deterministic" : "random";
+            //String deterministicInfo = deterministic ? "deterministic" : "random";
+            String deterministicInfo =  "deterministic" ;
             LoggerHelper.get().logInfo("CLIENT - Started " + deterministicInfo + " client " + clientAgent.getClientName());
             client.start();
         } catch (StaleProxyException e) {
@@ -77,4 +110,17 @@ public class Main {
             }
         }
     }
+
+    /**
+     * Launching Repast3
+     * @param args
+     */
+    public static void main(String[] args) {
+        boolean runMode = !BATCH_MODE;   // BATCH_MODE or !BATCH_MODE
+
+        SimInit init = new SimInit();
+        init.setNumRuns(1);   // works only in batch mode
+        init.loadModel(new repast.RepastLauncher(runMode), null, runMode);
+    }
+
 }
