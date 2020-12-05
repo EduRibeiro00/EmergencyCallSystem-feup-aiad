@@ -9,6 +9,7 @@ import jade.wrapper.StaleProxyException;
 
 import sajas.sim.repast3.Repast3Launcher;
 import uchicago.src.sim.engine.SimInit;
+import utils.Point;
 
 public class RepastLauncher extends Repast3Launcher {
     // ******************************************************
@@ -18,8 +19,24 @@ public class RepastLauncher extends Repast3Launcher {
 
     // ******************************************************
     // width and height variables
-    private static final int WIDTH = 200;
-    private static final int HEIGHT = 200;
+    private int CITY_WIDTH = 100;
+    private int CITY_HEIGHT = 100;
+
+    public int getCITY_WIDTH() {
+        return CITY_WIDTH;
+    }
+
+    public void setCITY_WIDTH(int CITY_WIDTH) {
+        this.CITY_WIDTH = CITY_WIDTH;
+    }
+
+    public int getCITY_HEIGHT() {
+        return CITY_HEIGHT;
+    }
+
+    public void setCITY_HEIGHT(int CITY_HEIGHT) {
+        this.CITY_HEIGHT = CITY_HEIGHT;
+    }
 
     // ******************************************************
     // Common vehicle variables
@@ -263,8 +280,8 @@ public class RepastLauncher extends Repast3Launcher {
     }
 
     // ******************************************************
-    // Emergency variables
-    private int SECOND_BETWEEN_CALLS = 1;
+    // Emergency variables (only for random generation of emergencies, i.e. when deterministic is false)
+    private int TIME_BETWEEN_CALLS_MS = 1000;
     private int MIN_VEHICLES_EMERGENCY = 1;
     private int MAX_VEHICLES_EMERGENCY = 3;
     private int MIN_DURATION_MS = 2000;
@@ -320,14 +337,14 @@ public class RepastLauncher extends Repast3Launcher {
         this.MAX_VEHICLES_EMERGENCY = MAX_VEHICLES_EMERGENCY;
     }
 
-    public int getSECOND_BETWEEN_CALLS() {
-        return SECOND_BETWEEN_CALLS;
+    public int getTIME_BETWEEN_CALLS_MS() {
+        return TIME_BETWEEN_CALLS_MS;
     }
 
-    public void setSECOND_BETWEEN_CALLS(int SECOND_BETWEEN_CALLS) {
-        if (SECOND_BETWEEN_CALLS < 0)
-            SECOND_BETWEEN_CALLS = 0;
-        this.SECOND_BETWEEN_CALLS = SECOND_BETWEEN_CALLS;
+    public void setTIME_BETWEEN_CALLS_MS(int TIME_BETWEEN_CALLS_MS) {
+        if (TIME_BETWEEN_CALLS_MS < 0)
+            TIME_BETWEEN_CALLS_MS = 0;
+        this.TIME_BETWEEN_CALLS_MS = TIME_BETWEEN_CALLS_MS;
     }
 
     // ******************************************************
@@ -356,6 +373,9 @@ public class RepastLauncher extends Repast3Launcher {
     @Override
     public String[] getInitParam() {
         return new String[] {
+            "CITY_WIDTH",
+            "CITY_HEIGHT",
+
             "MIN_NUM_EMPLOYEES",
             "MAX_NUM_EMPLOYEES",
             "REFUEL_DURATION_MS",
@@ -428,6 +448,9 @@ public class RepastLauncher extends Repast3Launcher {
 
         if (SIMPLE) LoggerHelper.setSimpleLog();
 
+        Point.setWidth(CITY_WIDTH);
+        Point.setHeight(CITY_HEIGHT);
+
         try {
             // ----------------------------------------------------
             // starting control tower agent
@@ -443,7 +466,8 @@ public class RepastLauncher extends Repast3Launcher {
 
             // ----------------------------------------------------
             // starting client agent
-            ClientAgent clientAgent = new ClientAgent("johnny", ControlTowerAgent.getDFName(), DETERMINISTIC);
+            ClientAgent clientAgent = new ClientAgent("johnny", ControlTowerAgent.getDFName(), DETERMINISTIC,
+                    TIME_BETWEEN_CALLS_MS, MIN_VEHICLES_EMERGENCY, MAX_VEHICLES_EMERGENCY, MIN_DURATION_MS, MAX_DURATION_MS);
             AgentController client = container.acceptNewAgent(clientAgent.getClientName(), clientAgent);
             String deterministicInfo = DETERMINISTIC ? "deterministic" : "random";
             LoggerHelper.get().logInfo("CLIENT - Started " + deterministicInfo + " client " + clientAgent.getClientName());
@@ -454,7 +478,7 @@ public class RepastLauncher extends Repast3Launcher {
         }
     }
 
-    private static VehicleAgent[] createVehicles(int numberInem, int numberFire, int numberPolice){
+    private VehicleAgent[] createVehicles(int numberInem, int numberFire, int numberPolice){
         LoggerHelper.get().logCreateVehicles(numberInem, numberFire, numberPolice);
 
         int total = numberFire + numberInem + numberPolice;
@@ -462,23 +486,32 @@ public class RepastLauncher extends Repast3Launcher {
 
         for (int i = 0; i < numberInem; i++) {
             String name = "Inem" + i;
-            VehicleAgent vehicleAgent = new InemAgent(name);
+            VehicleAgent vehicleAgent = new InemAgent(name,
+                    MIN_NUM_EMPLOYEES, MAX_NUM_EMPLOYEES, REFUEL_DURATION_MS,
+                    EMPLOYEE_CHANGE_PROB, MULTIPLIER_EMPLOYEE, MULTIPLIER_DISTANCE, MULTIPLIER_FUEL,
+                    MULTIPLIER_EMPLOYEE_FUEL, MAX_FUEL_INEM, SPARE_FUEL_LEVEL_INEM, FUEL_RATE_INEM);
             vehicles[i] = vehicleAgent;
         }
         for (int i = numberInem; i < numberInem + numberFire; i++) {
             String name = "Fireman" + i;
-            VehicleAgent vehicleAgent = new FiremanAgent(name);
+            VehicleAgent vehicleAgent = new FiremanAgent(name,
+                    MIN_NUM_EMPLOYEES, MAX_NUM_EMPLOYEES, REFUEL_DURATION_MS,
+                    EMPLOYEE_CHANGE_PROB, MULTIPLIER_EMPLOYEE, MULTIPLIER_DISTANCE, MULTIPLIER_FUEL,
+                    MULTIPLIER_EMPLOYEE_FUEL, MAX_FUEL_FIRE, SPARE_FUEL_LEVEL_FIRE, FUEL_RATE_FIRE);
             vehicles[i] = vehicleAgent;
         }
         for (int i = numberInem + numberFire; i < total; i++) {
             String name = "Police" + i;
-            VehicleAgent vehicleAgent = new PoliceAgent(name);
+            VehicleAgent vehicleAgent = new PoliceAgent(name,
+                    MIN_NUM_EMPLOYEES, MAX_NUM_EMPLOYEES, REFUEL_DURATION_MS,
+                    EMPLOYEE_CHANGE_PROB, MULTIPLIER_EMPLOYEE, MULTIPLIER_DISTANCE, MULTIPLIER_FUEL,
+                    MULTIPLIER_EMPLOYEE_FUEL, MAX_FUEL_POLICE, SPARE_FUEL_LEVEL_POLICE, FUEL_RATE_POLICE);
             vehicles[i] = vehicleAgent;
         }
         return vehicles;
     }
 
-    private static void startVehicles(VehicleAgent[] vehicleAgents, ContainerController container) {
+    private void startVehicles(VehicleAgent[] vehicleAgents, ContainerController container) {
         for (VehicleAgent vehicleAgent : vehicleAgents){
             AgentController vehicle = null;
             try {

@@ -6,26 +6,25 @@ import jade.core.AID;
 import sajas.core.Agent;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import logs.LoggerHelper;
+import sajas.core.behaviours.Behaviour;
 import utils.DFUtils;
 
 public class ClientAgent extends Agent {
 
-    private static final int SECONDS_BETWEEN_CALLS = 1;
     private static final int MAX_NUMBER_TRIES = 3;
 
     private String clientName;
     private String towerDFName;
     private AID controlTowerID;
-    private boolean deterministic;
 
-    public ClientAgent(String clientName, String towerDFName, boolean deterministic) {
+    private Behaviour behaviour;
+
+    public ClientAgent(String clientName, String towerDFName, boolean DETERMINISTIC,
+                       int TIME_BETWEEN_CALLS_MS, int MIN_VEHICLES_EMERGENCY, int MAX_VEHICLES_EMERGENCY,
+                       int MIN_DURATION_MS, int MAX_DURATION_MS) {
         this.clientName = clientName;
         this.towerDFName = towerDFName;
-        this.deterministic = deterministic;
-    }
 
-    @Override
-    protected void setup() {
         int numberOfTries = 0;
         while (numberOfTries < MAX_NUMBER_TRIES){
             DFAgentDescription[] tower = DFUtils.fetchFromDF(this, this.towerDFName);
@@ -36,19 +35,19 @@ public class ClientAgent extends Agent {
 
             this.controlTowerID = tower[0].getName();
 
-            if(deterministic) {
-                addBehaviour(
-                        new DeterministicCallBehaviour(
-                                controlTowerID
-                        )
+            if(DETERMINISTIC) {
+                this.behaviour = new DeterministicCallBehaviour(
+                        controlTowerID
                 );
             } else {
-                addBehaviour(
-                        new EmergencyCallBehaviour(
-                                this,
-                                SECONDS_BETWEEN_CALLS * 1000,
-                                controlTowerID
-                        )
+                this.behaviour = new EmergencyCallBehaviour(
+                        this,
+                        TIME_BETWEEN_CALLS_MS,
+                        controlTowerID,
+                        MIN_VEHICLES_EMERGENCY,
+                        MAX_VEHICLES_EMERGENCY,
+                        MIN_DURATION_MS,
+                        MAX_DURATION_MS
                 );
             }
             break;
@@ -60,6 +59,12 @@ public class ClientAgent extends Agent {
             );
             System.exit(-1);
         }
+    }
+
+
+    @Override
+    protected void setup() {
+        addBehaviour(behaviour);
     }
 
     public String getClientName() {

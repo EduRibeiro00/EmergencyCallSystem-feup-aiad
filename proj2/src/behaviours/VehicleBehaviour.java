@@ -19,16 +19,16 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public abstract class VehicleBehaviour extends ContractNetResponder {
-    protected static final int MIN_NUM_EMPLOYEES= 1;
-    protected static final int MAX_NUM_EMPLOYEES= 6;
-    protected static final int MAX_CONSECUTIVE_REJECTIONS = 3;
-    protected static final int REFUEL_DURATION = 20000;
-    protected static final int EMPLOYEE_CHANGE_PROB = 10; // 1 in 10 chance of changing number employees
+    protected int MIN_NUM_EMPLOYEES;
+    protected int MAX_NUM_EMPLOYEES;
+    protected int MAX_CONSECUTIVE_REJECTIONS;
+    protected int REFUEL_DURATION;
+    protected int EMPLOYEE_CHANGE_PROB;
 
-    protected static final double EMPLOYEE_MULTIPLIER = 2.5;
-    protected static final double DISTANCE_MULTIPLIER = -1.0;
-    protected static final double FUEL_MULTIPLIER = 0.3;
-    protected static final double EMPLOYEE_FUEL_MULTIPLIER = 0.1;
+    protected double EMPLOYEE_MULTIPLIER;
+    protected double DISTANCE_MULTIPLIER;
+    protected double FUEL_MULTIPLIER;
+    protected double EMPLOYEE_FUEL_MULTIPLIER;
 
     protected Point coordinates;
     protected int numberEmployees;
@@ -39,8 +39,21 @@ public abstract class VehicleBehaviour extends ContractNetResponder {
     protected AtomicBoolean refueling;
     private final ScheduledThreadPoolExecutor executor;
 
-    public VehicleBehaviour(Agent agent, MessageTemplate msgTemp) {
+    public VehicleBehaviour(Agent agent, MessageTemplate msgTemp,
+                            int MIN_NUM_EMPLOYEES, int MAX_NUM_EMPLOYEES, int REFUEL_DURATION, int EMPLOYEE_CHANGE_PROB,
+                            double EMPLOYEE_MULTIPLIER, double DISTANCE_MULTIPLIER, double FUEL_MULTIPLIER,
+                            double EMPLOYEE_FUEL_MULTIPLIER) {
+
         super(agent, msgTemp);
+
+        this.MIN_NUM_EMPLOYEES = MIN_NUM_EMPLOYEES;
+        this.MAX_NUM_EMPLOYEES = MAX_NUM_EMPLOYEES;
+        this.REFUEL_DURATION = REFUEL_DURATION;
+        this.EMPLOYEE_CHANGE_PROB = EMPLOYEE_CHANGE_PROB;
+        this.EMPLOYEE_MULTIPLIER = EMPLOYEE_MULTIPLIER;
+        this.DISTANCE_MULTIPLIER = DISTANCE_MULTIPLIER;
+        this.FUEL_MULTIPLIER = FUEL_MULTIPLIER;
+        this.EMPLOYEE_FUEL_MULTIPLIER = EMPLOYEE_FUEL_MULTIPLIER;
 
         consecutiveRejectionsByFuel = 0;
         coordinates = Point.genRandomPoint();
@@ -221,7 +234,7 @@ public abstract class VehicleBehaviour extends ContractNetResponder {
 
     protected abstract int getMaxFuel();
 
-    protected abstract int getFuelRate();
+    protected abstract double getFuelRate();
 
     protected abstract int getSpareFuelLevel();
 

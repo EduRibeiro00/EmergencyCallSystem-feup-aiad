@@ -5,12 +5,20 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 
 public class Point implements java.io.Serializable {
-    private static final double MIN_COORDS_VALUE = 1.0;
-    private static final double MAX_COORDS_VALUE = 100.0;
+    private static double MIN_COORDS_VALUE = 1.0;
+    private static double MAX_COORDS_VALUE = 100.0;
     private static final int PRECISION = 2;
 
     private double x;
     private double y;
+
+    public static void setWidth(double minCoordsValue) {
+        MIN_COORDS_VALUE = minCoordsValue;
+    }
+
+    public static void setHeight(double maxCoordsValue) {
+        MAX_COORDS_VALUE = maxCoordsValue;
+    }
 
     public static Point genRandomPoint() {
         return new Point(
