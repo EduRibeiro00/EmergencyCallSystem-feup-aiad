@@ -1,0 +1,31 @@
+{
+    "java.project.referencedLibraries": [
+        "lib/**/*.jar",
+        "/Users/eduribeiro/Desktop/AIAD/jars/asm.jar",
+        "/Users/eduribeiro/Desktop/AIAD/jars/beanbowl.jar",
+        "/Users/eduribeiro/Desktop/AIAD/jars/colt.jar",
+        "/Users/eduribeiro/Desktop/AIAD/jars/commons-collections.jar",
+        "/Users/eduribeiro/Desktop/AIAD/jars/commons-logging.jar",
+        "/Users/eduribeiro/Desktop/AIAD/jars/geotools_repast.jar",
+        "/Users/eduribeiro/Desktop/AIAD/jars/ibis.jar",
+        "/Users/eduribeiro/Desktop/AIAD/jars/jade.jar",
+        "/Users/eduribeiro/Desktop/AIAD/jars/jakarta-poi.jar",
+        "/Users/eduribeiro/Desktop/AIAD/jars/jep-2.24.jar",
+        "/Users/eduribeiro/Desktop/AIAD/jars/jgap.jar",
+        "/Users/eduribeiro/Desktop/AIAD/jars/jh.jar",
+        "/Users/eduribeiro/Desktop/AIAD/jars/jmf.jar",
+        "/Users/eduribeiro/Desktop/AIAD/jars/jode-1.1.2-pre1.jar",
+        "/Users/eduribeiro/Desktop/AIAD/jars/joone.jar",
+        "/Users/eduribeiro/Desktop/AIAD/jars/JTS.jar",
+        "/Users/eduribeiro/Desktop/AIAD/jars/junit.jar",
+        "/Users/eduribeiro/Desktop/AIAD/jars/log4j-1.2.8.jar",
+        "/Users/eduribeiro/Desktop/AIAD/jars/OpenForecast-0.4.0.jar",
+        "/Users/eduribeiro/Desktop/AIAD/jars/openmap.jar",
+        "/Users/eduribeiro/Desktop/AIAD/jars/plot.jar",
+        "/Users/eduribeiro/Desktop/AIAD/jars/ProActive.jar",
+        "/Users/eduribeiro/Desktop/AIAD/jars/repast.jar",
+        "/Users/eduribeiro/Desktop/AIAD/jars/SAJaS.jar",
+        "/Users/eduribeiro/Desktop/AIAD/jars/trove.jar",
+        "/Users/eduribeiro/Desktop/AIAD/jars/violinstrings-1.0.2.jar"
+    ]
+}

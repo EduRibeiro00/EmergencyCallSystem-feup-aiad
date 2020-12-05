@@ -15,16 +15,23 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class EmergencyCallBehaviour extends TickerBehaviour {
 
-    private final int MIN_NUM_VEHICLES = 1;
-    private final int MAX_NUM_VEHICLES = 3;
     private AID controlTowerID;
     private int currentID = 0;
-    private final int MIN_DURATION= 2000;
-    private final int MAX_DURATION = 5000;
 
-    public EmergencyCallBehaviour(ClientAgent clientAgent, long period, AID controlTowerID) {
+    private int MIN_NUM_VEHICLES;
+    private int MAX_NUM_VEHICLES;
+    private int MIN_DURATION;
+    private int MAX_DURATION;
+
+    public EmergencyCallBehaviour(ClientAgent clientAgent, long period, AID controlTowerID,
+                                  int MIN_VEHICLES_EMERGENCY, int MAX_VEHICLES_EMERGENCY,
+                                  int MIN_DURATION_MS, int MAX_DURATION_MS) {
         super(clientAgent, period);
         this.controlTowerID = controlTowerID;
+        this.MIN_NUM_VEHICLES = MIN_VEHICLES_EMERGENCY;
+        this.MAX_NUM_VEHICLES = MAX_VEHICLES_EMERGENCY;
+        this.MIN_DURATION = MIN_DURATION_MS;
+        this.MAX_DURATION = MAX_DURATION_MS;
     }
 
     @Override
