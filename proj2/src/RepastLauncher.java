@@ -8,6 +8,7 @@ import sajas.wrapper.ContainerController;
 import jade.wrapper.StaleProxyException;
 
 import sajas.sim.repast3.Repast3Launcher;
+import uchicago.src.reflector.RangePropertyDescriptor;
 import uchicago.src.sim.engine.SimInit;
 
 public class RepastLauncher extends Repast3Launcher {
@@ -24,11 +25,15 @@ public class RepastLauncher extends Repast3Launcher {
     private int NUM_FIRE = 2;
     private int NUM_POLICE = 2;
 
+    private int test = 0;
+
     public int getNUM_INEM() {
         return NUM_INEM;
     }
 
     public void setNUM_INEM(int NUM_INEM) {
+        if (NUM_INEM < 0)
+            NUM_INEM = 0;
         this.NUM_INEM = NUM_INEM;
     }
 
@@ -48,6 +53,14 @@ public class RepastLauncher extends Repast3Launcher {
         this.NUM_POLICE = NUM_POLICE;
     }
 
+    public int getTest() {
+        return test;
+    }
+
+    public void setTest(int test) {
+        this.test = test;
+    }
+
     public RepastLauncher(boolean runInBatchMode) {
         super();
         this.runInBatchMode = runInBatchMode;
@@ -56,8 +69,9 @@ public class RepastLauncher extends Repast3Launcher {
     @Override
 	public void setup() {
 		super.setup();
-        // property descriptors
-        // ...
+
+		RangePropertyDescriptor pdTest = new RangePropertyDescriptor("test", 0, 100, 10);
+        descriptors.put("test", pdTest);
 	}
 
     @Override
@@ -75,7 +89,7 @@ public class RepastLauncher extends Repast3Launcher {
 
     @Override
     public String[] getInitParam() {
-        return new String[] {"NUM_INEM", "NUM_FIRE", "NUM_POLICE"};
+        return new String[] {"NUM_INEM", "NUM_FIRE", "NUM_POLICE", "test"};
     }
 
     @Override
