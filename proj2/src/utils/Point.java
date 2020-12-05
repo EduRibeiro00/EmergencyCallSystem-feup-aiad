@@ -6,7 +6,7 @@ import java.math.RoundingMode;
 
 public class Point implements java.io.Serializable {
     private static final double MIN_COORDS_VALUE = 1.0;
-    private static final double MAX_COORDS_VALUE = 100.0;
+    private static final double MAX_COORDS_VALUE = 190.0;
     private static final int PRECISION = 2;
 
     private double x;

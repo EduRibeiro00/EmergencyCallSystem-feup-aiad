@@ -10,7 +10,7 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../../jars/asm.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../../../../Programs/JADE-bin-4.5.0/jade/lib/jade.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -19,7 +19,7 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../../jars/beanbowl.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../../Programas/Repast-3.1/RepastJ/repast.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -28,7 +28,7 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../../jars/colt.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../../Programas/Repast-3.1/RepastJ/lib/asm.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -37,7 +37,7 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../../jars/commons-collections.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../../Programas/Repast-3.1/RepastJ/lib/beanbowl.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -46,7 +46,7 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../../jars/commons-logging.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../../Programas/Repast-3.1/RepastJ/lib/colt.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -55,7 +55,7 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../../jars/geotools_repast.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../../Programas/Repast-3.1/RepastJ/lib/commons-collections.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -64,7 +64,7 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../../jars/ibis.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../../Programas/Repast-3.1/RepastJ/lib/commons-logging.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -73,7 +73,7 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../../jars/jade.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../../Programas/Repast-3.1/RepastJ/lib/geotools_repast.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -82,7 +82,7 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../../jars/jakarta-poi.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../../Programas/Repast-3.1/RepastJ/lib/ibis.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -91,7 +91,7 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../../jars/jep-2.24.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../../Programas/Repast-3.1/RepastJ/lib/jakarta-poi.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -100,7 +100,7 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../../jars/jgap.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../../Programas/Repast-3.1/RepastJ/lib/jep-2.24.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -109,7 +109,7 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../../jars/jh.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../../Programas/Repast-3.1/RepastJ/lib/jgap.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -118,7 +118,7 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../../jars/jmf.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../../Programas/Repast-3.1/RepastJ/lib/jh.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -127,7 +127,7 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../../jars/jode-1.1.2-pre1.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../../Programas/Repast-3.1/RepastJ/lib/jmf.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -136,7 +136,7 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../../jars/joone.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../../Programas/Repast-3.1/RepastJ/lib/jode-1.1.2-pre1.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -145,7 +145,7 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../../jars/JTS.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../../Programas/Repast-3.1/RepastJ/lib/joone.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -154,7 +154,7 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../../jars/junit.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../../Programas/Repast-3.1/RepastJ/lib/JTS.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -163,7 +163,7 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../../jars/log4j-1.2.8.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../../Programas/Repast-3.1/RepastJ/lib/junit.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -172,7 +172,7 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../../jars/OpenForecast-0.4.0.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../../Programas/Repast-3.1/RepastJ/lib/log4j-1.2.8.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -181,7 +181,7 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../../jars/openmap.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../../Programas/Repast-3.1/RepastJ/lib/OpenForecast-0.4.0.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -190,7 +190,7 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../../jars/plot.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../../Programas/Repast-3.1/RepastJ/lib/openmap.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -199,18 +199,27 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../../jars/ProActive.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../../Programas/Repast-3.1/RepastJ/lib/plot.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../../../Programas/Repast-3.1/RepastJ/lib/ProActive.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES>
-          <root url="jar://$MODULE_DIR$/../../jars/ProActive.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../../Programas/Repast-3.1/RepastJ/lib/ProActive.jar!/" />
         </SOURCES>
       </library>
     </orderEntry>
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../../jars/repast.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../../Programas/Repast-3.1/RepastJ/lib/trove.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -219,30 +228,21 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../../jars/SAJaS.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../../Programas/Repast-3.1/RepastJ/lib/violinstrings-1.0.2.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../../../../../Programs/SAJaS.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES>
-          <root url="jar://$MODULE_DIR$/../../jars/SAJaS.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../../../../Programs/SAJaS.jar!/" />
         </SOURCES>
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library">
-      <library>
-        <CLASSES>
-          <root url="jar://$MODULE_DIR$/../../jars/trove.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library">
-      <library>
-        <CLASSES>
-          <root url="jar://$MODULE_DIR$/../../jars/violinstrings-1.0.2.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
       </library>
     </orderEntry>
   </component>

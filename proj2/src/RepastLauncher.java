@@ -1,3 +1,4 @@
+import GUI.GUI;
 import agents.*;
 import jade.core.Profile;
 import jade.core.ProfileImpl;
@@ -9,6 +10,10 @@ import jade.wrapper.StaleProxyException;
 
 import sajas.sim.repast3.Repast3Launcher;
 import uchicago.src.sim.engine.SimInit;
+import uchicago.src.sim.network.DefaultDrawableNode;
+
+import java.awt.*;
+import java.util.Random;
 
 public class RepastLauncher extends Repast3Launcher {
     // ******************************************************
@@ -479,10 +484,14 @@ public class RepastLauncher extends Repast3Launcher {
     }
 
     private static void startVehicles(VehicleAgent[] vehicleAgents, ContainerController container) {
+        Random random = new Random(System.currentTimeMillis());
         for (VehicleAgent vehicleAgent : vehicleAgents){
             AgentController vehicle = null;
             try {
                 vehicle = container.acceptNewAgent(vehicleAgent.getVehicleName(), vehicleAgent);
+                DefaultDrawableNode node =
+                        GUI.generateNode(vehicleAgent.getVehicleName(), GUI.parseColor(vehicleAgent),
+                                vehicleAgent.getCoordinates().getX() ,vehicleAgent.getCoordinates().getY());
                 vehicle.start();
             } catch (StaleProxyException e) {
                 e.printStackTrace();

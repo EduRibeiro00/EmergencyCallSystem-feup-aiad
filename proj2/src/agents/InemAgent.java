@@ -14,7 +14,7 @@ public class InemAgent extends VehicleAgent {
     public VehicleType getType() {return VehicleType.INEM; }
 
     @Override
-    protected VehicleBehaviour getVehicleBehaviour() {
+    public VehicleBehaviour getVehicleBehaviour() {
         return new InemBehaviour(this, getMt());
     }
 }

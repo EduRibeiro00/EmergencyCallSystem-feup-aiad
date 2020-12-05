@@ -14,7 +14,7 @@ public class PoliceAgent extends VehicleAgent {
     public VehicleType getType() { return VehicleType.POLICE; }
 
     @Override
-    protected VehicleBehaviour getVehicleBehaviour() {
+    public VehicleBehaviour getVehicleBehaviour() {
         return new PoliceBehaviour(this, getMt());
     }
 }
