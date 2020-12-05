@@ -1,0 +1,18 @@
+runs: 1
+NUM_INEM {
+    start: 3
+    end: 3
+    incr: 0
+}
+
+NUM_FIRE {
+    start: 3
+    end: 3
+    incr: 0
+}
+
+NUM_POLICE {
+    start: 3
+    end: 3
+    incr: 0
+}

@@ -14,14 +14,39 @@ public class RepastLauncher extends Repast3Launcher {
     private static final boolean BATCH_MODE = false;
     private static final boolean SIMPLE = true;
     private static final boolean DETERMINISTIC = true;
-    private static final int NUM_INEM = 2;
-    private static final int NUM_FIRE = 2;
-    private static final int NUM_POLICE = 2;
+
+    private final boolean runInBatchMode;
 
     private static final int WIDTH = 200;
     private static final int HEIGHT = 200;
 
-    private final boolean runInBatchMode;
+    private int NUM_INEM = 2;
+    private int NUM_FIRE = 2;
+    private int NUM_POLICE = 2;
+
+    public int getNUM_INEM() {
+        return NUM_INEM;
+    }
+
+    public void setNUM_INEM(int NUM_INEM) {
+        this.NUM_INEM = NUM_INEM;
+    }
+
+    public int getNUM_FIRE() {
+        return NUM_FIRE;
+    }
+
+    public void setNUM_FIRE(int NUM_FIRE) {
+        this.NUM_FIRE = NUM_FIRE;
+    }
+
+    public int getNUM_POLICE() {
+        return NUM_POLICE;
+    }
+
+    public void setNUM_POLICE(int NUM_POLICE) {
+        this.NUM_POLICE = NUM_POLICE;
+    }
 
     public RepastLauncher(boolean runInBatchMode) {
         super();
@@ -135,9 +160,11 @@ public class RepastLauncher extends Repast3Launcher {
     public static void main(String[] args) {
         boolean runMode = BATCH_MODE;
 
+        String filepath = System.getProperty("user.dir") + "/src/params.txt";
+
         SimInit init = new SimInit();
         init.setNumRuns(1);   // works only in batch mode
-        init.loadModel(new RepastLauncher(runMode), null, runMode);
+        init.loadModel(new RepastLauncher(runMode), filepath, runMode);
     }
 
 }
