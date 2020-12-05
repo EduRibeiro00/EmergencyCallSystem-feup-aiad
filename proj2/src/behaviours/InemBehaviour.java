@@ -1,5 +1,6 @@
 package behaviours;
 
+import agents.VehicleAgent;
 import sajas.core.Agent;
 import jade.lang.acl.MessageTemplate;
 import utils.VehicleType;
@@ -9,7 +10,7 @@ public class InemBehaviour extends VehicleBehaviour {
     private static final int SPARE_FUEL_LEVEL = 100;
     private static final int FUEL_RATE = 3;
 
-    public InemBehaviour(Agent agent, MessageTemplate msgTemp) {
+    public InemBehaviour(VehicleAgent agent, MessageTemplate msgTemp) {
         super(agent, msgTemp);
     }
 

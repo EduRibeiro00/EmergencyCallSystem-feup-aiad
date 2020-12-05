@@ -4,10 +4,12 @@ import behaviours.VehicleBehaviour;
 import sajas.core.Agent;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
+import uchicago.src.sim.network.DefaultDrawableNode;
 import utils.DFUtils;
 import utils.Point;
 import utils.VehicleType;
 
+import java.awt.*;
 import java.util.concurrent.ThreadLocalRandom;
 
 public abstract class VehicleAgent extends Agent {
@@ -17,6 +19,7 @@ public abstract class VehicleAgent extends Agent {
 
     private final String vehicleName;
     private static final MessageTemplate mt = MessageTemplate.MatchPerformative(ACLMessage.CFP);
+
 
 
 
@@ -37,7 +40,10 @@ public abstract class VehicleAgent extends Agent {
     protected void setup() {
         DFUtils.registerInDF(this, getType().getDFName());
         addBehaviour(getVehicleBehaviour());
+
     }
+
+
 
     @Override
     protected void takeDown() {
@@ -72,4 +78,6 @@ public abstract class VehicleAgent extends Agent {
     public void setNumberEmployees(int numberEmployees) {
         this.numberEmployees = numberEmployees;
     }
+
+    public void setNode(DefaultDrawableNode node){getVehicleBehaviour().setNode(node);} //TODO Pode dar erro caso behaviour ainda nao tenha sido criada
 }

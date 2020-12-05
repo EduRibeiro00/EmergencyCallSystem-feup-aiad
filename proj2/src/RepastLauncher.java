@@ -9,10 +9,17 @@ import sajas.wrapper.ContainerController;
 import jade.wrapper.StaleProxyException;
 
 import sajas.sim.repast3.Repast3Launcher;
+import uchicago.src.sim.analysis.OpenSequenceGraph;
+import uchicago.src.sim.analysis.Sequence;
+import uchicago.src.sim.engine.Schedule;
 import uchicago.src.sim.engine.SimInit;
+import uchicago.src.sim.gui.DisplaySurface;
+import uchicago.src.sim.gui.Network2DDisplay;
 import uchicago.src.sim.network.DefaultDrawableNode;
 
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 public class RepastLauncher extends Repast3Launcher {
@@ -21,10 +28,18 @@ public class RepastLauncher extends Repast3Launcher {
     private static final boolean BATCH_MODE = false;
     private final boolean runInBatchMode;
 
+
     // ******************************************************
     // width and height variables
     private static final int WIDTH = 200;
     private static final int HEIGHT = 200;
+
+    // ******************************************************
+    // Build ans schedule display
+    private DisplaySurface dsurf;
+    private OpenSequenceGraph plot;
+    private List<VehicleAgent> vehicles = new ArrayList<>();
+
 
     // ******************************************************
     // Common vehicle variables
@@ -417,7 +432,45 @@ public class RepastLauncher extends Repast3Launcher {
     }
 
     private void buildAndScheduleDisplay() {
-        // TODO: fazer graficos e esquemas, para dar display
+        // display surface
+        if (dsurf != null) dsurf.dispose();
+        dsurf = new DisplaySurface(this, "Service Consumer/Provider Display");
+        registerDisplaySurface("Service Consumer/Provider Display", dsurf);
+        Network2DDisplay display = new Network2DDisplay(GUI.getNodes(),WIDTH,HEIGHT);
+        dsurf.addDisplayableProbeable(display, "Network Display");
+        dsurf.addZoomable(display);
+        addSimEventListener(dsurf);
+        dsurf.display();
+
+        /*// graph
+        if (plot != null) plot.dispose();
+        plot = new OpenSequenceGraph("Service performance", this);
+        plot.setAxisTitles("time", "% successful service executions");
+
+        plot.addSequence("Occupied Vehicles", new Sequence() {
+            public double getSValue() {
+                // iterate through vehicles
+                double v = 0.0;
+                for(int i = 0; i < consumers.size(); i++) {
+                    v += consumers.get(i).getMovingAverage(10);
+                }
+                return v / consumers.size();
+            }
+        });
+        plot.addSequence("Filtering Consumers", new Sequence() {
+            public double getSValue() {
+                // iterate through filtering consumers
+                double v = 0.0;
+                for(int i = 0; i < filteringConsumers.size(); i++) {
+                    v += filteringConsumers.get(i).getMovingAverage(10);
+                }
+                return v / filteringConsumers.size();
+            }
+        });
+        plot.display();
+
+        getSchedule().scheduleActionAtInterval(1, dsurf, "updateDisplay", Schedule.LAST);
+        getSchedule().scheduleActionAtInterval(100, plot, "step", Schedule.LAST);*/
     }
 
     @Override
@@ -489,14 +542,21 @@ public class RepastLauncher extends Repast3Launcher {
             AgentController vehicle = null;
             try {
                 vehicle = container.acceptNewAgent(vehicleAgent.getVehicleName(), vehicleAgent);
-                DefaultDrawableNode node =
-                        GUI.generateNode(vehicleAgent.getVehicleName(), GUI.parseColor(vehicleAgent),
-                                vehicleAgent.getCoordinates().getX() ,vehicleAgent.getCoordinates().getY());
+                generateVehicleNode(vehicleAgent);
                 vehicle.start();
             } catch (StaleProxyException e) {
                 e.printStackTrace();
             }
         }
+    }
+
+    private static void generateVehicleNode(VehicleAgent vehicleAgent){
+        DefaultDrawableNode node =
+                GUI.generateNode(vehicleAgent.getVehicleName(), GUI.parseColor(vehicleAgent),
+                        vehicleAgent.getCoordinates().getX() ,vehicleAgent.getCoordinates().getY());
+        GUI.addNode(node);
+        vehicleAgent.setNode(node);
+
     }
 
     /**

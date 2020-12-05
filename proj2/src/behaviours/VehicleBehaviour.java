@@ -1,5 +1,7 @@
 package behaviours;
 
+import GUI.GUI;
+import GUI.Edge;
 import agents.VehicleAgent;
 import sajas.core.Agent;
 import jade.lang.acl.ACLMessage;
@@ -11,8 +13,11 @@ import messages.TowerRequest;
 import messages.VehicleResponse;
 import messages.AcceptVehicle;
 import messages.Messages;
+import uchicago.src.sim.network.DefaultDrawableNode;
 import utils.Point;
 import utils.VehicleType;
+
+import java.awt.*;
 import java.io.IOException;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.ThreadLocalRandom;
@@ -38,6 +43,10 @@ public abstract class VehicleBehaviour extends ContractNetResponder {
     protected AtomicBoolean occupied;
     protected AtomicBoolean refueling;
     private final ScheduledThreadPoolExecutor executor;
+
+
+
+    DefaultDrawableNode myNode;
 
     public VehicleBehaviour(VehicleAgent agent, MessageTemplate msgTemp) {
         super(agent, msgTemp);
@@ -230,4 +239,30 @@ public abstract class VehicleBehaviour extends ContractNetResponder {
                 ", fuel=" + fuel +
                 '}';
     }
+    @Override
+    public void onStart() {
+        //TODO Isto esta bem?
+        super.onStart();
+
+        // create edge
+        if(myNode != null) {
+            DefaultDrawableNode to =  GUI.getNode( agent.getAID().getLocalName());
+
+            Edge edge = new Edge(myNode, to);
+            edge.setColor(Color.ORANGE);
+            myNode.addOutEdge(edge);
+        }
+    }
+
+    public DefaultDrawableNode getNode() {
+        return myNode;
+    }
+
+    public void setNode(DefaultDrawableNode myNode) {
+        this.myNode = myNode;
+    }
+
+
+
+
 }

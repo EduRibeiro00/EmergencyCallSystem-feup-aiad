@@ -6,8 +6,12 @@ import uchicago.src.sim.network.DefaultDrawableNode;
 import utils.VehicleType;
 
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class GUI {
+    private static List<DefaultDrawableNode> nodes = new ArrayList<DefaultDrawableNode>();;
+
     public static Color parseColor(VehicleAgent agent){
         switch (agent.getType()){
             case FIREMAN:
@@ -30,4 +34,16 @@ public class GUI {
 
         return node;
     }
+    public static DefaultDrawableNode getNode(String label) {
+        for(DefaultDrawableNode node : nodes) {
+            if(node.getNodeLabel().equals(label)) {
+                return node;
+            }
+        }
+        return null;
+    }
+
+    public static void addNode(DefaultDrawableNode node) { nodes.add(node);}
+
+    public static List<DefaultDrawableNode> getNodes(){return nodes;}
 }
