@@ -41,6 +41,8 @@ public class EmergencyDispatcherBehaviour extends ContractNetInitiator {
 
         // vehicle with highest value will be at the front of the queue
         this.candidateQueue = new PriorityQueue<>(Comparator.comparingDouble(Candidate::getValue).reversed());
+
+
     }
 
     @Override

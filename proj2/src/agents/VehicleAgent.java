@@ -11,6 +11,7 @@ import utils.VehicleType;
 
 import java.awt.*;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public abstract class VehicleAgent extends Agent {
 
@@ -19,6 +20,8 @@ public abstract class VehicleAgent extends Agent {
 
     private final String vehicleName;
     private static final MessageTemplate mt = MessageTemplate.MatchPerformative(ACLMessage.CFP);
+
+    protected AtomicBoolean occupied;
 
 
 
@@ -80,4 +83,9 @@ public abstract class VehicleAgent extends Agent {
     }
 
     public void setNode(DefaultDrawableNode node){getVehicleBehaviour().setNode(node);} //TODO Pode dar erro caso behaviour ainda nao tenha sido criada
+
+    public AtomicBoolean getOccupied() {return occupied;}
+
+    public void setOccupied(AtomicBoolean occupied) {this.occupied = occupied;}
+
 }

@@ -12,6 +12,7 @@ import java.util.List;
 public class GUI {
     private static List<DefaultDrawableNode> nodes = new ArrayList<DefaultDrawableNode>();;
 
+
     public static Color parseColor(VehicleAgent agent){
         switch (agent.getType()){
             case FIREMAN:
@@ -43,7 +44,17 @@ public class GUI {
         return null;
     }
 
+    public static void generateVehicleNode(VehicleAgent vehicleAgent){
+        DefaultDrawableNode node =
+                GUI.generateNode(vehicleAgent.getVehicleName(), GUI.parseColor(vehicleAgent),
+                        vehicleAgent.getCoordinates().getX() ,vehicleAgent.getCoordinates().getY());
+        GUI.addNode(node);
+        vehicleAgent.setNode(node);
+
+    }
+
     public static void addNode(DefaultDrawableNode node) { nodes.add(node);}
 
     public static List<DefaultDrawableNode> getNodes(){return nodes;}
+
 }

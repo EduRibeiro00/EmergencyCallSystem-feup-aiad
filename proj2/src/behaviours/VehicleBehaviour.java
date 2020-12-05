@@ -40,7 +40,7 @@ public abstract class VehicleBehaviour extends ContractNetResponder {
     private int consecutiveRejectionsByFuel;
     final private VehicleAgent agent;
 
-    protected AtomicBoolean occupied;
+
     protected AtomicBoolean refueling;
     private final ScheduledThreadPoolExecutor executor;
 
@@ -54,7 +54,7 @@ public abstract class VehicleBehaviour extends ContractNetResponder {
 
         consecutiveRejectionsByFuel = 0;
         fuel = getMaxFuel();
-        occupied = new AtomicBoolean(false);
+        this.agent.setOccupied(new AtomicBoolean(false));
         refueling = new AtomicBoolean(false);
         executor = new ScheduledThreadPoolExecutor(2);
 
@@ -71,7 +71,7 @@ public abstract class VehicleBehaviour extends ContractNetResponder {
         ACLMessage vehicleReply = cfp.createReply();
 
         // vehicle is occupied with another emergency
-        if(occupied.get()) {
+        if(this.agent.getOccupied().get()) {
             vehicleReply.setPerformative(ACLMessage.REFUSE);
             vehicleReply.setContent(Messages.IS_OCCUPIED);
             LoggerHelper.get().logAlreadyOccupied(this.myAgent.getLocalName());
@@ -116,7 +116,7 @@ public abstract class VehicleBehaviour extends ContractNetResponder {
 
     @Override
     public void handleRejectProposal(ACLMessage cfp, ACLMessage propose, ACLMessage reject) {
-        if(occupied.get())
+        if(this.agent.getOccupied().get())
             LoggerHelper.get().logRejectProposalOccupied(this.myAgent.getLocalName());
         else if(refueling.get())
             LoggerHelper.get().logRejectProposalRefueling(this.myAgent.getLocalName());
@@ -178,7 +178,7 @@ public abstract class VehicleBehaviour extends ContractNetResponder {
     }
 
     protected void startEmergency(int duration) {
-        occupied.set(true);
+        this.agent.getOccupied().set(true);
         executor.schedule(
                 this::finishOccupied,
                 duration,
@@ -200,7 +200,7 @@ public abstract class VehicleBehaviour extends ContractNetResponder {
     }
 
     protected void finishOccupied() {
-        occupied.set(false);
+        agent.getOccupied().set(false);
         boolean shouldChangeEmployees = ThreadLocalRandom.current().nextInt(EMPLOYEE_CHANGE_PROB) == 0;
         if (shouldChangeEmployees) {
             agent.setNumberEmployees( agent.getRandomNumberEmployees());

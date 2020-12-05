@@ -442,7 +442,7 @@ public class RepastLauncher extends Repast3Launcher {
         addSimEventListener(dsurf);
         dsurf.display();
 
-        /*// graph
+        // graph
         if (plot != null) plot.dispose();
         plot = new OpenSequenceGraph("Service performance", this);
         plot.setAxisTitles("time", "% successful service executions");
@@ -451,26 +451,21 @@ public class RepastLauncher extends Repast3Launcher {
             public double getSValue() {
                 // iterate through vehicles
                 double v = 0.0;
-                for(int i = 0; i < consumers.size(); i++) {
-                    v += consumers.get(i).getMovingAverage(10);
+                for(int i = 0; i < vehicles.size(); i++) {
+                    v += vehicles.get(i).getOccupied().get() ? 1:0;
                 }
-                return v / consumers.size();
+                return v / vehicles.size();
             }
         });
-        plot.addSequence("Filtering Consumers", new Sequence() {
-            public double getSValue() {
-                // iterate through filtering consumers
-                double v = 0.0;
-                for(int i = 0; i < filteringConsumers.size(); i++) {
-                    v += filteringConsumers.get(i).getMovingAverage(10);
-                }
-                return v / filteringConsumers.size();
-            }
-        });
+
         plot.display();
 
+        //Num emergency
+        //Numero de emergencis nao respondidas
+
+
         getSchedule().scheduleActionAtInterval(1, dsurf, "updateDisplay", Schedule.LAST);
-        getSchedule().scheduleActionAtInterval(100, plot, "step", Schedule.LAST);*/
+        getSchedule().scheduleActionAtInterval(100, plot, "step", Schedule.LAST);
     }
 
     @Override
@@ -496,8 +491,8 @@ public class RepastLauncher extends Repast3Launcher {
 
             // ----------------------------------------------------
             // starting vehicle agents
-            VehicleAgent[] vehicles = createVehicles(NUM_INEM, NUM_FIRE, NUM_POLICE);
-            startVehicles(vehicles, container);
+            createVehicles(NUM_INEM, NUM_FIRE, NUM_POLICE);
+            startVehicles(container);
 
             // ----------------------------------------------------
             // starting client agent
@@ -512,37 +507,32 @@ public class RepastLauncher extends Repast3Launcher {
         }
     }
 
-    private static VehicleAgent[] createVehicles(int numberInem, int numberFire, int numberPolice){
+    private void createVehicles(int numberInem, int numberFire, int numberPolice){
         LoggerHelper.get().logCreateVehicles(numberInem, numberFire, numberPolice);
-
-        int total = numberFire + numberInem + numberPolice;
-        VehicleAgent[] vehicles  = new VehicleAgent[total];
 
         for (int i = 0; i < numberInem; i++) {
             String name = "Inem" + i;
             VehicleAgent vehicleAgent = new InemAgent(name);
-            vehicles[i] = vehicleAgent;
+            this.vehicles.add(vehicleAgent);
         }
-        for (int i = numberInem; i < numberInem + numberFire; i++) {
+        for (int i = 0; i < numberFire; i++) {
             String name = "Fireman" + i;
             VehicleAgent vehicleAgent = new FiremanAgent(name);
-            vehicles[i] = vehicleAgent;
+            this.vehicles.add(vehicleAgent);
         }
-        for (int i = numberInem + numberFire; i < total; i++) {
+        for (int i = 0; i < numberPolice; i++) {
             String name = "Police" + i;
             VehicleAgent vehicleAgent = new PoliceAgent(name);
-            vehicles[i] = vehicleAgent;
+            this.vehicles.add(vehicleAgent);
         }
-        return vehicles;
     }
 
-    private static void startVehicles(VehicleAgent[] vehicleAgents, ContainerController container) {
-        Random random = new Random(System.currentTimeMillis());
-        for (VehicleAgent vehicleAgent : vehicleAgents){
+    private void startVehicles(ContainerController container) {
+        for (VehicleAgent vehicleAgent : vehicles){
             AgentController vehicle = null;
             try {
                 vehicle = container.acceptNewAgent(vehicleAgent.getVehicleName(), vehicleAgent);
-                generateVehicleNode(vehicleAgent);
+                GUI.generateVehicleNode(vehicleAgent);
                 vehicle.start();
             } catch (StaleProxyException e) {
                 e.printStackTrace();
@@ -550,14 +540,7 @@ public class RepastLauncher extends Repast3Launcher {
         }
     }
 
-    private static void generateVehicleNode(VehicleAgent vehicleAgent){
-        DefaultDrawableNode node =
-                GUI.generateNode(vehicleAgent.getVehicleName(), GUI.parseColor(vehicleAgent),
-                        vehicleAgent.getCoordinates().getX() ,vehicleAgent.getCoordinates().getY());
-        GUI.addNode(node);
-        vehicleAgent.setNode(node);
 
-    }
 
     /**
      * Launching Repast3
