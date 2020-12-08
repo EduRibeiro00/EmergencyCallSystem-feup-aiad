@@ -405,7 +405,7 @@ public class RepastLauncher extends Repast3Launcher {
             "SPARE_FUEL_LEVEL_POLICE",
             "FUEL_RATE_POLICE",
 
-            "SECONDS_BETWEEN_CALLS",
+            "TIME_BETWEEN_CALLS_MS",
             "MIN_VEHICLES_EMERGENCY",
             "MAX_VEHICLES_EMERGENCY",
             "MIN_DURATION_MS",
