@@ -27,6 +27,8 @@ public class RepastLauncher extends Repast3Launcher {
     }
 
     public void setCITY_WIDTH(int CITY_WIDTH) {
+        if (CITY_WIDTH < 1)
+            CITY_WIDTH = 1;
         this.CITY_WIDTH = CITY_WIDTH;
     }
 
@@ -35,6 +37,8 @@ public class RepastLauncher extends Repast3Launcher {
     }
 
     public void setCITY_HEIGHT(int CITY_HEIGHT) {
+        if (CITY_HEIGHT < 1)
+            CITY_HEIGHT = 1;
         this.CITY_HEIGHT = CITY_HEIGHT;
     }
 
