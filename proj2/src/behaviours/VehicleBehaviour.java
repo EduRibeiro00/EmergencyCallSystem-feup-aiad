@@ -1,5 +1,6 @@
 package behaviours;
 
+import agents.VehicleAgent;
 import sajas.core.Agent;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
@@ -19,16 +20,9 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public abstract class VehicleBehaviour extends ContractNetResponder {
-    protected int MIN_NUM_EMPLOYEES;
-    protected int MAX_NUM_EMPLOYEES;
-    protected int MAX_CONSECUTIVE_REJECTIONS;
-    protected int REFUEL_DURATION;
-    protected int EMPLOYEE_CHANGE_PROB;
+    private static final int MAX_CONSECUTIVE_REJECTIONS = 3;
 
-    protected double EMPLOYEE_MULTIPLIER;
-    protected double DISTANCE_MULTIPLIER;
-    protected double FUEL_MULTIPLIER;
-    protected double EMPLOYEE_FUEL_MULTIPLIER;
+    private final VehicleAgent vehicleAgent;
 
     protected Point coordinates;
     protected int numberEmployees;
@@ -39,21 +33,9 @@ public abstract class VehicleBehaviour extends ContractNetResponder {
     protected AtomicBoolean refueling;
     private final ScheduledThreadPoolExecutor executor;
 
-    public VehicleBehaviour(Agent agent, MessageTemplate msgTemp,
-                            int MIN_NUM_EMPLOYEES, int MAX_NUM_EMPLOYEES, int REFUEL_DURATION, int EMPLOYEE_CHANGE_PROB,
-                            double EMPLOYEE_MULTIPLIER, double DISTANCE_MULTIPLIER, double FUEL_MULTIPLIER,
-                            double EMPLOYEE_FUEL_MULTIPLIER) {
-
+    public VehicleBehaviour(VehicleAgent agent, MessageTemplate msgTemp) {
         super(agent, msgTemp);
-
-        this.MIN_NUM_EMPLOYEES = MIN_NUM_EMPLOYEES;
-        this.MAX_NUM_EMPLOYEES = MAX_NUM_EMPLOYEES;
-        this.REFUEL_DURATION = REFUEL_DURATION;
-        this.EMPLOYEE_CHANGE_PROB = EMPLOYEE_CHANGE_PROB;
-        this.EMPLOYEE_MULTIPLIER = EMPLOYEE_MULTIPLIER;
-        this.DISTANCE_MULTIPLIER = DISTANCE_MULTIPLIER;
-        this.FUEL_MULTIPLIER = FUEL_MULTIPLIER;
-        this.EMPLOYEE_FUEL_MULTIPLIER = EMPLOYEE_FUEL_MULTIPLIER;
+        vehicleAgent = agent;
 
         consecutiveRejectionsByFuel = 0;
         coordinates = Point.genRandomPoint();
@@ -174,12 +156,15 @@ public abstract class VehicleBehaviour extends ContractNetResponder {
 
     protected double calcVehicleValue(double distance) {
         // value is influenced by distance to the emergency, number of employees in the vehicle and the fuel left in the car
-        double value = (distance * DISTANCE_MULTIPLIER) + (numberEmployees * EMPLOYEE_MULTIPLIER) + (fuel * FUEL_MULTIPLIER);
+        double value = (distance * this.vehicleAgent.getDISTANCE_MULTIPLIER()) +
+                (numberEmployees * this.vehicleAgent.getEMPLOYEE_MULTIPLIER()) +
+                (fuel * this.vehicleAgent.getFUEL_MULTIPLIER());
         return Math.round(value * 1000.0) / 1000.0;
     }
 
     protected int calcFuelForTrip(double distance) {
-        return (int)(distance * getFuelRate() * ( 1 + numberEmployees * EMPLOYEE_FUEL_MULTIPLIER));
+        return (int)(distance * getFuelRate() *
+                ( 1 + numberEmployees * this.vehicleAgent.getEMPLOYEE_FUEL_MULTIPLIER()));
     }
 
     protected void startEmergency(int duration) {
@@ -197,7 +182,7 @@ public abstract class VehicleBehaviour extends ContractNetResponder {
         refueling.set(true);
         executor.schedule(
                 this::finishRefueling,
-                REFUEL_DURATION,
+                this.vehicleAgent.getREFUEL_DURATION(),
                 TimeUnit.MILLISECONDS
         );
 
@@ -206,7 +191,7 @@ public abstract class VehicleBehaviour extends ContractNetResponder {
 
     protected void finishOccupied() {
         occupied.set(false);
-        boolean shouldChangeEmployees = ThreadLocalRandom.current().nextInt(EMPLOYEE_CHANGE_PROB) == 0;
+        boolean shouldChangeEmployees = ThreadLocalRandom.current().nextInt(this.vehicleAgent.getEMPLOYEE_CHANGE_PROB()) == 0;
         if (shouldChangeEmployees) {
             numberEmployees = getRandomNumberEmployees();
             LoggerHelper.get().logEmployeeChange(this.myAgent.getLocalName(), numberEmployees);
@@ -227,16 +212,22 @@ public abstract class VehicleBehaviour extends ContractNetResponder {
     }
 
     private int getRandomNumberEmployees() {
-        return ThreadLocalRandom.current().nextInt(MIN_NUM_EMPLOYEES, MAX_NUM_EMPLOYEES + 1);
+        return ThreadLocalRandom.current().nextInt(this.vehicleAgent.getMIN_NUM_EMPLOYEES(), this.vehicleAgent.getMAX_NUM_EMPLOYEES() + 1);
     }
 
     public abstract VehicleType getVehicleType();
 
-    protected abstract int getMaxFuel();
+    protected int getMaxFuel() {
+        return vehicleAgent.getMAX_FUEL();
+    }
 
-    protected abstract double getFuelRate();
+    protected double getFuelRate() {
+        return vehicleAgent.getFUEL_RATE();
+    }
 
-    protected abstract int getSpareFuelLevel();
+    protected int getSpareFuelLevel() {
+        return vehicleAgent.getSPARE_FUEL_LEVEL();
+    }
 
     @Override
     public String toString() {

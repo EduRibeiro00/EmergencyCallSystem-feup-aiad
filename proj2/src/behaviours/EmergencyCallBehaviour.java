@@ -15,29 +15,14 @@ import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 
-public class EmergencyCallBehaviour extends SimpleBehaviour {
-    private final ScheduledThreadPoolExecutor executor;
+    private final AID controlTowerID;
+    private final ClientAgent clientAgent;
+public class EmergencyCallBehaviour extends TickerBehaviour {
 
-    private AID controlTowerID;
-    private int currentID = 0;
-    private long period;
-
-    private int MIN_NUM_VEHICLES;
-    private int MAX_NUM_VEHICLES;
-    private int MIN_DURATION;
-    private int MAX_DURATION;
-
-    public EmergencyCallBehaviour(ClientAgent clientAgent, long period, AID controlTowerID,
-                                  int MIN_VEHICLES_EMERGENCY, int MAX_VEHICLES_EMERGENCY,
-                                  int MIN_DURATION_MS, int MAX_DURATION_MS) {
-        //super(clientAgent, period);
-        this.executor = new ScheduledThreadPoolExecutor(3);
+    public EmergencyCallBehaviour(ClientAgent clientAgent, long period, AID controlTowerID) {
+        super(clientAgent, period);
+        this.clientAgent = clientAgent;
         this.controlTowerID = controlTowerID;
-        this.period = period;
-        this.MIN_NUM_VEHICLES = MIN_VEHICLES_EMERGENCY;
-        this.MAX_NUM_VEHICLES = MAX_VEHICLES_EMERGENCY;
-        this.MIN_DURATION = MIN_DURATION_MS;
-        this.MAX_DURATION = MAX_DURATION_MS;
     }
 
     @Override
@@ -78,11 +63,15 @@ public class EmergencyCallBehaviour extends SimpleBehaviour {
     }
 
     private int getRandomNumberOfVehicles() {
-        return ThreadLocalRandom.current().nextInt(MIN_NUM_VEHICLES, MAX_NUM_VEHICLES + 1);
+        return ThreadLocalRandom.current().nextInt(
+                this.clientAgent.getMIN_VEHICLES_EMERGENCY(),
+                this.clientAgent.getMAX_VEHICLES_EMERGENCY() + 1);
     }
     
     private int getRandomAccidentDuration() {
-        return ThreadLocalRandom.current().nextInt(MIN_DURATION, MAX_DURATION + 1);
+        return ThreadLocalRandom.current().nextInt(
+                this.clientAgent.getMIN_DURATION_MS(),
+                this.clientAgent.getMAX_DURATION_MS() + 1);
     }
 
     @Override
