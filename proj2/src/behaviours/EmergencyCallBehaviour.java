@@ -2,7 +2,7 @@ package behaviours;
 
 import agents.ClientAgent;
 import jade.core.AID;
-import sajas.core.behaviours.TickerBehaviour;
+import sajas.core.behaviours.SimpleBehaviour;
 import jade.lang.acl.ACLMessage;
 import logs.LoggerHelper;
 import utils.Emergency;
@@ -11,12 +11,16 @@ import utils.Point;
 
 import java.io.IOException;
 import java.util.Random;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.TimeUnit;
 
-public class EmergencyCallBehaviour extends TickerBehaviour {
+public class EmergencyCallBehaviour extends SimpleBehaviour {
+    private final ScheduledThreadPoolExecutor executor;
 
     private AID controlTowerID;
     private int currentID = 0;
+    private long period;
 
     private int MIN_NUM_VEHICLES;
     private int MAX_NUM_VEHICLES;
@@ -26,8 +30,10 @@ public class EmergencyCallBehaviour extends TickerBehaviour {
     public EmergencyCallBehaviour(ClientAgent clientAgent, long period, AID controlTowerID,
                                   int MIN_VEHICLES_EMERGENCY, int MAX_VEHICLES_EMERGENCY,
                                   int MIN_DURATION_MS, int MAX_DURATION_MS) {
-        super(clientAgent, period);
+        //super(clientAgent, period);
+        this.executor = new ScheduledThreadPoolExecutor(3);
         this.controlTowerID = controlTowerID;
+        this.period = period;
         this.MIN_NUM_VEHICLES = MIN_VEHICLES_EMERGENCY;
         this.MAX_NUM_VEHICLES = MAX_VEHICLES_EMERGENCY;
         this.MIN_DURATION = MIN_DURATION_MS;
@@ -35,7 +41,11 @@ public class EmergencyCallBehaviour extends TickerBehaviour {
     }
 
     @Override
-    protected void onTick() {
+    public void action() {
+        scheduleCall();
+    }
+
+    private void scheduleCall() {
         ACLMessage request = new ACLMessage(ACLMessage.INFORM);
         request.addReceiver(controlTowerID);
         Emergency.incrementID();
@@ -53,6 +63,12 @@ public class EmergencyCallBehaviour extends TickerBehaviour {
 
         myAgent.send(request);
         LoggerHelper.get().logCreatedEmergency(emergency);
+
+        executor.schedule(
+                () -> this.scheduleCall(),
+                period,
+                TimeUnit.MILLISECONDS
+        );
     }
 
     private EmergencyType getRandomEmergencyType() {
@@ -67,5 +83,10 @@ public class EmergencyCallBehaviour extends TickerBehaviour {
     
     private int getRandomAccidentDuration() {
         return ThreadLocalRandom.current().nextInt(MIN_DURATION, MAX_DURATION + 1);
+    }
+
+    @Override
+    public boolean done() {
+        return false;
     }
 }
