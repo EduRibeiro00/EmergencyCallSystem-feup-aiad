@@ -158,10 +158,10 @@ public abstract class VehicleAgent extends Agent {
 
     public void updateVehicleCoordinates(){
         if(!coordinates.equal(getCurrentEmergencyCoords())) {
-            Point newCoords = coordinates.getNextPos(getCurrentEmergencyCoords());
+            Point newCoords = new Point(this.myNode.getX(),this.myNode.getY()).getNextPos(currentEmergencyCoords);
             this.myNode.setX(newCoords.getX());
             this.myNode.setY(newCoords.getY());
-            setCoordinates(newCoords);
+            //setCoordinates(newCoords);
         }
     }
 
