@@ -1,5 +1,6 @@
 package agents;
 
+import behaviours.ClientConnectBehaviour;
 import behaviours.DeterministicCallBehaviour;
 import behaviours.EmergencyCallBehaviour;
 import jade.core.AID;
@@ -9,7 +10,7 @@ import logs.LoggerHelper;
 import utils.DFUtils;
 
 public class ClientAgent extends Agent {
-    private static final int MAX_NUMBER_TRIES = 3;
+    private static final int MAX_NUMBER_TRIES = 15;
 
     private final boolean DETERMINISTIC;
     private final int TIME_BETWEEN_CALLS_MS;
@@ -20,6 +21,8 @@ public class ClientAgent extends Agent {
 
     private final String clientName;
     private final String towerDFName;
+
+    private ClientConnectBehaviour connectBehaviour;
 
     public ClientAgent(String clientName, String towerDFName, boolean DETERMINISTIC,
                        int TIME_BETWEEN_CALLS_MS, int MIN_VEHICLES_EMERGENCY, int MAX_VEHICLES_EMERGENCY,
@@ -33,44 +36,32 @@ public class ClientAgent extends Agent {
         this.MAX_VEHICLES_EMERGENCY = MAX_VEHICLES_EMERGENCY;
         this.MIN_DURATION_MS = MIN_DURATION_MS;
         this.MAX_DURATION_MS = MAX_DURATION_MS;
+        this.connectBehaviour = null;
     }
 
 
     @Override
     protected void setup() {
-        int numberOfTries = 0;
-        while (numberOfTries < MAX_NUMBER_TRIES){
-            DFAgentDescription[] tower = DFUtils.fetchFromDF(this, this.towerDFName);
-            if (tower == null || tower.length < 1) {
-                numberOfTries++;
-                continue;
-            }
+        this.connectBehaviour = new ClientConnectBehaviour(this, 1000, this.towerDFName);
+        addBehaviour(connectBehaviour);
+    }
 
-            AID controlTowerID = tower[0].getName();
-
-            if(DETERMINISTIC) {
-                addBehaviour(
+    public void addCallBehaviour(AID controlTowerID) {
+        this.removeBehaviour(connectBehaviour);
+        if(DETERMINISTIC) {
+            addBehaviour(
                     new DeterministicCallBehaviour(
                             controlTowerID
                     )
-                );
-            } else {
-                addBehaviour(
+            );
+        } else {
+            addBehaviour(
                     new EmergencyCallBehaviour(
-                        this,
+                            this,
                             TIME_BETWEEN_CALLS_MS,
                             controlTowerID
                     )
-                );
-            }
-            break;
-        }
-
-        if(numberOfTries >= MAX_NUMBER_TRIES){
-            LoggerHelper.get().logError(
-                    "[DF ERROR] - Client could not fetch control tower from the DF"
             );
-            System.exit(-1);
         }
     }
 
