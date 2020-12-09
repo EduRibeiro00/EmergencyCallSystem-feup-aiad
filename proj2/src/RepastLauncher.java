@@ -11,12 +11,14 @@ import jade.wrapper.StaleProxyException;
 import sajas.sim.repast3.Repast3Launcher;
 import uchicago.src.sim.analysis.OpenSequenceGraph;
 import uchicago.src.sim.analysis.Sequence;
+import uchicago.src.sim.engine.BasicAction;
 import uchicago.src.sim.engine.Schedule;
 import uchicago.src.sim.engine.SimInit;
 
 import uchicago.src.sim.gui.DisplaySurface;
 import uchicago.src.sim.gui.Network2DDisplay;
 import uchicago.src.sim.network.DefaultDrawableNode;
+import uchicago.src.sim.engine.Stepable;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -380,7 +382,7 @@ public class RepastLauncher extends Repast3Launcher {
     // ******************************************************
     // launch arguments (simple logs and deterministic emergencies i.e. reading from file)
     private boolean SIMPLE = true;
-    private boolean DETERMINISTIC = true;
+    private boolean DETERMINISTIC = false;
 
     public boolean isSIMPLE() {
         return SIMPLE;
@@ -487,15 +489,13 @@ public class RepastLauncher extends Repast3Launcher {
                 return v / vehicles.size();
             }
         });
-
-        plot.display();
-
         //Num emergency
         //Numero de emergencis nao respondidas
 
-
+        plot.display();
         getSchedule().scheduleActionAtInterval(1, dsurf, "updateDisplay", Schedule.LAST);
         getSchedule().scheduleActionAtInterval(100, plot, "step", Schedule.LAST);
+        getSchedule().scheduleActionAtInterval(100, this, "step", Schedule.INTERVAL_UPDATER);
     }
 
     @Override
@@ -567,6 +567,7 @@ public class RepastLauncher extends Repast3Launcher {
                     EMPLOYEE_CHANGE_PROB, MULTIPLIER_EMPLOYEE, MULTIPLIER_DISTANCE, MULTIPLIER_FUEL,
                     MULTIPLIER_EMPLOYEE_FUEL, MAX_FUEL_POLICE, SPARE_FUEL_LEVEL_POLICE, FUEL_RATE_POLICE);
             vehicles.add(vehicleAgent);
+
         }
     }
 
@@ -574,13 +575,31 @@ public class RepastLauncher extends Repast3Launcher {
         for (VehicleAgent vehicleAgent : vehicles){
             AgentController vehicle = null;
             try {
+
                 vehicle = container.acceptNewAgent(vehicleAgent.getVehicleName(), vehicleAgent);
                 GUI.generateVehicleNode(vehicleAgent);
                 vehicle.start();
+
+
+
+
             } catch (StaleProxyException e) {
                 e.printStackTrace();
             }
         }
+    }
+
+
+    public void step()
+    {
+
+
+        for(VehicleAgent vehicle : vehicles){
+            //vehicle.updateVehicleCoordinates();
+            vehicle.updateCoordTest();
+
+        }
+
     }
 
     /**

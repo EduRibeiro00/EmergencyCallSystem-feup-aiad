@@ -35,7 +35,7 @@ public abstract class VehicleBehaviour extends ContractNetResponder {
     private int consecutiveRejectionsByFuel;
     protected AtomicBoolean refueling;
     private final ScheduledThreadPoolExecutor executor;
-    DefaultDrawableNode myNode;
+
 
     public VehicleBehaviour(VehicleAgent agent, MessageTemplate msgTemp) {
         super(agent, msgTemp);
@@ -44,6 +44,7 @@ public abstract class VehicleBehaviour extends ContractNetResponder {
         consecutiveRejectionsByFuel = 0;
         fuel = getMaxFuel();
         this.vehicleAgent.setOccupied(new AtomicBoolean(false));
+        this.vehicleAgent.setCurrentEmergencyCoords(null);
         refueling = new AtomicBoolean(false);
         executor = new ScheduledThreadPoolExecutor(2);
 
@@ -85,6 +86,7 @@ public abstract class VehicleBehaviour extends ContractNetResponder {
                     LoggerHelper.get().logFuelInsuf(this.myAgent.getLocalName());
                 // vehicle is free and has enough fuel; is eligible for the emergency
                 } else {
+                    vehicleAgent.setCurrentEmergencyCoords(emergencyCoords);
                     consecutiveRejectionsByFuel = 0;
                     acceptCfp(vehicleReply, cfp);
                 }
@@ -134,6 +136,7 @@ public abstract class VehicleBehaviour extends ContractNetResponder {
             fuel = (fuel -= calcFuelForTrip(distance)) < 0 ? 0 : fuel;
 
             startEmergency(duration);
+
         }
 
         ACLMessage informReply = accept.createReply();
@@ -141,6 +144,10 @@ public abstract class VehicleBehaviour extends ContractNetResponder {
 
         return informReply;
     }
+
+
+
+
 
     protected void acceptCfp(ACLMessage vehicleReply, ACLMessage cfp){
         vehicleReply.setPerformative(ACLMessage.PROPOSE);
@@ -249,22 +256,16 @@ public abstract class VehicleBehaviour extends ContractNetResponder {
         super.onStart();
 
         // create edge
-        if(myNode != null) {
+        if(vehicleAgent.getNode() != null) {
             DefaultDrawableNode to =  GUI.getNode(vehicleAgent.getAID().getLocalName());
 
-            Edge edge = new Edge(myNode, to);
+            Edge edge = new Edge(vehicleAgent.getNode(), to);
             edge.setColor(Color.ORANGE);
-            myNode.addOutEdge(edge);
+            vehicleAgent.getNode().addOutEdge(edge);
         }
     }
 
-    public DefaultDrawableNode getNode() {
-        return myNode;
-    }
 
-    public void setNode(DefaultDrawableNode myNode) {
-        this.myNode = myNode;
-    }
 
 
 

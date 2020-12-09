@@ -27,8 +27,8 @@ public class GUI {
     public static DefaultDrawableNode generateNode(String label, Color color, double x, double y) {
         OvalNetworkItem oval = new OvalNetworkItem(x,y);
         oval.allowResizing(false);
-        oval.setHeight(5);
-        oval.setWidth(5);
+        oval.setHeight(1);
+        oval.setWidth(1);
 
         DefaultDrawableNode node = new DefaultDrawableNode(label, oval);
         node.setColor(color);

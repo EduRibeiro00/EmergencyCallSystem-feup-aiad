@@ -1,11 +1,13 @@
 package agents;
 
+import GUI.GUI;
 import behaviours.VehicleBehaviour;
 import sajas.core.Agent;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import uchicago.src.sim.network.DefaultDrawableNode;
 import utils.DFUtils;
+import utils.Emergency;
 import utils.Point;
 import utils.VehicleType;
 
@@ -29,9 +31,11 @@ public abstract class VehicleAgent extends Agent {
 
     protected Point coordinates;
     protected int numberEmployees;
-
+    protected  VehicleBehaviour vehicleBehaviour;
     private final String vehicleName;
     protected AtomicBoolean occupied;
+    protected Point currentEmergencyCoords;
+    DefaultDrawableNode myNode;
     private static final MessageTemplate mt = MessageTemplate.MatchPerformative(ACLMessage.CFP);
 
     public VehicleAgent(String name, int MIN_NUM_EMPLOYEES, int MAX_NUM_EMPLOYEES, int REFUEL_DURATION,
@@ -40,6 +44,7 @@ public abstract class VehicleAgent extends Agent {
         coordinates = Point.genRandomPoint();
         numberEmployees = getRandomNumberEmployees();
         this.vehicleName = name;
+        currentEmergencyCoords = new Point(coordinates.getX(),coordinates.getY());
 
         this.MIN_NUM_EMPLOYEES = MIN_NUM_EMPLOYEES;
         this.MAX_NUM_EMPLOYEES = MAX_NUM_EMPLOYEES;
@@ -58,7 +63,9 @@ public abstract class VehicleAgent extends Agent {
     @Override
     protected void setup() {
         DFUtils.registerInDF(this, getType().getDFName());
-        addBehaviour(getVehicleBehaviour());
+        addBehaviour(createVehicleBehaviour());
+
+
 
     }
 
@@ -80,7 +87,8 @@ public abstract class VehicleAgent extends Agent {
 
     public abstract VehicleType getType();
 
-    public abstract VehicleBehaviour getVehicleBehaviour();
+    public  VehicleBehaviour getVehicleBehaviour(){ return this.vehicleBehaviour;}
+    public abstract VehicleBehaviour createVehicleBehaviour();
 
     public Point getCoordinates() {
         return coordinates;
@@ -98,12 +106,16 @@ public abstract class VehicleAgent extends Agent {
         this.numberEmployees = numberEmployees;
     }
 
-    public void setNode(DefaultDrawableNode node){getVehicleBehaviour().setNode(node);} //TODO Pode dar erro caso behaviour ainda nao tenha sido criada
+    public void setNode(DefaultDrawableNode node){this.myNode = node;} //TODO Pode dar erro caso behaviour ainda nao tenha sido criada
+    public DefaultDrawableNode getNode(){return myNode;}
 
     public AtomicBoolean getOccupied() {return occupied;}
 
     public void setOccupied(AtomicBoolean occupied) {this.occupied = occupied;}
 
+    public Point getCurrentEmergencyCoords() { return currentEmergencyCoords; }
+
+    public void setCurrentEmergencyCoords(Point currentEmergencyCoords) { this.currentEmergencyCoords = currentEmergencyCoords; }
 
 
     public int getMIN_NUM_EMPLOYEES() {
@@ -143,4 +155,18 @@ public abstract class VehicleAgent extends Agent {
     public abstract int getSPARE_FUEL_LEVEL();
 
     public abstract double getFUEL_RATE();
+
+    public void updateVehicleCoordinates(){
+        Point newCoords =coordinates.getNextPos(getCurrentEmergencyCoords(),10);
+        this.myNode.setX(newCoords.getX());
+        this.myNode.setY(newCoords.getY());
+        setCoordinates(newCoords);
+    }
+
+    public void updateCoordTest(){
+        this.myNode.setX(myNode.getX()+1);
+        this.myNode.setY(myNode.getY()+1);
+        setCoordinates(new Point(getCoordinates().getX()+1,getCoordinates().getY()+1));
+
+    }
 }
