@@ -9,20 +9,32 @@ import logs.LoggerHelper;
 import utils.DFUtils;
 
 public class ClientAgent extends Agent {
-
-    private static final int SECONDS_BETWEEN_CALLS = 1;
     private static final int MAX_NUMBER_TRIES = 3;
 
-    private String clientName;
-    private String towerDFName;
-    private AID controlTowerID;
-    private boolean deterministic;
+    private final boolean DETERMINISTIC;
+    private final int TIME_BETWEEN_CALLS_MS;
+    private final int MIN_VEHICLES_EMERGENCY;
+    private final int MAX_VEHICLES_EMERGENCY;
+    private final int MIN_DURATION_MS;
+    private final int MAX_DURATION_MS;
 
-    public ClientAgent(String clientName, String towerDFName, boolean deterministic) {
+    private final String clientName;
+    private final String towerDFName;
+
+    public ClientAgent(String clientName, String towerDFName, boolean DETERMINISTIC,
+                       int TIME_BETWEEN_CALLS_MS, int MIN_VEHICLES_EMERGENCY, int MAX_VEHICLES_EMERGENCY,
+                       int MIN_DURATION_MS, int MAX_DURATION_MS) {
         this.clientName = clientName;
         this.towerDFName = towerDFName;
-        this.deterministic = deterministic;
+
+        this.DETERMINISTIC = DETERMINISTIC;
+        this.TIME_BETWEEN_CALLS_MS = TIME_BETWEEN_CALLS_MS;
+        this.MIN_VEHICLES_EMERGENCY = MIN_VEHICLES_EMERGENCY;
+        this.MAX_VEHICLES_EMERGENCY = MAX_VEHICLES_EMERGENCY;
+        this.MIN_DURATION_MS = MIN_DURATION_MS;
+        this.MAX_DURATION_MS = MAX_DURATION_MS;
     }
+
 
     @Override
     protected void setup() {
@@ -34,21 +46,21 @@ public class ClientAgent extends Agent {
                 continue;
             }
 
-            this.controlTowerID = tower[0].getName();
+            AID controlTowerID = tower[0].getName();
 
-            if(deterministic) {
+            if(DETERMINISTIC) {
                 addBehaviour(
-                        new DeterministicCallBehaviour(
-                                controlTowerID
-                        )
+                    new DeterministicCallBehaviour(
+                            controlTowerID
+                    )
                 );
             } else {
                 addBehaviour(
-                        new EmergencyCallBehaviour(
-                                this,
-                                SECONDS_BETWEEN_CALLS * 1000,
-                                controlTowerID
-                        )
+                    new EmergencyCallBehaviour(
+                        this,
+                            TIME_BETWEEN_CALLS_MS,
+                            controlTowerID
+                    )
                 );
             }
             break;
@@ -64,5 +76,21 @@ public class ClientAgent extends Agent {
 
     public String getClientName() {
         return clientName;
+    }
+
+    public int getMIN_VEHICLES_EMERGENCY() {
+        return MIN_VEHICLES_EMERGENCY;
+    }
+
+    public int getMAX_VEHICLES_EMERGENCY() {
+        return MAX_VEHICLES_EMERGENCY;
+    }
+
+    public int getMIN_DURATION_MS() {
+        return MIN_DURATION_MS;
+    }
+
+    public int getMAX_DURATION_MS() {
+        return MAX_DURATION_MS;
     }
 }

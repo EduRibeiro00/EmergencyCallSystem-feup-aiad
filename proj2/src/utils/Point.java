@@ -5,17 +5,27 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 
 public class Point implements java.io.Serializable {
-    private static final double MIN_COORDS_VALUE = 1.0;
-    private static final double MAX_COORDS_VALUE = 190.0;
+
+    private static int MAX_COORDS_WIDTH = 100;
+    private static int MAX_COORDS_HEIGHT = 100;
+
     private static final int PRECISION = 2;
 
     private double x;
     private double y;
 
+    public static void setWidth(int widthValue) {
+        MAX_COORDS_WIDTH = widthValue;
+    }
+
+    public static void setHeight(int heightValue) {
+        MAX_COORDS_HEIGHT = heightValue;
+    }
+
     public static Point genRandomPoint() {
         return new Point(
-            ThreadLocalRandom.current().nextDouble(MIN_COORDS_VALUE, MAX_COORDS_VALUE + 1),
-            ThreadLocalRandom.current().nextDouble(MIN_COORDS_VALUE, MAX_COORDS_VALUE + 1)
+            ThreadLocalRandom.current().nextDouble(0.0, MAX_COORDS_WIDTH + 1),
+            ThreadLocalRandom.current().nextDouble(0.0, MAX_COORDS_HEIGHT + 1)
         );
     }
 
