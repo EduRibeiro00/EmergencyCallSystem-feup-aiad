@@ -18,11 +18,15 @@ import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+
 public class DeterministicCallBehaviour extends SimpleBehaviour {
     private final String EMERGENCIES_FILE_PATH = System.getProperty("user.dir") + "/src/experiment/emergencies.gen";
     private final AID controlTowerID;
     private List<DeterministicEmergency> deterministicEmergencies;
     private boolean done;
+    private int demEmgIndex = 0;
+    private boolean waitingForEmergency = false;
+    private long timestamp = 0;
 
     public DeterministicCallBehaviour(AID controlTowerID) {
         this.controlTowerID = controlTowerID;
@@ -80,28 +84,35 @@ public class DeterministicCallBehaviour extends SimpleBehaviour {
 
     @Override
     public void action() {
-        for(DeterministicEmergency demEmg : deterministicEmergencies) {
-            ACLMessage request = new ACLMessage(ACLMessage.INFORM);
-            request.addReceiver(controlTowerID);
+        if (demEmgIndex < deterministicEmergencies.size()) {
+            DeterministicEmergency demEmg = deterministicEmergencies.get(demEmgIndex);
 
-            try {
-                request.setContentObject(demEmg.getEmergency());
-            } catch (IOException e) {
-                e.printStackTrace();
+            if (waitingForEmergency) {
+                long currentTimestamp = System.currentTimeMillis();
+                long elapsedTime = currentTimestamp - timestamp;
+                if (elapsedTime >= demEmg.getDelay()) {
+                    ACLMessage request = new ACLMessage(ACLMessage.INFORM);
+                    request.addReceiver(controlTowerID);
+
+                    try {
+                        request.setContentObject(demEmg.getEmergency());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
+                    myAgent.send(request);
+                    LoggerHelper.get().logCreatedEmergency(demEmg.getEmergency());
+
+                    waitingForEmergency = false;
+                    demEmgIndex++;
+                }
+            } else {
+                timestamp = System.currentTimeMillis();
+                waitingForEmergency = true;
             }
-
-
-            try {
-                Thread.sleep(demEmg.getDelay());
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-
-            myAgent.send(request);
-            LoggerHelper.get().logCreatedEmergency(demEmg.getEmergency());
+        } else {
+            done = true;
         }
-
-        done = true;
     }
 
     @Override
