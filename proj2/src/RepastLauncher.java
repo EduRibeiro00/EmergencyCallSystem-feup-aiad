@@ -32,9 +32,19 @@ public class RepastLauncher extends Repast3Launcher {
     private static final boolean BATCH_MODE = false;
     private final boolean runInBatchMode;
 
+    // ******************************************************
+    // width and height for GUI
+    private static final int WIDTH = 100;
+    private static final int HEIGHT = 100;
 
     // ******************************************************
-    // width and height variables
+    // Build and schedule display
+    private DisplaySurface dsurf;
+    private OpenSequenceGraph plot;
+    private final List<VehicleAgent> vehicles = new ArrayList<>();
+
+    // ******************************************************
+    // width and height variables for coordinates
     private int CITY_WIDTH = 100;
     private int CITY_HEIGHT = 100;
 
@@ -57,13 +67,6 @@ public class RepastLauncher extends Repast3Launcher {
             CITY_HEIGHT = 1;
         this.CITY_HEIGHT = CITY_HEIGHT;
     }
-
-    // ******************************************************
-    // Build ans schedule display
-    private DisplaySurface dsurf;
-    private OpenSequenceGraph plot;
-    private List<VehicleAgent> vehicles = new ArrayList<>();
-
 
     // ******************************************************
     // Common vehicle variables
@@ -463,7 +466,7 @@ public class RepastLauncher extends Repast3Launcher {
         if (dsurf != null) dsurf.dispose();
         dsurf = new DisplaySurface(this, "Service Consumer/Provider Display");
         registerDisplaySurface("Service Consumer/Provider Display", dsurf);
-        Network2DDisplay display = new Network2DDisplay(GUI.getNodes(),WIDTH,HEIGHT);
+        Network2DDisplay display = new Network2DDisplay(GUI.getNodes(), WIDTH, HEIGHT);
         dsurf.addDisplayableProbeable(display, "Network Display");
         dsurf.addZoomable(display);
         addSimEventListener(dsurf);
@@ -478,8 +481,8 @@ public class RepastLauncher extends Repast3Launcher {
             public double getSValue() {
                 // iterate through vehicles
                 double v = 0.0;
-                for(int i = 0; i < vehicles.size(); i++) {
-                    v += vehicles.get(i).getOccupied().get() ? 1:0;
+                for (VehicleAgent vehicle : vehicles) {
+                    v += vehicle.getOccupied().get() ? 1 : 0;
                 }
                 return v / vehicles.size();
             }
@@ -547,7 +550,7 @@ public class RepastLauncher extends Repast3Launcher {
                     MIN_NUM_EMPLOYEES, MAX_NUM_EMPLOYEES, REFUEL_DURATION_MS,
                     EMPLOYEE_CHANGE_PROB, MULTIPLIER_EMPLOYEE, MULTIPLIER_DISTANCE, MULTIPLIER_FUEL,
                     MULTIPLIER_EMPLOYEE_FUEL, MAX_FUEL_INEM, SPARE_FUEL_LEVEL_INEM, FUEL_RATE_INEM);
-            vehicles[i] = vehicleAgent;
+            vehicles.add(vehicleAgent);
         }
         for (int i = 0; i < numberFire; i++) {
             String name = "Fireman" + i;
@@ -555,7 +558,7 @@ public class RepastLauncher extends Repast3Launcher {
                     MIN_NUM_EMPLOYEES, MAX_NUM_EMPLOYEES, REFUEL_DURATION_MS,
                     EMPLOYEE_CHANGE_PROB, MULTIPLIER_EMPLOYEE, MULTIPLIER_DISTANCE, MULTIPLIER_FUEL,
                     MULTIPLIER_EMPLOYEE_FUEL, MAX_FUEL_FIRE, SPARE_FUEL_LEVEL_FIRE, FUEL_RATE_FIRE);
-            vehicles[i] = vehicleAgent;
+            vehicles.add(vehicleAgent);
         }
         for (int i = 0; i < numberPolice; i++) {
             String name = "Police" + i;
@@ -563,7 +566,7 @@ public class RepastLauncher extends Repast3Launcher {
                     MIN_NUM_EMPLOYEES, MAX_NUM_EMPLOYEES, REFUEL_DURATION_MS,
                     EMPLOYEE_CHANGE_PROB, MULTIPLIER_EMPLOYEE, MULTIPLIER_DISTANCE, MULTIPLIER_FUEL,
                     MULTIPLIER_EMPLOYEE_FUEL, MAX_FUEL_POLICE, SPARE_FUEL_LEVEL_POLICE, FUEL_RATE_POLICE);
-            vehicles[i] = vehicleAgent;
+            vehicles.add(vehicleAgent);
         }
     }
 
@@ -579,8 +582,6 @@ public class RepastLauncher extends Repast3Launcher {
             }
         }
     }
-
-
 
     /**
      * Launching Repast3

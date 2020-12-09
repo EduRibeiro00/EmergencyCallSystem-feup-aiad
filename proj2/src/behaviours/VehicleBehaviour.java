@@ -30,24 +30,12 @@ public abstract class VehicleBehaviour extends ContractNetResponder {
 
     protected static final int MAX_CONSECUTIVE_REJECTIONS = 3;
 
-
-
     private final VehicleAgent vehicleAgent;
-
-
     protected int fuel;
     private int consecutiveRejectionsByFuel;
-
-
-
     protected AtomicBoolean refueling;
     private final ScheduledThreadPoolExecutor executor;
-
-
-
-
     DefaultDrawableNode myNode;
-
 
     public VehicleBehaviour(VehicleAgent agent, MessageTemplate msgTemp) {
         super(agent, msgTemp);
@@ -249,11 +237,12 @@ public abstract class VehicleBehaviour extends ContractNetResponder {
     @Override
     public String toString() {
         return "Vehicle{" +
-                "coordinates=" + agent.getCoordinates() +
-                ", numberEmployees=" + agent.getNumberEmployees() +
+                "coordinates=" + vehicleAgent.getCoordinates() +
+                ", numberEmployees=" + vehicleAgent.getNumberEmployees() +
                 ", fuel=" + fuel +
                 '}';
     }
+
     @Override
     public void onStart() {
         //TODO Isto esta bem?
@@ -261,7 +250,7 @@ public abstract class VehicleBehaviour extends ContractNetResponder {
 
         // create edge
         if(myNode != null) {
-            DefaultDrawableNode to =  GUI.getNode( agent.getAID().getLocalName());
+            DefaultDrawableNode to =  GUI.getNode(vehicleAgent.getAID().getLocalName());
 
             Edge edge = new Edge(myNode, to);
             edge.setColor(Color.ORANGE);
