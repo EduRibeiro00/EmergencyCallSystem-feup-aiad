@@ -44,7 +44,6 @@ public abstract class VehicleBehaviour extends ContractNetResponder {
         consecutiveRejectionsByFuel = 0;
         fuel = getMaxFuel();
         this.vehicleAgent.setOccupied(new AtomicBoolean(false));
-        this.vehicleAgent.setCurrentEmergencyCoords(null);
         refueling = new AtomicBoolean(false);
         executor = new ScheduledThreadPoolExecutor(2);
 

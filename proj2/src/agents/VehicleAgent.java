@@ -157,10 +157,12 @@ public abstract class VehicleAgent extends Agent {
     public abstract double getFUEL_RATE();
 
     public void updateVehicleCoordinates(){
-        Point newCoords =coordinates.getNextPos(getCurrentEmergencyCoords(),10);
-        this.myNode.setX(newCoords.getX());
-        this.myNode.setY(newCoords.getY());
-        setCoordinates(newCoords);
+        if(!coordinates.equal(getCurrentEmergencyCoords())) {
+            Point newCoords = coordinates.getNextPos(getCurrentEmergencyCoords());
+            this.myNode.setX(newCoords.getX());
+            this.myNode.setY(newCoords.getY());
+            setCoordinates(newCoords);
+        }
     }
 
     public void updateCoordTest(){

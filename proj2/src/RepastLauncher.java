@@ -592,12 +592,9 @@ public class RepastLauncher extends Repast3Launcher {
 
     public void step()
     {
-
-
         for(VehicleAgent vehicle : vehicles){
-            //vehicle.updateVehicleCoordinates();
-            vehicle.updateCoordTest();
-
+            vehicle.updateVehicleCoordinates();
+            //vehicle.updateCoordTest();
         }
 
     }
