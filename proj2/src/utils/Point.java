@@ -65,8 +65,10 @@ public class Point implements java.io.Serializable {
 
     public Point getNextPos(Point other) {
 
-        double stepX = (other.getX()-getX()) /Math.abs(other.getX()-getX());
-        double stepY = (other.getY()-getY())/Math.abs(other.getY()-getY());
+        double stepX = (other.getX()-getX());
+        double stepY = (other.getY()-getY());
+        stepX =stepX/ (stepX == 0 ? 1: Math.abs(stepX));
+        stepY =stepY/ (stepY == 0 ? 1: Math.abs(stepY));
         return new Point(getX()+ stepX,getY()+stepY);
     }
 

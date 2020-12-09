@@ -1,5 +1,6 @@
 package behaviours;
 
+import GUI.GUI;
 import agents.ClientAgent;
 import jade.core.AID;
 import sajas.core.behaviours.SimpleBehaviour;
@@ -56,6 +57,10 @@ public class EmergencyCallBehaviour extends TickerBehaviour {
                 Point.genRandomPoint(),
                 getRandomNumberOfVehicles(),
                 getRandomAccidentDuration());
+        //GUI.generateEmergencyNode(emergency); //TODO Problem
+
+
+
 
         try {
             request.setContentObject(emergency);

@@ -160,7 +160,7 @@ public class RepastLauncher extends Repast3Launcher {
 
     // ******************************************************
     // Inem vehicle variables
-    private int NUM_INEM = 2;
+    private int NUM_INEM = 10;
     private int MAX_FUEL_INEM = 700;
     private int SPARE_FUEL_LEVEL_INEM = 100;
     private double FUEL_RATE_INEM = 3.0;
@@ -211,7 +211,7 @@ public class RepastLauncher extends Repast3Launcher {
 
     // ******************************************************
     // Fire vehicle variables
-    private int NUM_FIRE = 2;
+    private int NUM_FIRE = 10;
     private int MAX_FUEL_FIRE = 1500;
     private int SPARE_FUEL_LEVEL_FIRE = 200;
     private double FUEL_RATE_FIRE = 6.0;
@@ -262,7 +262,7 @@ public class RepastLauncher extends Repast3Launcher {
 
     // ******************************************************
     // Police vehicle variables
-    private int NUM_POLICE = 2;
+    private int NUM_POLICE = 10;
     private int MAX_FUEL_POLICE = 350;
     private int SPARE_FUEL_LEVEL_POLICE = 60;
     private double FUEL_RATE_POLICE = 2.0;
@@ -491,6 +491,7 @@ public class RepastLauncher extends Repast3Launcher {
         });
         //Num emergency
         //Numero de emergencis nao respondidas
+        //Tempo medio de espera
 
         plot.display();
         getSchedule().scheduleActionAtInterval(1, dsurf, "updateDisplay", Schedule.LAST);
@@ -521,6 +522,7 @@ public class RepastLauncher extends Repast3Launcher {
             AgentController controlTower = container.acceptNewAgent(ControlTowerAgent.getDFName(), controlTowerAgent);
             LoggerHelper.get().logInfo("START - Started control tower");
             controlTower.start();
+            GUI.generateNode(ControlTowerAgent.getDFName(),Color.GREEN, WIDTH/2,HEIGHT/2,8);
 
             // ----------------------------------------------------
             // starting vehicle agents
@@ -579,10 +581,6 @@ public class RepastLauncher extends Repast3Launcher {
                 vehicle = container.acceptNewAgent(vehicleAgent.getVehicleName(), vehicleAgent);
                 GUI.generateVehicleNode(vehicleAgent);
                 vehicle.start();
-
-
-
-
             } catch (StaleProxyException e) {
                 e.printStackTrace();
             }
@@ -594,7 +592,6 @@ public class RepastLauncher extends Repast3Launcher {
     {
         for(VehicleAgent vehicle : vehicles){
             vehicle.updateVehicleCoordinates();
-            //vehicle.updateCoordTest();
         }
 
     }

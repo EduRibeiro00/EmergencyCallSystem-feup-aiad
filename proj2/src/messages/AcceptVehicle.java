@@ -1,14 +1,17 @@
 package messages;
 
+import utils.Emergency;
 import utils.Point;
 
 public class AcceptVehicle implements java.io.Serializable {
     private Point coordinates;
     private int accidentDuration; // in ms
+    private Emergency emergency;
 
-    public AcceptVehicle(Point coordinates, int accidentDuration) {
-        this.coordinates = coordinates;
-        this.accidentDuration = accidentDuration;
+    public AcceptVehicle(Emergency emergency) {
+        this.coordinates = emergency.getCoordinates();
+        this.accidentDuration = emergency.getDuration();
+        this.emergency =emergency;
     }
 
     public Point getCoordinates() {
@@ -22,4 +25,8 @@ public class AcceptVehicle implements java.io.Serializable {
     public void setAccidentDuration(int accidentDuration) {
         this.accidentDuration = accidentDuration;
     }
+
+    public Emergency getEmergency() { return emergency; }
+
+    public void setEmergency(Emergency emergency) { this.emergency = emergency; }
 }

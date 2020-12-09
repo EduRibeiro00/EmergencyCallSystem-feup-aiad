@@ -14,6 +14,7 @@ import messages.TowerRequest;
 import messages.VehicleResponse;
 import messages.AcceptVehicle;
 import messages.Messages;
+import uchicago.src.sim.network.DefaultDrawableEdge;
 import uchicago.src.sim.network.DefaultDrawableNode;
 import utils.Point;
 import utils.VehicleType;
@@ -133,7 +134,6 @@ public abstract class VehicleBehaviour extends ContractNetResponder {
 
             vehicleAgent.setCoordinates( acceptVehicleMsg.getCoordinates());
             fuel = (fuel -= calcFuelForTrip(distance)) < 0 ? 0 : fuel;
-
             startEmergency(duration);
 
         }
@@ -185,6 +185,8 @@ public abstract class VehicleBehaviour extends ContractNetResponder {
                 duration,
                 TimeUnit.MILLISECONDS
         );
+
+        //Sample edge
 
         LoggerHelper.get().logOccupied(this.myAgent.getLocalName(), ((double) duration)/1000);
     }
@@ -255,13 +257,13 @@ public abstract class VehicleBehaviour extends ContractNetResponder {
         super.onStart();
 
         // create edge
-        if(vehicleAgent.getNode() != null) {
+        /*if(vehicleAgent.getNode() != null) {
             DefaultDrawableNode to =  GUI.getNode(vehicleAgent.getAID().getLocalName());
 
             Edge edge = new Edge(vehicleAgent.getNode(), to);
             edge.setColor(Color.ORANGE);
             vehicleAgent.getNode().addOutEdge(edge);
-        }
+        }*/
     }
 
 

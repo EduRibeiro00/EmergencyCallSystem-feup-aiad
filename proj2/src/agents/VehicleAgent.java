@@ -65,8 +65,6 @@ public abstract class VehicleAgent extends Agent {
         DFUtils.registerInDF(this, getType().getDFName());
         addBehaviour(createVehicleBehaviour());
 
-
-
     }
 
 
@@ -161,7 +159,6 @@ public abstract class VehicleAgent extends Agent {
             Point newCoords = new Point(this.myNode.getX(),this.myNode.getY()).getNextPos(currentEmergencyCoords);
             this.myNode.setX(newCoords.getX());
             this.myNode.setY(newCoords.getY());
-            //setCoordinates(newCoords);
         }
     }
 

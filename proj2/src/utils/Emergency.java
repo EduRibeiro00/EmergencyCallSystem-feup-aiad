@@ -1,11 +1,15 @@
 package utils;
 
-public class Emergency implements java.io.Serializable {
+import GUI.GUI;
+import uchicago.src.sim.network.DefaultDrawableNode;
+
+public class Emergency  implements java.io.Serializable {
     private EmergencyType emergencyType;
     private Point coordinates;
     private int numberVehicles;
     private int duration; // in ms
     private static int  currentID = 0;
+    private DefaultDrawableNode node;
 
 
 
@@ -68,4 +72,8 @@ public class Emergency implements java.io.Serializable {
     public void setDuration(int duration) {
         this.duration = duration;
     }
+
+    public DefaultDrawableNode getNode() { return node; }
+
+    public void setNode(DefaultDrawableNode node) { this.node = node; }
 }
