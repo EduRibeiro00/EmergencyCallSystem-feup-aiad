@@ -3,6 +3,7 @@ package behaviours;
 
 import GUI.GUI;
 import GUI.Edge;
+import agents.ControlTowerAgent;
 import agents.VehicleAgent;
 import sajas.core.Agent;
 import jade.lang.acl.ACLMessage;
@@ -87,6 +88,7 @@ public abstract class VehicleBehaviour extends ContractNetResponder {
                 // vehicle is free and has enough fuel; is eligible for the emergency
                 } else {
                     vehicleAgent.setCurrentEmergencyCoords(emergencyCoords);
+                    GUI.createEdgeName(vehicleAgent.getNode(),ControlTowerAgent.getDFName(),Color.GREEN);
                     consecutiveRejectionsByFuel = 0;
                     acceptCfp(vehicleReply, cfp);
                 }

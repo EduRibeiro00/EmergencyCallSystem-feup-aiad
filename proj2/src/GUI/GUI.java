@@ -58,7 +58,7 @@ public class GUI {
     public static void generateVehicleNode(VehicleAgent vehicleAgent){
         DefaultDrawableNode node =
                 GUI.generateNode(vehicleAgent.getVehicleName(), GUI.parseColor(vehicleAgent),
-                        vehicleAgent.getCoordinates().getX() ,vehicleAgent.getCoordinates().getY(),1);
+                        vehicleAgent.getCoordinates().getX() ,vehicleAgent.getCoordinates().getY(),2);
         vehicleAgent.setNode(node);
     }
 
@@ -77,6 +77,13 @@ public class GUI {
         DefaultDrawableEdge sampleEdge = new DefaultDrawableEdge(node1, node2);
         node1.addOutEdge(sampleEdge);
         node2.addInEdge(sampleEdge);
+    }
+
+    public static void createEdgeName(DefaultDrawableNode myNode,String name,Color color){
+        DefaultDrawableNode to = GUI.getNode(name);
+        Edge edge = new Edge(myNode, to);
+        edge.setColor(color);
+        myNode.addOutEdge(edge);
     }
 
     public static void addNode(DefaultDrawableNode node) { nodes.add(node);}

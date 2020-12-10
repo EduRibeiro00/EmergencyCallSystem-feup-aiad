@@ -36,7 +36,7 @@ public class RepastLauncher extends Repast3Launcher {
 
     // ******************************************************
     // width and height for GUI
-    private static final int WIDTH = 100;
+    private static final int WIDTH = 200;
     private static final int HEIGHT = 100;
 
     // ******************************************************
@@ -47,7 +47,7 @@ public class RepastLauncher extends Repast3Launcher {
 
     // ******************************************************
     // width and height variables for coordinates
-    private int CITY_WIDTH = 100;
+    private int CITY_WIDTH = 200;
     private int CITY_HEIGHT = 100;
 
     public int getCITY_WIDTH() {
@@ -522,7 +522,7 @@ public class RepastLauncher extends Repast3Launcher {
             AgentController controlTower = container.acceptNewAgent(ControlTowerAgent.getDFName(), controlTowerAgent);
             LoggerHelper.get().logInfo("START - Started control tower");
             controlTower.start();
-            GUI.generateNode(ControlTowerAgent.getDFName(),Color.GREEN, WIDTH/2,HEIGHT/2,8);
+            GUI.generateNode(ControlTowerAgent.getDFName(),Color.GREEN, WIDTH/2,HEIGHT/2,5);
 
             // ----------------------------------------------------
             // starting vehicle agents

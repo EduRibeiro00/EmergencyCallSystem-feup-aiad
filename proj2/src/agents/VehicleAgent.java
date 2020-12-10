@@ -159,6 +159,8 @@ public abstract class VehicleAgent extends Agent {
             Point newCoords = new Point(this.myNode.getX(),this.myNode.getY()).getNextPos(currentEmergencyCoords);
             this.myNode.setX(newCoords.getX());
             this.myNode.setY(newCoords.getY());
+        }else{
+            myNode.removeEdgesTo(GUI.getNode(ControlTowerAgent.getDFName()));
         }
     }
 
