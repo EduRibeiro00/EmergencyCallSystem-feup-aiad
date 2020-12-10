@@ -88,6 +88,7 @@ public abstract class VehicleBehaviour extends ContractNetResponder {
                 // vehicle is free and has enough fuel; is eligible for the emergency
                 } else {
                     vehicleAgent.setCurrentEmergencyCoords(emergencyCoords);
+                    GUI.generateNewEmergencyNode(vehicleAgent);
                     GUI.createEdgeName(vehicleAgent.getNode(),ControlTowerAgent.getDFName(),Color.GREEN);
                     consecutiveRejectionsByFuel = 0;
                     acceptCfp(vehicleReply, cfp);
@@ -101,6 +102,7 @@ public abstract class VehicleBehaviour extends ContractNetResponder {
         if(consecutiveRejectionsByFuel >= MAX_CONSECUTIVE_REJECTIONS) {
             LoggerHelper.get().logRejectedConsecutiveMax(this.myAgent.getLocalName(), MAX_CONSECUTIVE_REJECTIONS);
             startRefueling();
+
         }
 
         return vehicleReply;
@@ -201,12 +203,16 @@ public abstract class VehicleBehaviour extends ContractNetResponder {
                 TimeUnit.MILLISECONDS
         );
 
+        vehicleAgent.getNode().setColor(Color.gray);
+
         LoggerHelper.get().logNeedRefuel(this.myAgent.getLocalName(), fuel);
     }
 
     protected void finishOccupied() {
 
         vehicleAgent.getOccupied().set(false);
+
+        //GUI.removeNode(vehicleAgent.getEmergencyNode());
         boolean shouldChangeEmployees = ThreadLocalRandom.current().nextInt(this.vehicleAgent.getEMPLOYEE_CHANGE_PROB()) == 0;
 
         if (shouldChangeEmployees) {
@@ -219,12 +225,16 @@ public abstract class VehicleBehaviour extends ContractNetResponder {
         if(fuel < getSpareFuelLevel()) {
             startRefueling();
         }
+
+
     }
 
     protected void finishRefueling() {
         refueling.set(false);
         fuel = getMaxFuel();
 
+
+        vehicleAgent.getNode().setColor(GUI.parseColor(vehicleAgent));
         LoggerHelper.get().logDoneRefuel(this.myAgent.getLocalName(), fuel);
     }
 

@@ -36,6 +36,8 @@ public abstract class VehicleAgent extends Agent {
     protected AtomicBoolean occupied;
     protected Point currentEmergencyCoords;
     DefaultDrawableNode myNode;
+
+    DefaultDrawableNode emergencyNode;
     private static final MessageTemplate mt = MessageTemplate.MatchPerformative(ACLMessage.CFP);
 
     public VehicleAgent(String name, int MIN_NUM_EMPLOYEES, int MAX_NUM_EMPLOYEES, int REFUEL_DURATION,
@@ -153,6 +155,10 @@ public abstract class VehicleAgent extends Agent {
     public abstract int getSPARE_FUEL_LEVEL();
 
     public abstract double getFUEL_RATE();
+
+    public DefaultDrawableNode getEmergencyNode() {return emergencyNode; }
+
+    public void setEmergencyNode(DefaultDrawableNode emergencyNode) {this.emergencyNode = emergencyNode; }
 
     public void updateVehicleCoordinates(){
         if(!coordinates.equal(getCurrentEmergencyCoords())) {

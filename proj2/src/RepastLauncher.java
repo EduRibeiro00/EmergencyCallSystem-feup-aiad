@@ -595,7 +595,6 @@ public class RepastLauncher extends Repast3Launcher {
         for(VehicleAgent vehicle : vehicles){
             vehicle.updateVehicleCoordinates();
         }
-
     }
 
     /**

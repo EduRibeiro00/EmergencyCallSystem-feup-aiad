@@ -62,6 +62,13 @@ public class GUI {
         vehicleAgent.setNode(node);
     }
 
+    public static void  generateNewEmergencyNode(VehicleAgent vehicleAgent){
+        DefaultDrawableNode emergNode =
+                GUI.generateNode(vehicleAgent.getVehicleName(), Color.orange /*GUI.parseEmergencyColor(Color.white)*/,
+                        vehicleAgent.getCurrentEmergencyCoords().getX() ,vehicleAgent.getCurrentEmergencyCoords().getY(),3);
+        vehicleAgent.setEmergencyNode(emergNode);
+    }
+
     public static void generateEmergencyNode(Emergency emergency){
 
 
@@ -70,6 +77,10 @@ public class GUI {
                         emergency.getCoordinates().getX() ,emergency.getCoordinates().getY(),5);
         emergency.setNode(node);
 
+    }
+
+    public static void removeNode(DefaultDrawableNode node){
+        GUI.getNodes().remove(node);
     }
 
     public static void createEdge(DefaultDrawableNode node1,DefaultDrawableNode node2){

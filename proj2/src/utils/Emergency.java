@@ -1,9 +1,10 @@
 package utils;
 
 import GUI.GUI;
+import sajas.core.Agent;
 import uchicago.src.sim.network.DefaultDrawableNode;
 
-public class Emergency  implements java.io.Serializable {
+public class Emergency implements java.io.Serializable {
     private EmergencyType emergencyType;
     private Point coordinates;
     private int numberVehicles;
