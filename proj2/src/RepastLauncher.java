@@ -1,4 +1,5 @@
 import GUI.GUI;
+import GUI.Results;
 import agents.*;
 import jade.core.Profile;
 import jade.core.ProfileImpl;
@@ -479,14 +480,15 @@ public class RepastLauncher extends Repast3Launcher {
         plot = new OpenSequenceGraph("Service performance", this);
         plot.setAxisTitles("time", "% successful service executions");
 
-        plot.addSequence("Occupied Vehicles", new Sequence() {
+        plot.addSequence("Occupied Vehicles Percentage", new Sequence() {
             public double getSValue() {
                 // iterate through vehicles
-                double v = 0.0;
-                for (VehicleAgent vehicle : vehicles) {
-                    v += vehicle.getOccupied().get() ? 1 : 0;
-                }
-                return v / vehicles.size();
+                return Results.getOccupiedVehicles(vehicles);
+            }
+        });
+        plot.addSequence("Emergencies Success Percentage", new Sequence() {
+            public double getSValue() {
+                return Results.getSuccessEmergenciesPerc();
             }
         });
         //Num emergency

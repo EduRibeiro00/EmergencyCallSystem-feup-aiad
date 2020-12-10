@@ -1,5 +1,6 @@
 package agents;
 
+import GUI.Results;
 import behaviours.ControlTowerBehaviour;
 import sajas.core.Agent;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
@@ -64,6 +65,7 @@ public class ControlTowerAgent extends Agent {
         if (priority >= vehiclePriorities.size()) {
             // if the max number of tries are
             if (numTries >= EMERGENCY_MAX_TRIES) {
+                Results.incrementFailedEmergencies();
                 LoggerHelper.get().logMaxRetriesEmergency(emergency, EMERGENCY_MAX_TRIES);
             }
             else {

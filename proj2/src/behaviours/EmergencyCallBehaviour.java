@@ -1,5 +1,6 @@
 package behaviours;
 
+import GUI.Results;
 import GUI.GUI;
 import agents.ClientAgent;
 import jade.core.AID;
@@ -11,6 +12,7 @@ import utils.Emergency;
 import utils.EmergencyType;
 import utils.Point;
 
+import javax.xml.transform.Result;
 import java.io.IOException;
 import java.util.Random;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
@@ -58,6 +60,7 @@ public class EmergencyCallBehaviour extends TickerBehaviour {
                 getRandomNumberOfVehicles(),
                 getRandomAccidentDuration());
         //GUI.generateEmergencyNode(emergency); //TODO Problem
+        Results.incrementEmergencies();
 
 
 
