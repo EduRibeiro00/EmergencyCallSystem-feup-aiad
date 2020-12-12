@@ -102,7 +102,12 @@ public class GUI {
     }
 
     public static void createEdgeName(DefaultDrawableNode myNode, String name, Color color){
+
         DefaultDrawableNode to = GUI.getNode(name);
+        if(to ==null){
+            System.out.println("Node is null when creating edge");
+            return;
+        }
         Edge edge = new Edge(myNode, to);
         edge.setColor(color);
         myNode.addOutEdge(edge);
@@ -131,5 +136,5 @@ public class GUI {
 
 
     public static List<DefaultDrawableNode> getNodes(){return nodes;}
-    
+
 }

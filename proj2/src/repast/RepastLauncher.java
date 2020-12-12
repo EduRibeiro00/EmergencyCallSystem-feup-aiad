@@ -19,6 +19,7 @@ import uchicago.src.sim.engine.SimInit;
 
 import uchicago.src.sim.gui.DisplaySurface;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -567,6 +568,7 @@ public class RepastLauncher extends Repast3Launcher {
             String deterministicInfo = DETERMINISTIC ? "deterministic" : "random";
             LoggerHelper.get().logInfo("CLIENT - Started " + deterministicInfo + " client " + clientAgent.getClientName());
             client.start();
+            //GUI.generateNode(ControlTowerAgent.getDFName(), Color.GREEN, WIDTH/2,HEIGHT/2,5,false);
 
         } catch (StaleProxyException e) {
             e.printStackTrace();

@@ -5,6 +5,7 @@ import GUI.GUI;
 import GUI.Edge;
 import agents.ControlTowerAgent;
 import agents.VehicleAgent;
+import repast.RepastLauncher;
 import sajas.core.Agent;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
@@ -88,6 +89,7 @@ public abstract class VehicleBehaviour extends ContractNetResponder {
                     vehicleAgent.setCurrentEmergencyCoords(emergencyCoords);
                     consecutiveRejectionsByFuel = 0;
                     acceptCfp(vehicleReply, cfp);
+                    //GUI.createEdgeName(vehicleAgent.getNode(),ControlTowerAgent.getDFName(),Color.GREEN);
                 }
             } catch (UnreadableException e) {
                 e.printStackTrace();
@@ -131,7 +133,7 @@ public abstract class VehicleBehaviour extends ContractNetResponder {
 
             this.vehicleAgent.setEmergencyId(acceptVehicleMsg.getEmergencyId());
             // TODO: isto esta a dar excecao
-            GUI.createEdge(vehicleAgent.getNode(), GUI.getNode(GUI.getEmergencyLabel(acceptVehicleMsg.getEmergencyId())));
+            GUI.createEdgeName(vehicleAgent.getNode(), GUI.getEmergencyLabel(acceptVehicleMsg.getEmergencyId()),Color.green);
 
             double distance = vehicleAgent.getCoordinates().getDistance(acceptVehicleMsg.getCoordinates());
             int duration = (acceptVehicleMsg.getAccidentDuration() + (int) Math.round(distance) * 20);
