@@ -2,6 +2,7 @@ package agents;
 
 import GUI.GUI;
 import behaviours.VehicleBehaviour;
+import repast.RepastLauncher;
 import sajas.core.Agent;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
@@ -169,19 +170,24 @@ public abstract class VehicleAgent extends Agent {
     }
 
     // called when vehicle is accepted for an emergency, to calc its path to the emergency location
-    public void calcVehicleNodeMovement(Point emergencyCoords) {
+    public void calcVehicleNodeMovement(Point emergencyCoords, double tripDuration) {
         currentEmergencyCoords = emergencyCoords;
         double totalDistX = emergencyCoords.getX() - coordinates.getX();
         double totalDistY = emergencyCoords.getY() - coordinates.getY();
 
-        // TODO: este numero nao pode ser fixo, tem de depender na distancia/tempo que
-        // TODO: demora a chegar a emergencia
-        numStepsUntilEmergNode = 5;
-        deltaXToEmergency = totalDistX / 5;
-        deltaYToEmergency = totalDistY / 5;
+        // TODO: confirmar esta solucao no PC do tiago
+        numStepsUntilEmergNode = (int) Math.round(tripDuration / RepastLauncher.getStepDuration());
+        System.out.println("------------");
+        System.out.println("vehicleCoords: " + coordinates);
+        System.out.println("emergCoords: " + emergencyCoords);
+        System.out.println("tripDuration: " + tripDuration);
+        System.out.println("numSteps: " + numStepsUntilEmergNode);
+        System.out.println("------------");
+        deltaXToEmergency = totalDistX / numStepsUntilEmergNode;
+        deltaYToEmergency = totalDistY / numStepsUntilEmergNode;
     }
 
-    // called every repast tick to update vehicle coordinates
+    // called every repast step to update vehicle coordinates
     public void updateVehicleCoordinates() {
         if(numStepsUntilEmergNode > 0) {
             // increment another step towards emergency

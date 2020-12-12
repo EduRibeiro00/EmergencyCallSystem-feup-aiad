@@ -108,9 +108,18 @@ public class RepastLauncher extends Repast3Launcher {
     }
 
     // ******************************************************
-    // batch mode variables
+    // repast related variables
     private static final boolean BATCH_MODE = false;
     private final boolean runInBatchMode;
+    // each step will be run each TICKS_FOR_STEP ticks
+    private static final int TICKS_FOR_STEP = 25;
+    // each tick takes around 30ms. This variable is used to calculate the amount
+    // of time each vehicle node should take to get to its emergency node
+    private static final int STEP_DURATION = 30 * TICKS_FOR_STEP;
+
+    public static int getStepDuration() {
+        return STEP_DURATION;
+    }
 
     // ******************************************************
     // width and height for GUI
@@ -537,14 +546,15 @@ public class RepastLauncher extends Repast3Launcher {
                 return Results.getSuccessEmergenciesPerc();
             }
         });
+
         //Num emergency
         //Numero de emergencis nao respondidas
         //Tempo medio de espera
 
         plot.display();
         getSchedule().scheduleActionAtInterval(1, dsurf, "updateDisplay", Schedule.LAST);
-        getSchedule().scheduleActionAtInterval(100, plot, "step", Schedule.LAST);
-        getSchedule().scheduleActionAtInterval(100, this, "step", Schedule.INTERVAL_UPDATER);
+        getSchedule().scheduleActionAtInterval(TICKS_FOR_STEP, plot, "step", Schedule.LAST);
+        getSchedule().scheduleActionAtInterval(TICKS_FOR_STEP, this, "step", Schedule.INTERVAL_UPDATER);
     }
 
     @Override
