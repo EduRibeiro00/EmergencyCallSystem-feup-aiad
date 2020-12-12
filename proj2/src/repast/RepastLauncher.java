@@ -115,7 +115,7 @@ public class RepastLauncher extends Repast3Launcher {
     private static final int TICKS_FOR_STEP = 25;
     // each tick takes around 30ms. This variable is used to calculate the amount
     // of time each vehicle node should take to get to its emergency node
-    private static final int STEP_DURATION = 30 * TICKS_FOR_STEP;
+    private static final int STEP_DURATION = 8 * TICKS_FOR_STEP;
 
     public static int getStepDuration() {
         return STEP_DURATION;

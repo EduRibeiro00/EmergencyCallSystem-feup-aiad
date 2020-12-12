@@ -175,7 +175,6 @@ public abstract class VehicleAgent extends Agent {
         double totalDistX = emergencyCoords.getX() - coordinates.getX();
         double totalDistY = emergencyCoords.getY() - coordinates.getY();
 
-        // TODO: confirmar esta solucao no PC do tiago
         numStepsUntilEmergNode = (int) Math.round(tripDuration / RepastLauncher.getStepDuration());
         System.out.println("------------");
         System.out.println("vehicleCoords: " + coordinates);
