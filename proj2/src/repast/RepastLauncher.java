@@ -550,7 +550,7 @@ public class RepastLauncher extends Repast3Launcher {
 
         plot.addSequence("Emergencies Success Percentage", new Sequence() {
             public double getSValue() {
-                return Results.getSuccessEmergenciesPerc()/Results.getNumberEmergencies();
+                return Results.getNumberEmergFirstPriority()/Results.getNumberEmergencies();
             }
         });
 
