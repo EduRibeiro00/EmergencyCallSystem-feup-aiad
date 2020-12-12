@@ -207,7 +207,7 @@ public abstract class VehicleBehaviour extends ContractNetResponder {
         vehicleAgent.getOccupied().set(false);
 
         GUI.removeEdge(vehicleAgent.getNode(), GUI.getNode(GUI.getEmergencyLabel(this.vehicleAgent.getEmergencyId())));
-        GUI.removeNode(GUI.getEmergencyLabel(this.vehicleAgent.getEmergencyId()));
+        //GUI.removeNode(GUI.getEmergencyLabel(this.vehicleAgent.getEmergencyId()));
         this.vehicleAgent.setEmergencyId(-1);
 
         boolean shouldChangeEmployees = ThreadLocalRandom.current().nextInt(this.vehicleAgent.getEMPLOYEE_CHANGE_PROB()) == 0;

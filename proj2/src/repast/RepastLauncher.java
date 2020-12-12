@@ -1,6 +1,7 @@
 package repast;
 
 import GUI.GUI;
+import utils.MyDisplaySurface;
 import GUI.Results;
 import agents.*;
 import jade.core.Profile;
@@ -17,7 +18,7 @@ import uchicago.src.sim.analysis.Sequence;
 import uchicago.src.sim.engine.Schedule;
 import uchicago.src.sim.engine.SimInit;
 
-import uchicago.src.sim.gui.DisplaySurface;
+
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -47,7 +48,7 @@ public class RepastLauncher extends Repast3Launcher {
 
     // ******************************************************
     // Build and schedule display
-    private static DisplaySurface dsurf;
+    private static MyDisplaySurface dsurf;
     private OpenSequenceGraph plot;
     private final List<VehicleAgent> vehicles = new ArrayList<>();
     private static Network2DDisplay display;
@@ -62,7 +63,7 @@ public class RepastLauncher extends Repast3Launcher {
     }
 
 
-    public static DisplaySurface getDsurf() {
+    public static MyDisplaySurface getDsurf() {
         return dsurf;
     }
 
@@ -500,7 +501,7 @@ public class RepastLauncher extends Repast3Launcher {
     private void buildAndScheduleDisplay() {
         // display surface
         if (dsurf != null) dsurf.dispose();
-        dsurf = new DisplaySurface(this, "Service Consumer/Provider Display");
+        dsurf = new MyDisplaySurface(this, "Service Consumer/Provider Display");
         registerDisplaySurface("Service Consumer/Provider Display", dsurf);
         updateNetwork();
         dsurf.display();
@@ -629,8 +630,8 @@ public class RepastLauncher extends Repast3Launcher {
 
     public void updateNetwork() {
 
-        /*if (display != null)
-            dsurf.removeProbeableDisplayable(display);*/
+        if (display != null)
+            dsurf.removeProbeableDisplayable(display);
         display = new Network2DDisplay(GUI.getNodes(), WIDTH, HEIGHT);
         dsurf.addDisplayableProbeable(display, "Network Display" + display.hashCode());
         dsurf.addZoomable(display);
