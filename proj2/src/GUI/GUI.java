@@ -78,11 +78,8 @@ public class GUI {
     }
 
     public static void generateEmergencyNode(Emergency emergency) {
-        double x = emergency.getCoordinates().getX();
-        double y = emergency.getCoordinates().getY();
-
-        GUI.generateNode(getEmergencyLabel(emergency.getId()),
-                GUI.parseEmergencyColor(emergency), x, y,3,true);
+        GUI.generateNode(getEmergencyLabel(emergency.getId()), GUI.parseEmergencyColor(emergency),
+                emergency.getCoordinates().getX(), emergency.getCoordinates().getY(),3,true);
     }
 
     public static String getEmergencyLabel(int emergencyId) {

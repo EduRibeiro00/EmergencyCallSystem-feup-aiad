@@ -59,22 +59,17 @@ public class Point implements java.io.Serializable {
         return roundDouble(distance);
     }
 
-
-
-
-
     public Point getNextPos(Point other) {
-
-        double stepX = (other.getX()-getX());
-        double stepY = (other.getY()-getY());
-        stepX =stepX/ (stepX == 0 ? 1: Math.abs(stepX));
-        stepY =stepY/ (stepY == 0 ? 1: Math.abs(stepY));
-        return new Point(getX()+ stepX,getY()+stepY);
+        double stepX = (other.getX() - getX());
+        double stepY = (other.getY() - getY());
+        stepX = stepX / (stepX == 0 ? 1 : Math.abs(stepX));
+        stepY = stepY / (stepY == 0 ? 1 : Math.abs(stepY));
+        return new Point(getX() + stepX,getY() +stepY);
     }
 
-    public boolean equal(Point coord){ return x==coord.getX() && y ==coord.getY();}
-
-
+    public boolean equal(Point coord){
+        return x == coord.getX() && y == coord.getY();
+    }
 
     private static double roundDouble(double value) {
         return new BigDecimal(value).setScale(PRECISION, RoundingMode.HALF_EVEN).doubleValue();

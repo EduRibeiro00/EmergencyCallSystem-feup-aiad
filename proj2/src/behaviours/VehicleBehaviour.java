@@ -83,7 +83,6 @@ public abstract class VehicleBehaviour extends ContractNetResponder {
 
                 // vehicle is free and has enough fuel; is eligible for the emergency
                 } else {
-                    vehicleAgent.setCurrentEmergencyCoords(emergencyCoords);
                     consecutiveRejectionsByFuel = 0;
                     acceptCfp(vehicleReply, cfp);
 
@@ -134,7 +133,8 @@ public abstract class VehicleBehaviour extends ContractNetResponder {
             double distance = vehicleAgent.getCoordinates().getDistance(acceptVehicleMsg.getCoordinates());
             int duration = (acceptVehicleMsg.getAccidentDuration() + (int) Math.round(distance) * 20);
 
-            vehicleAgent.setCoordinates(acceptVehicleMsg.getCoordinates());
+            vehicleAgent.calcVehicleNodeMovement(acceptVehicleMsg.getCoordinates());
+
             fuel = (fuel -= calcFuelForTrip(distance)) < 0 ? 0 : fuel;
             startEmergency(duration);
         }
@@ -207,6 +207,8 @@ public abstract class VehicleBehaviour extends ContractNetResponder {
 
     protected void finishOccupied() {
         vehicleAgent.getOccupied().set(false);
+        vehicleAgent.setCoordsToEmergency();
+
         Emergency emergency = RepastLauncher.getEmergencyMap().get(this.vehicleAgent.getEmergencyId());
         emergency.incrementLeftVehiclesEmerg(this.vehicleAgent);
         this.vehicleAgent.setEmergencyId(-1);

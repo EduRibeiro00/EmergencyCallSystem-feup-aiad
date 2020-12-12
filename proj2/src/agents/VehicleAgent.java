@@ -28,13 +28,16 @@ public abstract class VehicleAgent extends Agent {
 
     protected Point coordinates;
     protected int numberEmployees;
-    protected  VehicleBehaviour vehicleBehaviour;
+    protected VehicleBehaviour vehicleBehaviour;
     private final String vehicleName;
     protected AtomicBoolean occupied;
+
     protected Point currentEmergencyCoords;
+    protected int numStepsUntilEmergNode;
+    protected double deltaXToEmergency;
+    protected double deltaYToEmergency;
 
     protected int emergencyId = -1;
-
     private DefaultDrawableNode myNode;
 
     private static final MessageTemplate mt = MessageTemplate.MatchPerformative(ACLMessage.CFP);
@@ -45,7 +48,6 @@ public abstract class VehicleAgent extends Agent {
         coordinates = Point.genRandomPoint();
         numberEmployees = getRandomNumberEmployees();
         this.vehicleName = name;
-        currentEmergencyCoords = new Point(coordinates.getX(),coordinates.getY());
 
         this.MIN_NUM_EMPLOYEES = MIN_NUM_EMPLOYEES;
         this.MAX_NUM_EMPLOYEES = MAX_NUM_EMPLOYEES;
@@ -55,6 +57,8 @@ public abstract class VehicleAgent extends Agent {
         this.DISTANCE_MULTIPLIER = DISTANCE_MULTIPLIER;
         this.FUEL_MULTIPLIER = FUEL_MULTIPLIER;
         this.EMPLOYEE_FUEL_MULTIPLIER = EMPLOYEE_FUEL_MULTIPLIER;
+
+        resetCurrentEmergency();
     }
 
     public static MessageTemplate getMt() {
@@ -76,7 +80,6 @@ public abstract class VehicleAgent extends Agent {
         return ThreadLocalRandom.current().nextInt(MIN_NUM_EMPLOYEES, MAX_NUM_EMPLOYEES + 1);
     }
 
-
     public String getVehicleName() {
         return vehicleName;
     }
@@ -86,13 +89,7 @@ public abstract class VehicleAgent extends Agent {
     public  VehicleBehaviour getVehicleBehaviour(){ return this.vehicleBehaviour;}
     public abstract VehicleBehaviour createVehicleBehaviour();
 
-    public Point getCoordinates() {
-        return coordinates;
-    }
-
-    public void setCoordinates(Point coordinates) {
-        this.coordinates = coordinates;
-    }
+    public Point getCoordinates() { return coordinates; }
 
     public int getNumberEmployees() {
         return numberEmployees;
@@ -102,17 +99,13 @@ public abstract class VehicleAgent extends Agent {
         this.numberEmployees = numberEmployees;
     }
 
-    public void setNode(DefaultDrawableNode node){this.myNode = node;} // TODO Pode dar erro caso behaviour ainda nao tenha sido criado
+    public void setNode(DefaultDrawableNode node){this.myNode = node;}
 
     public DefaultDrawableNode getNode(){return myNode;}
 
     public AtomicBoolean getOccupied() {return occupied;}
 
     public void setOccupied(AtomicBoolean occupied) {this.occupied = occupied;}
-
-    public Point getCurrentEmergencyCoords() { return currentEmergencyCoords; }
-
-    public void setCurrentEmergencyCoords(Point currentEmergencyCoords) { this.currentEmergencyCoords = currentEmergencyCoords; }
 
     public int getEmergencyId() {
         return emergencyId;
@@ -160,13 +153,51 @@ public abstract class VehicleAgent extends Agent {
 
     public abstract double getFUEL_RATE();
 
-    public void updateVehicleCoordinates(){
-        if(!coordinates.equal(getCurrentEmergencyCoords())) {
-            Point newCoords = new Point(this.myNode.getX(),this.myNode.getY()).getNextPos(currentEmergencyCoords);
-            this.myNode.setX(newCoords.getX());
-            this.myNode.setY(newCoords.getY());
-        }else{
-            myNode.removeEdgesTo(GUI.getNode(ControlTowerAgent.getDFName()));
+    public void resetCurrentEmergency() {
+        this.currentEmergencyCoords = null;
+        this.numStepsUntilEmergNode = 0;
+        this.deltaXToEmergency = 0.0;
+        this.deltaYToEmergency = 0.0;
+    }
+
+    // sets both the vehicle coordinates and the node coordinates, so they are always in sync
+    public void setVehicleCoordinates(double x, double y) {
+        this.myNode.setX(x);
+        this.coordinates.setX(x);
+        this.myNode.setY(y);
+        this.coordinates.setY(y);
+    }
+
+    // called when vehicle is accepted for an emergency, to calc its path to the emergency location
+    public void calcVehicleNodeMovement(Point emergencyCoords) {
+        currentEmergencyCoords = emergencyCoords;
+        double totalDistX = emergencyCoords.getX() - coordinates.getX();
+        double totalDistY = emergencyCoords.getY() - coordinates.getY();
+
+        // TODO: este numero nao pode ser fixo, tem de depender na distancia/tempo que
+        // TODO: demora a chegar a emergencia
+        numStepsUntilEmergNode = 5;
+        deltaXToEmergency = totalDistX / 5;
+        deltaYToEmergency = totalDistY / 5;
+    }
+
+    // called every repast tick to update vehicle coordinates
+    public void updateVehicleCoordinates() {
+        if(numStepsUntilEmergNode > 0) {
+            // increment another step towards emergency
+            double newX = this.myNode.getX() + deltaXToEmergency;
+            double newY = this.myNode.getY() + deltaYToEmergency;
+            this.setVehicleCoordinates(newX, newY);
+            numStepsUntilEmergNode--;
         }
+    }
+
+    // called when vehicle arrives at emergency
+    public void setCoordsToEmergency() {
+        this.setVehicleCoordinates(
+            this.currentEmergencyCoords.getX(),
+            this.currentEmergencyCoords.getY()
+        );
+        this.resetCurrentEmergency();
     }
 }

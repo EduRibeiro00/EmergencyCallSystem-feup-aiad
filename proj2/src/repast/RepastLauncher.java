@@ -585,7 +585,6 @@ public class RepastLauncher extends Repast3Launcher {
             String deterministicInfo = DETERMINISTIC ? "deterministic" : "random";
             LoggerHelper.get().logInfo("CLIENT - Started " + deterministicInfo + " client " + clientAgent.getClientName());
             client.start();
-            //GUI.generateNode(ControlTowerAgent.getDFName(), Color.GREEN, WIDTH/2,HEIGHT/2,5,false);
 
         } catch (StaleProxyException e) {
             e.printStackTrace();
@@ -626,10 +625,9 @@ public class RepastLauncher extends Repast3Launcher {
         for (VehicleAgent vehicleAgent : vehicles){
             AgentController vehicle = null;
             try {
-
                 vehicle = container.acceptNewAgent(vehicleAgent.getVehicleName(), vehicleAgent);
-                GUI.generateVehicleNode(vehicleAgent);
                 vehicle.start();
+                GUI.generateVehicleNode(vehicleAgent);
             } catch (StaleProxyException e) {
                 e.printStackTrace();
             }
@@ -639,7 +637,7 @@ public class RepastLauncher extends Repast3Launcher {
 
     public void step()
     {
-        for(VehicleAgent vehicle : vehicles){
+        for(VehicleAgent vehicle : vehicles) {
             vehicle.updateVehicleCoordinates();
         }
     }
@@ -660,11 +658,9 @@ public class RepastLauncher extends Repast3Launcher {
      * @param args
      */
     public static void main(String[] args) {
-        boolean runMode = BATCH_MODE;
-
         SimInit init = new SimInit();
         init.setNumRuns(1);   // works only in batch mode
-        init.loadModel(RepastLauncher.get(), null, runMode);
+        init.loadModel(RepastLauncher.get(), null, BATCH_MODE);
     }
 
 }
