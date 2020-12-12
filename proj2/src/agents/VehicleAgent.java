@@ -26,18 +26,17 @@ public abstract class VehicleAgent extends Agent {
     private final double FUEL_MULTIPLIER;
     private final double EMPLOYEE_FUEL_MULTIPLIER;
 
-    //protected static final int MIN_NUM_EMPLOYEES= 1;
-    //protected static final int MAX_NUM_EMPLOYEES= 6;
-
     protected Point coordinates;
     protected int numberEmployees;
     protected  VehicleBehaviour vehicleBehaviour;
     private final String vehicleName;
     protected AtomicBoolean occupied;
     protected Point currentEmergencyCoords;
-    DefaultDrawableNode myNode;
 
-    DefaultDrawableNode emergencyNode;
+    protected int emergencyId = -1;
+
+    private DefaultDrawableNode myNode;
+
     private static final MessageTemplate mt = MessageTemplate.MatchPerformative(ACLMessage.CFP);
 
     public VehicleAgent(String name, int MIN_NUM_EMPLOYEES, int MAX_NUM_EMPLOYEES, int REFUEL_DURATION,
@@ -66,10 +65,7 @@ public abstract class VehicleAgent extends Agent {
     protected void setup() {
         DFUtils.registerInDF(this, getType().getDFName());
         addBehaviour(createVehicleBehaviour());
-
     }
-
-
 
     @Override
     protected void takeDown() {
@@ -106,7 +102,8 @@ public abstract class VehicleAgent extends Agent {
         this.numberEmployees = numberEmployees;
     }
 
-    public void setNode(DefaultDrawableNode node){this.myNode = node;} //TODO Pode dar erro caso behaviour ainda nao tenha sido criada
+    public void setNode(DefaultDrawableNode node){this.myNode = node;} // TODO Pode dar erro caso behaviour ainda nao tenha sido criado
+
     public DefaultDrawableNode getNode(){return myNode;}
 
     public AtomicBoolean getOccupied() {return occupied;}
@@ -117,6 +114,13 @@ public abstract class VehicleAgent extends Agent {
 
     public void setCurrentEmergencyCoords(Point currentEmergencyCoords) { this.currentEmergencyCoords = currentEmergencyCoords; }
 
+    public int getEmergencyId() {
+        return emergencyId;
+    }
+
+    public void setEmergencyId(int emergencyId) {
+        this.emergencyId = emergencyId;
+    }
 
     public int getMIN_NUM_EMPLOYEES() {
         return MIN_NUM_EMPLOYEES;
@@ -156,10 +160,6 @@ public abstract class VehicleAgent extends Agent {
 
     public abstract double getFUEL_RATE();
 
-    public DefaultDrawableNode getEmergencyNode() {return emergencyNode; }
-
-    public void setEmergencyNode(DefaultDrawableNode emergencyNode) {this.emergencyNode = emergencyNode; }
-
     public void updateVehicleCoordinates(){
         if(!coordinates.equal(getCurrentEmergencyCoords())) {
             Point newCoords = new Point(this.myNode.getX(),this.myNode.getY()).getNextPos(currentEmergencyCoords);
@@ -168,12 +168,5 @@ public abstract class VehicleAgent extends Agent {
         }else{
             myNode.removeEdgesTo(GUI.getNode(ControlTowerAgent.getDFName()));
         }
-    }
-
-    public void updateCoordTest(){
-        this.myNode.setX(myNode.getX()+1);
-        this.myNode.setY(myNode.getY()+1);
-        setCoordinates(new Point(getCoordinates().getX()+1,getCoordinates().getY()+1));
-
     }
 }

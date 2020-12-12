@@ -524,7 +524,6 @@ public class RepastLauncher extends Repast3Launcher {
             AgentController controlTower = container.acceptNewAgent(ControlTowerAgent.getDFName(), controlTowerAgent);
             LoggerHelper.get().logInfo("START - Started control tower");
             controlTower.start();
-            GUI.generateNode(ControlTowerAgent.getDFName(),Color.GREEN, WIDTH/2,HEIGHT/2,5);
 
             // ----------------------------------------------------
             // starting vehicle agents

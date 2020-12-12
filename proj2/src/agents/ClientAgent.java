@@ -5,13 +5,8 @@ import behaviours.DeterministicCallBehaviour;
 import behaviours.EmergencyCallBehaviour;
 import jade.core.AID;
 import sajas.core.Agent;
-import jade.domain.FIPAAgentManagement.DFAgentDescription;
-import logs.LoggerHelper;
-import utils.DFUtils;
 
 public class ClientAgent extends Agent {
-    private static final int MAX_NUMBER_TRIES = 15;
-
     private final boolean DETERMINISTIC;
     private final int TIME_BETWEEN_CALLS_MS;
     private final int MIN_VEHICLES_EMERGENCY;

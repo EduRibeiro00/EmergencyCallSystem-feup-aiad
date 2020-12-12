@@ -34,14 +34,5 @@ public class ClientConnectBehaviour extends TickerBehaviour {
             this.clientAgent.addCallBehaviour(controlTowerID);
             break;
         }
-
-        /*
-        if(numberOfTries >= MAX_NUMBER_TRIES){
-            LoggerHelper.get().logError(
-                    "[DF ERROR] - Client could not fetch control tower from the DF"
-            );
-            System.exit(-1);
-        }
-         */
     }
 }

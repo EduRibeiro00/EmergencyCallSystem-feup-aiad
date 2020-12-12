@@ -1,6 +1,7 @@
 package agents;
 
 import GUI.Results;
+import GUI.GUI;
 import behaviours.ControlTowerBehaviour;
 import sajas.core.Agent;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
@@ -40,6 +41,7 @@ public class ControlTowerAgent extends Agent {
     }
 
     public void handleEmergency(Emergency emergency) {
+        GUI.generateEmergencyNode(emergency);
         LoggerHelper.get().logReceivedEmergency(emergency);
         handleEmergency(emergency, emergency.getNumberVehicles() ,0, 1);
     }
@@ -66,6 +68,7 @@ public class ControlTowerAgent extends Agent {
             // if the max number of tries are
             if (numTries >= EMERGENCY_MAX_TRIES) {
                 Results.incrementFailedEmergencies();
+                GUI.removeNode(GUI.getEmergencyLabel(emergency.getId()));
                 LoggerHelper.get().logMaxRetriesEmergency(emergency, EMERGENCY_MAX_TRIES);
             }
             else {

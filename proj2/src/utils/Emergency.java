@@ -1,28 +1,22 @@
 package utils;
 
-import GUI.GUI;
-import sajas.core.Agent;
 import uchicago.src.sim.network.DefaultDrawableNode;
 
 public class Emergency implements java.io.Serializable {
+    private static int CURRENT_ID = 0;
+
+    private int id;
     private EmergencyType emergencyType;
     private Point coordinates;
     private int numberVehicles;
     private int duration; // in ms
-    private static int  currentID = 0;
-    private DefaultDrawableNode node;
-
-
-
-    private int id = 0;
 
     public Emergency(EmergencyType emergencyType, Point coordinates, int numberVehicles, int duration) {
         this.emergencyType = emergencyType;
         this.coordinates = coordinates;
         this.numberVehicles = numberVehicles;
         this.duration = duration;
-        this.id = currentID;
-
+        this.id = CURRENT_ID;
     }
 
     public EmergencyType getEmergencyType() {
@@ -53,7 +47,9 @@ public class Emergency implements java.io.Serializable {
 
     public void setId(int id) { this.id = id;}
 
-    public static void incrementID(){currentID++;}
+    public static void incrementID(){
+        CURRENT_ID++;
+    }
 
     @Override
     public String toString() {
@@ -73,8 +69,4 @@ public class Emergency implements java.io.Serializable {
     public void setDuration(int duration) {
         this.duration = duration;
     }
-
-    public DefaultDrawableNode getNode() { return node; }
-
-    public void setNode(DefaultDrawableNode node) { this.node = node; }
 }

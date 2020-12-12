@@ -28,8 +28,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public abstract class VehicleBehaviour extends ContractNetResponder {
-
-
     protected static final int MAX_CONSECUTIVE_REJECTIONS = 3;
 
     private final VehicleAgent vehicleAgent;
@@ -88,8 +86,6 @@ public abstract class VehicleBehaviour extends ContractNetResponder {
                 // vehicle is free and has enough fuel; is eligible for the emergency
                 } else {
                     vehicleAgent.setCurrentEmergencyCoords(emergencyCoords);
-                    GUI.generateNewEmergencyNode(vehicleAgent);
-                    GUI.createEdgeName(vehicleAgent.getNode(),ControlTowerAgent.getDFName(),Color.GREEN);
                     consecutiveRejectionsByFuel = 0;
                     acceptCfp(vehicleReply, cfp);
                 }
@@ -133,13 +129,16 @@ public abstract class VehicleBehaviour extends ContractNetResponder {
             AcceptVehicle acceptVehicleMsg = (AcceptVehicle) content;
             LoggerHelper.get().logAcceptProposal(this.myAgent.getLocalName(), vehicleAgent.getCoordinates());
 
+            this.vehicleAgent.setEmergencyId(acceptVehicleMsg.getEmergencyId());
+            // TODO: isto esta a dar excecao
+            // GUI.createEdge(vehicleAgent.getNode(), GUI.getNode(GUI.getEmergencyLabel(acceptVehicleMsg.getEmergencyId())));
+
             double distance = vehicleAgent.getCoordinates().getDistance(acceptVehicleMsg.getCoordinates());
             int duration = (acceptVehicleMsg.getAccidentDuration() + (int) Math.round(distance) * 20);
 
-            vehicleAgent.setCoordinates( acceptVehicleMsg.getCoordinates());
+            vehicleAgent.setCoordinates(acceptVehicleMsg.getCoordinates());
             fuel = (fuel -= calcFuelForTrip(distance)) < 0 ? 0 : fuel;
             startEmergency(duration);
-
         }
 
         ACLMessage informReply = accept.createReply();
@@ -147,10 +146,6 @@ public abstract class VehicleBehaviour extends ContractNetResponder {
 
         return informReply;
     }
-
-
-
-
 
     protected void acceptCfp(ACLMessage vehicleReply, ACLMessage cfp){
         vehicleReply.setPerformative(ACLMessage.PROPOSE);
@@ -190,8 +185,6 @@ public abstract class VehicleBehaviour extends ContractNetResponder {
                 TimeUnit.MILLISECONDS
         );
 
-        //Sample edge
-
         LoggerHelper.get().logOccupied(this.myAgent.getLocalName(), ((double) duration)/1000);
     }
 
@@ -209,10 +202,12 @@ public abstract class VehicleBehaviour extends ContractNetResponder {
     }
 
     protected void finishOccupied() {
-
         vehicleAgent.getOccupied().set(false);
 
-        //GUI.removeNode(vehicleAgent.getEmergencyNode());
+        GUI.removeEdge(vehicleAgent.getNode(), GUI.getNode(GUI.getEmergencyLabel(this.vehicleAgent.getEmergencyId())));
+        GUI.removeNode(GUI.getEmergencyLabel(this.vehicleAgent.getEmergencyId()));
+        this.vehicleAgent.setEmergencyId(-1);
+
         boolean shouldChangeEmployees = ThreadLocalRandom.current().nextInt(this.vehicleAgent.getEMPLOYEE_CHANGE_PROB()) == 0;
 
         if (shouldChangeEmployees) {
@@ -225,14 +220,11 @@ public abstract class VehicleBehaviour extends ContractNetResponder {
         if(fuel < getSpareFuelLevel()) {
             startRefueling();
         }
-
-
     }
 
     protected void finishRefueling() {
         refueling.set(false);
         fuel = getMaxFuel();
-
 
         vehicleAgent.getNode().setColor(GUI.parseColor(vehicleAgent));
         LoggerHelper.get().logDoneRefuel(this.myAgent.getLocalName(), fuel);
