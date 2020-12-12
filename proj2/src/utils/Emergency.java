@@ -9,6 +9,7 @@ public class Emergency implements java.io.Serializable {
     private EmergencyType emergencyType;
     private Point coordinates;
     private int numberVehicles;
+    private int numberVehiclesLeftEmergency;
     private int duration; // in ms
 
     public Emergency(EmergencyType emergencyType, Point coordinates, int numberVehicles, int duration) {

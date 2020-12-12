@@ -131,7 +131,7 @@ public abstract class VehicleBehaviour extends ContractNetResponder {
 
             this.vehicleAgent.setEmergencyId(acceptVehicleMsg.getEmergencyId());
             // TODO: isto esta a dar excecao
-            // GUI.createEdge(vehicleAgent.getNode(), GUI.getNode(GUI.getEmergencyLabel(acceptVehicleMsg.getEmergencyId())));
+            GUI.createEdge(vehicleAgent.getNode(), GUI.getNode(GUI.getEmergencyLabel(acceptVehicleMsg.getEmergencyId())));
 
             double distance = vehicleAgent.getCoordinates().getDistance(acceptVehicleMsg.getCoordinates());
             int duration = (acceptVehicleMsg.getAccidentDuration() + (int) Math.round(distance) * 20);
