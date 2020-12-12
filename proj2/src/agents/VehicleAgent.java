@@ -1,6 +1,6 @@
 package agents;
 
-import GUI.GUI;
+import GUI.Results;
 import behaviours.VehicleBehaviour;
 import repast.RepastLauncher;
 import sajas.core.Agent;
@@ -171,6 +171,7 @@ public abstract class VehicleAgent extends Agent {
 
     // called when vehicle is accepted for an emergency, to calc its path to the emergency location
     public void calcVehicleNodeMovement(Point emergencyCoords, double tripDuration) {
+        Results.addTripTime(tripDuration);
         currentEmergencyCoords = emergencyCoords;
         double totalDistX = emergencyCoords.getX() - coordinates.getX();
         double totalDistY = emergencyCoords.getY() - coordinates.getY();

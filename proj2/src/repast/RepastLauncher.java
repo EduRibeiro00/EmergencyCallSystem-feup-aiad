@@ -578,6 +578,12 @@ public class RepastLauncher extends Repast3Launcher {
             }
         });
 
+        plot2.addSequence("Average Trip Duration", new Sequence() {
+            public double getSValue() {
+                return Results.getAvgTripDuration();
+            }
+        });
+
 
 
         //Tempo medio de espera de emergencia;

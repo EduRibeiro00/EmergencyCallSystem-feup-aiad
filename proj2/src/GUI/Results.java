@@ -10,6 +10,8 @@ public class Results {
     private static double numberEmergencies = 0;
     private static  double numberEmergFirstPriority = 0;
     private static double numberTimesRefuelled = 0;
+    private static double totalTripDuration = 0;
+    private static double numberTripDurations = 0;
 
     public static double getNumberFailedEmergencies() {
         return numberFailedEmergencies;
@@ -61,4 +63,17 @@ public class Results {
     public static void incrementTimesRefuelled() {
         Results.numberTimesRefuelled++;
     }
+
+    public static double getAvgTripDuration() {
+        return (totalTripDuration/numberTripDurations)/1000;
+    }
+    public static void addTripTime(double tripTime) {
+        Results.numberTripDurations++;
+        totalTripDuration =  (totalTripDuration + tripTime);
+
+    }
+
+
+
+
 }
