@@ -91,6 +91,7 @@ public class GUI {
 
     public static void removeNode(String label){
         nodes.removeIf(node -> node.getNodeLabel().equals(label));
+        RepastLauncher.get().updateNetwork();
     }
 
     public static void createEdge(DefaultDrawableNode node1, DefaultDrawableNode node2){
@@ -108,7 +109,7 @@ public class GUI {
     public static void createEdgeName(DefaultDrawableNode myNode, String name, Color color){
 
         DefaultDrawableNode to = GUI.getNode(name);
-        if(to ==null){
+        if(to == null){
             System.out.println("Node is null when creating edge");
             return;
         }
