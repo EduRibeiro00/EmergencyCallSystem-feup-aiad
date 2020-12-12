@@ -10,12 +10,12 @@ import utils.Emergency;
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class GUI {
-    // TODO: mudar para hash map se der
-    private static List<DefaultDrawableNode> nodes = new ArrayList<>();
-    private static int displayId = 0;
+    private static Map<String, DefaultDrawableNode> nodes = new HashMap<>();
     private static DefaultDrawableNode controlTowerNode;
 
     public static int CONTROL_TOWER_EDGE_DURATION = 500; // in ms
@@ -54,19 +54,11 @@ public class GUI {
             GUI.addNodeUpdate(node);
         else GUI.addNode(node);
 
-
-
         return node;
     }
 
     public static DefaultDrawableNode getNode(String label) {
-        for (DefaultDrawableNode node : nodes) {
-            if (node.getNodeLabel().equals(label)) {
-                return node;
-            }
-         }
-
-        return null;
+        return nodes.get(label);
     }
 
     public static void generateVehicleNode(VehicleAgent vehicleAgent) {
@@ -79,7 +71,7 @@ public class GUI {
 
     public static void generateEmergencyNode(Emergency emergency) {
         GUI.generateNode(getEmergencyLabel(emergency.getId()), GUI.parseEmergencyColor(emergency),
-                emergency.getCoordinates().getX(), emergency.getCoordinates().getY(),3,true);
+                emergency.getCoordinates().getX(), emergency.getCoordinates().getY(),2,true);
     }
 
     public static String getEmergencyLabel(int emergencyId) {
@@ -87,7 +79,7 @@ public class GUI {
     }
 
     public static void removeNode(String label){
-        nodes.removeIf(node -> node.getNodeLabel().equals(label));
+        nodes.remove(label);
         RepastLauncher.get().updateNetwork();
     }
 
@@ -116,28 +108,15 @@ public class GUI {
     }
 
     public static void addNode(DefaultDrawableNode node) {
-        nodes.add(node);
+        nodes.put(node.getNodeLabel(), node);
     }
 
     public static void addNodeUpdate(DefaultDrawableNode node) {
-        nodes.add(node);
+        addNode(node);
         RepastLauncher.get().updateNetwork();
     }
 
-    public static void updateDisplay() {
-        Network2DDisplay display = new Network2DDisplay(GUI.getNodes(), RepastLauncher.getWIDTH(), RepastLauncher.getHEIGHT());
-        RepastLauncher.getDsurf().addDisplayableProbeable(display, "Network Display" + displayId++);
-        RepastLauncher.setDisplay(display);
-        RepastLauncher.getDsurf().addZoomable(display);
-        RepastLauncher.getDsurf().display();
-    }
-
-
-
-
-
-
-    public static List<DefaultDrawableNode> getNodes(){return nodes;}
+    public static List<DefaultDrawableNode> getNodes(){return new ArrayList<>(nodes.values());}
 
     public static DefaultDrawableNode getControlTowerNode() {
         return controlTowerNode;

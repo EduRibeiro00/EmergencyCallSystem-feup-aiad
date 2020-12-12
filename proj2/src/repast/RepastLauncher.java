@@ -643,7 +643,6 @@ public class RepastLauncher extends Repast3Launcher {
     }
 
     public void updateNetwork() {
-
         if (display != null)
             dsurf.removeProbeableDisplayable(display);
         display = new Network2DDisplay(GUI.getNodes(), WIDTH, HEIGHT);
