@@ -1,3 +1,5 @@
+package repast;
+
 import GUI.GUI;
 import GUI.Results;
 import agents.*;
@@ -12,19 +14,13 @@ import jade.wrapper.StaleProxyException;
 import sajas.sim.repast3.Repast3Launcher;
 import uchicago.src.sim.analysis.OpenSequenceGraph;
 import uchicago.src.sim.analysis.Sequence;
-import uchicago.src.sim.engine.BasicAction;
 import uchicago.src.sim.engine.Schedule;
 import uchicago.src.sim.engine.SimInit;
 
 import uchicago.src.sim.gui.DisplaySurface;
-import uchicago.src.sim.gui.Network2DDisplay;
-import uchicago.src.sim.network.DefaultDrawableNode;
-import uchicago.src.sim.engine.Stepable;
 
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 import utils.Point;
 
@@ -37,14 +33,26 @@ public class RepastLauncher extends Repast3Launcher {
 
     // ******************************************************
     // width and height for GUI
-    private static final int WIDTH = 200;
-    private static final int HEIGHT = 100;
+    public static final int WIDTH = 200;
+    public static final int HEIGHT = 100;
+
+    public static int getWIDTH() {
+        return WIDTH;
+    }
+
+    public static int getHEIGHT() {
+        return HEIGHT;
+    }
 
     // ******************************************************
     // Build and schedule display
-    private DisplaySurface dsurf;
+    public static DisplaySurface dsurf;
     private OpenSequenceGraph plot;
     private final List<VehicleAgent> vehicles = new ArrayList<>();
+
+    public static DisplaySurface getDsurf() {
+        return dsurf;
+    }
 
     // ******************************************************
     // width and height variables for coordinates
@@ -469,11 +477,8 @@ public class RepastLauncher extends Repast3Launcher {
         if (dsurf != null) dsurf.dispose();
         dsurf = new DisplaySurface(this, "Service Consumer/Provider Display");
         registerDisplaySurface("Service Consumer/Provider Display", dsurf);
-        Network2DDisplay display = new Network2DDisplay(GUI.getNodes(), WIDTH, HEIGHT);
-        dsurf.addDisplayableProbeable(display, "Network Display");
-        dsurf.addZoomable(display);
         addSimEventListener(dsurf);
-        dsurf.display();
+        GUI.updateDisplay();
 
         // graph
         if (plot != null) plot.dispose();

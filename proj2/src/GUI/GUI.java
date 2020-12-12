@@ -1,17 +1,16 @@
 package GUI;
 
 import agents.VehicleAgent;
+import repast.RepastLauncher;
+import uchicago.src.sim.gui.Network2DDisplay;
 import uchicago.src.sim.gui.OvalNetworkItem;
 import uchicago.src.sim.network.DefaultDrawableEdge;
 import uchicago.src.sim.network.DefaultDrawableNode;
 import utils.Emergency;
-import utils.VehicleType;
 
 import java.awt.*;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class GUI {
     // TODO: mudar para hash map se der
@@ -38,6 +37,8 @@ public class GUI {
         oval.setHeight(size);
         oval.setWidth(size);
         DefaultDrawableNode node = new DefaultDrawableNode(label, oval);
+        // just so the labels don't appear on the black background
+        node.setLabelColor(Color.BLACK);
         node.setColor(color);
         GUI.addNode(node);
         return node;
@@ -62,8 +63,11 @@ public class GUI {
     }
 
     public static void generateEmergencyNode(Emergency emergency) {
-        GUI.generateNode(getEmergencyLabel(emergency.getId()), GUI.parseEmergencyColor(emergency),
-                emergency.getCoordinates().getX(), emergency.getCoordinates().getY(),1);
+        double x = emergency.getCoordinates().getX();
+        double y = emergency.getCoordinates().getY();
+
+        GUI.generateNode(getEmergencyLabel(emergency.getId()),
+                GUI.parseEmergencyColor(emergency), x, y,3);
     }
 
     public static String getEmergencyLabel(int emergencyId) {
@@ -93,7 +97,17 @@ public class GUI {
         myNode.addOutEdge(edge);
     }
 
-    public static void addNode(DefaultDrawableNode node) { nodes.add(node);}
+    public static void addNode(DefaultDrawableNode node) {
+        nodes.add(node);
+        updateDisplay();
+    }
+
+    public static void updateDisplay() {
+        Network2DDisplay display = new Network2DDisplay(GUI.getNodes(), RepastLauncher.getWIDTH(), RepastLauncher.getHEIGHT());
+        RepastLauncher.getDsurf().addDisplayableProbeable(display, "Network Display");
+        RepastLauncher.getDsurf().addZoomable(display);
+        RepastLauncher.getDsurf().display();
+    }
 
     public static List<DefaultDrawableNode> getNodes(){return nodes;}
 }
