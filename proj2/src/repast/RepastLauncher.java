@@ -28,6 +28,21 @@ import utils.Point;
 
 public class RepastLauncher extends Repast3Launcher {
     // ******************************************************
+    // singleton variable
+    private static RepastLauncher singleton;
+
+    public static RepastLauncher get() {
+        if (singleton == null)
+            singleton = new RepastLauncher(BATCH_MODE);
+        return singleton;
+    }
+
+    public RepastLauncher(boolean runInBatchMode) {
+        super();
+        this.runInBatchMode = runInBatchMode;
+    }
+
+    // ******************************************************
     // batch mode variables
     private static final boolean BATCH_MODE = false;
     private final boolean runInBatchMode;
@@ -465,11 +480,6 @@ public class RepastLauncher extends Repast3Launcher {
         };
     }
 
-    public RepastLauncher(boolean runInBatchMode) {
-        super();
-        this.runInBatchMode = runInBatchMode;
-    }
-
     @Override
 	public void setup() {
 		super.setup();
@@ -622,7 +632,7 @@ public class RepastLauncher extends Repast3Launcher {
 
         SimInit init = new SimInit();
         init.setNumRuns(1);   // works only in batch mode
-        init.loadModel(new RepastLauncher(runMode), null, runMode);
+        init.loadModel(RepastLauncher.get(), null, runMode);
     }
 
 }
