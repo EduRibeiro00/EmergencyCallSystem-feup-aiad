@@ -15,23 +15,29 @@ import java.util.List;
 public class GUI {
     // TODO: mudar para hash map se der
     private static List<DefaultDrawableNode> nodes = new ArrayList<>();
+    private static int displayId = 0;
 
     public static Color parseColor(VehicleAgent agent){
-        return switch (agent.getType()) {
-            case FIREMAN -> Color.red;
-            case INEM -> Color.WHITE;
-            case POLICE -> Color.blue;
-        };
+        switch (agent.getType()) {
+            case FIREMAN: return Color.red;
+            case INEM : return Color.WHITE;
+            case POLICE : return Color.blue;
+            default: return null;
+        }
+
     }
     private static Color parseEmergencyColor(Emergency emergency){
-        return switch (emergency.getEmergencyType()) {
-            case FIRE -> Color.orange;
-            case ACCIDENT -> Color.magenta;
-            case ROBBERY -> Color.cyan;
+        switch (emergency.getEmergencyType()) {
+            case FIRE : return Color.orange;
+            case ACCIDENT : return Color.magenta;
+            case ROBBERY : return Color.cyan;
+
         };
+        return null;
+
     }
 
-    public static DefaultDrawableNode generateNode(String label, Color color, double x, double y, int size) {
+    public static DefaultDrawableNode generateNode(String label, Color color, double x, double y, int size,boolean update) {
         OvalNetworkItem oval = new OvalNetworkItem(x, y);
         oval.allowResizing(false);
         oval.setHeight(size);
@@ -40,7 +46,12 @@ public class GUI {
         // just so the labels don't appear on the black background
         node.setLabelColor(Color.BLACK);
         node.setColor(color);
-        GUI.addNode(node);
+        if(update)
+            GUI.addNodeUpdate(node);
+        else GUI.addNode(node);
+
+
+
         return node;
     }
 
@@ -57,7 +68,7 @@ public class GUI {
     public static void generateVehicleNode(VehicleAgent vehicleAgent) {
         DefaultDrawableNode node =
                 GUI.generateNode(vehicleAgent.getVehicleName(), GUI.parseColor(vehicleAgent),
-                        vehicleAgent.getCoordinates().getX(), vehicleAgent.getCoordinates().getY(),2);
+                        vehicleAgent.getCoordinates().getX(), vehicleAgent.getCoordinates().getY(),2,false);
 
         vehicleAgent.setNode(node);
     }
@@ -67,7 +78,7 @@ public class GUI {
         double y = emergency.getCoordinates().getY();
 
         GUI.generateNode(getEmergencyLabel(emergency.getId()),
-                GUI.parseEmergencyColor(emergency), x, y,3);
+                GUI.parseEmergencyColor(emergency), x, y,3,true);
     }
 
     public static String getEmergencyLabel(int emergencyId) {
@@ -99,15 +110,32 @@ public class GUI {
 
     public static void addNode(DefaultDrawableNode node) {
         nodes.add(node);
-        updateDisplay();
+    }
+
+    public static void addNodeUpdate(DefaultDrawableNode node) {
+        nodes.add(node);
+        updateNetwork();
     }
 
     public static void updateDisplay() {
         Network2DDisplay display = new Network2DDisplay(GUI.getNodes(), RepastLauncher.getWIDTH(), RepastLauncher.getHEIGHT());
-        RepastLauncher.getDsurf().addDisplayableProbeable(display, "Network Display");
+        RepastLauncher.getDsurf().addDisplayableProbeable(display, "Network Display" + displayId++);
+        RepastLauncher.setDisplay(display);
         RepastLauncher.getDsurf().addZoomable(display);
         RepastLauncher.getDsurf().display();
     }
+
+    public static void updateNetwork() {
+        if (RepastLauncher.getDisplay() != null)
+            RepastLauncher.getDsurf().removeProbeableDisplayable(RepastLauncher.getDisplay());
+        RepastLauncher.setDisplay( new Network2DDisplay(nodes, RepastLauncher.getWIDTH(), RepastLauncher.getHEIGHT()));
+        RepastLauncher.getDsurf().addDisplayableProbeable(RepastLauncher.getDisplay(), "Network Display" + RepastLauncher.getDisplay().hashCode());
+        RepastLauncher.getDsurf().addZoomable(RepastLauncher.getDisplay());
+        //this.launcher.addSimEventListener(RepastLauncher.getDsurf());
+    }
+
+
+
 
     public static List<DefaultDrawableNode> getNodes(){return nodes;}
 }

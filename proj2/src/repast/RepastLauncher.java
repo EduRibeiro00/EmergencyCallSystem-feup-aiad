@@ -22,6 +22,7 @@ import uchicago.src.sim.gui.DisplaySurface;
 import java.util.ArrayList;
 import java.util.List;
 
+import uchicago.src.sim.gui.Network2DDisplay;
 import utils.Point;
 
 
@@ -33,8 +34,8 @@ public class RepastLauncher extends Repast3Launcher {
 
     // ******************************************************
     // width and height for GUI
-    public static final int WIDTH = 200;
-    public static final int HEIGHT = 100;
+    private static final int WIDTH = 200;
+    private static final int HEIGHT = 100;
 
     public static int getWIDTH() {
         return WIDTH;
@@ -46,9 +47,20 @@ public class RepastLauncher extends Repast3Launcher {
 
     // ******************************************************
     // Build and schedule display
-    public static DisplaySurface dsurf;
+    private static DisplaySurface dsurf;
     private OpenSequenceGraph plot;
     private final List<VehicleAgent> vehicles = new ArrayList<>();
+    private static Network2DDisplay display;
+
+
+    public static Network2DDisplay getDisplay() {
+        return display;
+    }
+
+    public static void setDisplay(Network2DDisplay display) {
+        RepastLauncher.display = display;
+    }
+
 
     public static DisplaySurface getDsurf() {
         return dsurf;
