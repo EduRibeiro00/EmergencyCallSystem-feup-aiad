@@ -20,7 +20,7 @@ import java.util.concurrent.TimeUnit;
 public class ControlTowerAgent extends Agent {
     private static final String DF_NAME = "control-tower";
     private static final int EMERGENCY_MAX_TRIES = 3;
-    private static final int WAIT_BETWEEN_TRIES = 10000;
+    private static final int WAIT_BETWEEN_TRIES = 1000;
 
     private final ControlTowerBehaviour behaviour;
     private final ScheduledThreadPoolExecutor executor;
@@ -70,11 +70,12 @@ public class ControlTowerAgent extends Agent {
             // if the max number of tries are
             if (numTries >= EMERGENCY_MAX_TRIES) {
                 Results.incrementFailedEmergencies();
-                GUI.removeNode(GUI.getEmergencyLabel(emergency.getId()));
+                //GUI.removeNode(GUI.getEmergencyLabel(emergency.getId()));
                 LoggerHelper.get().logMaxRetriesEmergency(emergency, EMERGENCY_MAX_TRIES);
 
             }
             else {
+
                 LoggerHelper.get().logNotEnoughVehicles(emergency);
                 executor.schedule(
                         () -> this.handleEmergency(emergency, numberVehicles, 0, numTries + 1),
@@ -94,6 +95,9 @@ public class ControlTowerAgent extends Agent {
             this.handleEmergency(emergency, numberVehicles, priority + 1, numTries);
             return false;
         }
+
+
+        //Aqui é quando ele consegue à primeira?
 
         LoggerHelper.get().logSendingCfpTo(vehicleType.getDFName());
         for (DFAgentDescription vehicle : vehicles) {

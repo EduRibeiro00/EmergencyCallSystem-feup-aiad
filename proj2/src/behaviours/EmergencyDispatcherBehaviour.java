@@ -1,6 +1,7 @@
 package behaviours;
 
 import GUI.GUI;
+import GUI.Results;
 import logs.LoggerHelper;
 import messages.VehicleResponse;
 import messages.AcceptVehicle;
@@ -103,7 +104,7 @@ public class EmergencyDispatcherBehaviour extends ContractNetInitiator {
                             (LoggerHelper.get().getIDOut(emergency.getId())) : "")+
                             "Tower - will try to recruit vehicles from next type");
             agent.handleEmergency(emergency, numberVehicles - acceptedVehicles, this.priority + 1, numTries);
-        }
+        }else{ Results.incrementEmergFirstPriority();}
     }
 
     @Override

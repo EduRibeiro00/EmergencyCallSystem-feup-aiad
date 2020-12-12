@@ -64,7 +64,7 @@ public class GUI {
     public static void generateVehicleNode(VehicleAgent vehicleAgent) {
         DefaultDrawableNode node =
                 GUI.generateNode(vehicleAgent.getVehicleName(), GUI.parseColor(vehicleAgent),
-                        vehicleAgent.getCoordinates().getX(), vehicleAgent.getCoordinates().getY(),2,false);
+                        vehicleAgent.getCoordinates().getX(), vehicleAgent.getCoordinates().getY(),1,false);
 
         vehicleAgent.setNode(node);
     }

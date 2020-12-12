@@ -65,6 +65,7 @@ public class RepastLauncher extends Repast3Launcher {
     // Build and schedule display
     private static MyDisplaySurface dsurf;
     private OpenSequenceGraph plot;
+    private OpenSequenceGraph plot2;
     private final List<VehicleAgent> vehicles = new ArrayList<>();
     private static Network2DDisplay display;
 
@@ -529,10 +530,10 @@ public class RepastLauncher extends Repast3Launcher {
         registerDisplaySurface("Service Consumer/Provider Display", dsurf);
         updateNetwork();
         dsurf.display();
-
-        // graph
+        //*******************************************************************
+        // Plot 1
         if (plot != null) plot.dispose();
-        plot = new OpenSequenceGraph("Service performance", this);
+        plot = new OpenSequenceGraph("Percentages", this);
         plot.setAxisTitles("time", "% successful service executions");
 
         plot.addSequence("Occupied Vehicles Percentage", new Sequence() {
@@ -547,13 +548,49 @@ public class RepastLauncher extends Repast3Launcher {
             }
         });
 
-        //Num emergency
-        //Numero de emergencis nao respondidas
-        //Tempo medio de espera
+        plot.addSequence("Emergencies Success Percentage", new Sequence() {
+            public double getSValue() {
+                return Results.getSuccessEmergenciesPerc()/Results.getNumberEmergencies();
+            }
+        });
+
+        //*********************************************************************
+        //Plot 2
+
+        // graph
+        if (plot2 != null) plot2.dispose();
+        plot2 = new OpenSequenceGraph("Service performance", this);
+        plot2.setAxisTitles("time", "% successful service executions");
+
+        /*//Num emergency com veiculo de primeira prioridade
+        plot2.addSequence("Number of Emergencies first priority", new Sequence() {
+            public double getSValue() {
+                // iterate through vehicles
+                return Results.getNumberEmergFirstPriority();
+            }
+        });*/
+
+        //Number of times vehicles refuelled
+        plot2.addSequence("Times Refueled", new Sequence() {
+            public double getSValue() {
+                // iterate through vehicles
+                return Results.getNumberTimesRefuelled();
+            }
+        });
+
+
+
+        //Tempo medio de espera de emergencia;
+        //Numero de * total que tiveram que abastecer
+
+
+
 
         plot.display();
+        plot2.display();
         getSchedule().scheduleActionAtInterval(1, dsurf, "updateDisplay", Schedule.LAST);
         getSchedule().scheduleActionAtInterval(TICKS_FOR_STEP, plot, "step", Schedule.LAST);
+        getSchedule().scheduleActionAtInterval(TICKS_FOR_STEP, plot2, "step", Schedule.LAST);
         getSchedule().scheduleActionAtInterval(TICKS_FOR_STEP, this, "step", Schedule.INTERVAL_UPDATER);
     }
 

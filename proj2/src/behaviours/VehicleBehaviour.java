@@ -2,6 +2,7 @@ package behaviours;
 
 
 import GUI.GUI;
+import GUI.Results;
 import agents.VehicleAgent;
 import repast.RepastLauncher;
 import jade.lang.acl.ACLMessage;
@@ -194,6 +195,8 @@ public abstract class VehicleBehaviour extends ContractNetResponder {
     }
 
     protected void startRefueling() {
+        Results.incrementTimesRefuelled();
+
         refueling.set(true);
         executor.schedule(
                 this::finishRefueling,

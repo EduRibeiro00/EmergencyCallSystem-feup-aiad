@@ -59,8 +59,6 @@ public class EmergencyCallBehaviour extends TickerBehaviour {
                 Point.genRandomPoint(),
                 getRandomNumberOfVehicles(),
                 getRandomAccidentDuration());
-        //GUI.generateEmergencyNode(emergency); //TODO Problem
-        Results.incrementEmergencies();
 
 
 

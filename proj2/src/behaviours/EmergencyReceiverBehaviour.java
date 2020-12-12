@@ -1,5 +1,6 @@
 package behaviours;
 
+import GUI.Results;
 import agents.ControlTowerAgent;
 import sajas.core.behaviours.CyclicBehaviour;
 import jade.lang.acl.ACLMessage;
@@ -25,6 +26,7 @@ public class EmergencyReceiverBehaviour extends CyclicBehaviour {
                 Object content = requestMsg.getContentObject();
                 if(content instanceof Emergency) {
                     Emergency emergency = (Emergency) content;
+                    Results.incrementEmergencies();
                     this.agent.handleEmergency(emergency);
 
                 }
