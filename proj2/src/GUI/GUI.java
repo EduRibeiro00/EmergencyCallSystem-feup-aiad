@@ -16,6 +16,7 @@ public class GUI {
     // TODO: mudar para hash map se der
     private static List<DefaultDrawableNode> nodes = new ArrayList<>();
     private static int displayId = 0;
+    private static DefaultDrawableNode controlTowerNode;
 
     public static Color parseColor(VehicleAgent agent){
         switch (agent.getType()) {
@@ -137,4 +138,11 @@ public class GUI {
 
     public static List<DefaultDrawableNode> getNodes(){return nodes;}
 
+    public static DefaultDrawableNode getControlTowerNode() {
+        return controlTowerNode;
+    }
+
+    public static void setControlTowerNode(DefaultDrawableNode controlTowerNodeNew) {
+        controlTowerNode = controlTowerNodeNew;
+    }
 }

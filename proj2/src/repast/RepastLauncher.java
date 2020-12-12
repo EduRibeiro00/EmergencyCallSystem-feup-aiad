@@ -1,6 +1,7 @@
 package repast;
 
 import GUI.GUI;
+import utils.Emergency;
 import utils.MyDisplaySurface;
 import GUI.Results;
 import agents.*;
@@ -22,7 +23,9 @@ import uchicago.src.sim.engine.SimInit;
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import uchicago.src.sim.gui.Network2DDisplay;
 import utils.Point;
@@ -43,7 +46,19 @@ public class RepastLauncher extends Repast3Launcher {
         super();
         this.runInBatchMode = runInBatchMode;
     }
+    // ******************************************************
+    // Emergency map
 
+    private static Map<Integer, Emergency> emergencyMap = new HashMap<>();
+
+
+    public static Map<Integer, Emergency> getEmergencyMap() {
+        return emergencyMap;
+    }
+
+    public static void setEmergencyMap(Map<Integer, Emergency> emergencyMap) {
+        RepastLauncher.emergencyMap = emergencyMap;
+    }
 
 
     // ******************************************************
@@ -555,6 +570,7 @@ public class RepastLauncher extends Repast3Launcher {
             AgentController controlTower = container.acceptNewAgent(ControlTowerAgent.getDFName(), controlTowerAgent);
             LoggerHelper.get().logInfo("START - Started control tower");
             controlTower.start();
+            GUI.setControlTowerNode( GUI.generateNode(ControlTowerAgent.getDFName(),Color.GREEN, WIDTH/2,HEIGHT/2,5,false));
 
             // ----------------------------------------------------
             // starting vehicle agents

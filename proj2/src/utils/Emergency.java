@@ -1,6 +1,9 @@
 package utils;
 
+import agents.VehicleAgent;
 import uchicago.src.sim.network.DefaultDrawableNode;
+
+import GUI.GUI;
 
 public class Emergency implements java.io.Serializable {
     private static int CURRENT_ID = 0;
@@ -17,7 +20,7 @@ public class Emergency implements java.io.Serializable {
         this.coordinates = coordinates;
         this.numberVehicles = numberVehicles;
         this.duration = duration;
-        this.id = CURRENT_ID;
+        this.id = CURRENT_ID++;
     }
 
     public EmergencyType getEmergencyType() {
@@ -69,5 +72,21 @@ public class Emergency implements java.io.Serializable {
 
     public void setDuration(int duration) {
         this.duration = duration;
+    }
+
+    public void incrementLeftVehiclesEmerg(VehicleAgent vehicleAgent){
+        numberVehiclesLeftEmergency++;
+        GUI.removeEdge(vehicleAgent.getNode(), GUI.getNode(GUI.getEmergencyLabel(vehicleAgent.getEmergencyId())));
+        if(numberVehiclesLeftEmergency==numberVehicles) {
+            GUI.removeNode(GUI.getEmergencyLabel(id));
+        }
+    }
+
+    public int getNumberVehiclesLeftEmergency() {
+        return numberVehiclesLeftEmergency;
+    }
+
+    public void setNumberVehiclesLeftEmergency(int numberVehiclesLeftEmergency) {
+        this.numberVehiclesLeftEmergency = numberVehiclesLeftEmergency;
     }
 }

@@ -18,6 +18,7 @@ import messages.AcceptVehicle;
 import messages.Messages;
 import uchicago.src.sim.network.DefaultDrawableEdge;
 import uchicago.src.sim.network.DefaultDrawableNode;
+import utils.Emergency;
 import utils.Point;
 import utils.VehicleType;
 
@@ -89,7 +90,7 @@ public abstract class VehicleBehaviour extends ContractNetResponder {
                     vehicleAgent.setCurrentEmergencyCoords(emergencyCoords);
                     consecutiveRejectionsByFuel = 0;
                     acceptCfp(vehicleReply, cfp);
-                    //GUI.createEdgeName(vehicleAgent.getNode(),ControlTowerAgent.getDFName(),Color.GREEN);
+
                 }
             } catch (UnreadableException e) {
                 e.printStackTrace();
@@ -132,8 +133,11 @@ public abstract class VehicleBehaviour extends ContractNetResponder {
             LoggerHelper.get().logAcceptProposal(this.myAgent.getLocalName(), vehicleAgent.getCoordinates());
 
             this.vehicleAgent.setEmergencyId(acceptVehicleMsg.getEmergencyId());
-            // TODO: isto esta a dar excecao
             GUI.createEdgeName(vehicleAgent.getNode(), GUI.getEmergencyLabel(acceptVehicleMsg.getEmergencyId()),Color.green);
+            System.out.println("ZAAAAAAAAAAAAAAAS");
+            System.out.println(GUI.getControlTowerNode());
+            GUI.removeEdge(vehicleAgent.getNode(),GUI.getControlTowerNode());
+
 
             double distance = vehicleAgent.getCoordinates().getDistance(acceptVehicleMsg.getCoordinates());
             int duration = (acceptVehicleMsg.getAccidentDuration() + (int) Math.round(distance) * 20);
@@ -145,6 +149,9 @@ public abstract class VehicleBehaviour extends ContractNetResponder {
 
         ACLMessage informReply = accept.createReply();
         informReply.setPerformative(ACLMessage.INFORM);
+
+        //TODO Como e que isto funciona?
+        GUI.createEdgeName(vehicleAgent.getNode(),ControlTowerAgent.getDFName(),Color.red);
 
         return informReply;
     }
@@ -205,9 +212,8 @@ public abstract class VehicleBehaviour extends ContractNetResponder {
 
     protected void finishOccupied() {
         vehicleAgent.getOccupied().set(false);
-
-        GUI.removeEdge(vehicleAgent.getNode(), GUI.getNode(GUI.getEmergencyLabel(this.vehicleAgent.getEmergencyId())));
-        //GUI.removeNode(GUI.getEmergencyLabel(this.vehicleAgent.getEmergencyId()));
+        Emergency emergency = RepastLauncher.getEmergencyMap().get(this.vehicleAgent.getEmergencyId());
+        emergency.incrementLeftVehiclesEmerg(this.vehicleAgent);
         this.vehicleAgent.setEmergencyId(-1);
 
         boolean shouldChangeEmployees = ThreadLocalRandom.current().nextInt(this.vehicleAgent.getEMPLOYEE_CHANGE_PROB()) == 0;
