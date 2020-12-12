@@ -42,23 +42,7 @@ public class RepastLauncher extends Repast3Launcher {
         this.runInBatchMode = runInBatchMode;
     }
 
-    // ******************************************************
-    // batch mode variables
-    private static final boolean BATCH_MODE = false;
-    private final boolean runInBatchMode;
 
-    // ******************************************************
-    // width and height for GUI
-    private static final int WIDTH = 200;
-    private static final int HEIGHT = 100;
-
-    public static int getWIDTH() {
-        return WIDTH;
-    }
-
-    public static int getHEIGHT() {
-        return HEIGHT;
-    }
 
     // ******************************************************
     // Build and schedule display
@@ -104,6 +88,24 @@ public class RepastLauncher extends Repast3Launcher {
         if (CITY_HEIGHT < 1)
             CITY_HEIGHT = 1;
         this.CITY_HEIGHT = CITY_HEIGHT;
+    }
+
+    // ******************************************************
+    // batch mode variables
+    private static final boolean BATCH_MODE = false;
+    private final boolean runInBatchMode;
+
+    // ******************************************************
+    // width and height for GUI
+    private static final int WIDTH = get().CITY_WIDTH+10;
+    private static final int HEIGHT = get().CITY_HEIGHT+10;
+
+    public static int getWIDTH() {
+        return WIDTH;
+    }
+
+    public static int getHEIGHT() {
+        return HEIGHT;
     }
 
     // ******************************************************
@@ -499,8 +501,8 @@ public class RepastLauncher extends Repast3Launcher {
         if (dsurf != null) dsurf.dispose();
         dsurf = new DisplaySurface(this, "Service Consumer/Provider Display");
         registerDisplaySurface("Service Consumer/Provider Display", dsurf);
-        addSimEventListener(dsurf);
-        GUI.updateDisplay();
+        updateNetwork();
+        dsurf.display();
 
         // graph
         if (plot != null) plot.dispose();
@@ -621,6 +623,17 @@ public class RepastLauncher extends Repast3Launcher {
         for(VehicleAgent vehicle : vehicles){
             vehicle.updateVehicleCoordinates();
         }
+    }
+
+    public void updateNetwork() {
+
+        /*if (display != null)
+            dsurf.removeProbeableDisplayable(display);*/
+        display = new Network2DDisplay(GUI.getNodes(), WIDTH, HEIGHT);
+        dsurf.addDisplayableProbeable(display, "Network Display" + display.hashCode());
+        dsurf.addZoomable(display);
+        this.addSimEventListener(dsurf);
+
     }
 
     /**

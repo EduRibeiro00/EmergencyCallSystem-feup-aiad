@@ -114,7 +114,7 @@ public class GUI {
 
     public static void addNodeUpdate(DefaultDrawableNode node) {
         nodes.add(node);
-        updateNetwork();
+        RepastLauncher.get().updateNetwork();
     }
 
     public static void updateDisplay() {
@@ -125,17 +125,11 @@ public class GUI {
         RepastLauncher.getDsurf().display();
     }
 
-    public static void updateNetwork() {
-        if (RepastLauncher.getDisplay() != null)
-            RepastLauncher.getDsurf().removeProbeableDisplayable(RepastLauncher.getDisplay());
-        RepastLauncher.setDisplay( new Network2DDisplay(nodes, RepastLauncher.getWIDTH(), RepastLauncher.getHEIGHT()));
-        RepastLauncher.getDsurf().addDisplayableProbeable(RepastLauncher.getDisplay(), "Network Display" + RepastLauncher.getDisplay().hashCode());
-        RepastLauncher.getDsurf().addZoomable(RepastLauncher.getDisplay());
-        //this.launcher.addSimEventListener(RepastLauncher.getDsurf());
-    }
+
 
 
 
 
     public static List<DefaultDrawableNode> getNodes(){return nodes;}
+    
 }
