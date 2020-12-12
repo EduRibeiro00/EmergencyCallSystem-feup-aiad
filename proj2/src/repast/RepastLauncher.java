@@ -114,8 +114,8 @@ public class RepastLauncher extends Repast3Launcher {
 
     // ******************************************************
     // width and height for GUI
-    private static final int WIDTH = get().CITY_WIDTH+10;
-    private static final int HEIGHT = get().CITY_HEIGHT+10;
+    private static final int WIDTH = get().CITY_WIDTH + 10;
+    private static final int HEIGHT = get().CITY_HEIGHT + 10;
 
     public static int getWIDTH() {
         return WIDTH;

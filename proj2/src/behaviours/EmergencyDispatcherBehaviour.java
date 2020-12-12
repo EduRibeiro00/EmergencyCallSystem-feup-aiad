@@ -1,5 +1,6 @@
 package behaviours;
 
+import GUI.GUI;
 import logs.LoggerHelper;
 import messages.VehicleResponse;
 import messages.AcceptVehicle;
@@ -11,6 +12,7 @@ import messages.Messages;
 import utils.Candidate;
 import utils.Emergency;
 
+import java.awt.*;
 import java.util.*;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -83,6 +85,7 @@ public class EmergencyDispatcherBehaviour extends ContractNetInitiator {
                     currentCandidate.getValue()
             );
 
+
             acceptMsgs.add(currentCandidate.getMessage());
             acceptedVehicles++;
         }
@@ -124,6 +127,18 @@ public class EmergencyDispatcherBehaviour extends ContractNetInitiator {
 
     private void sendAcceptMsgs(Vector acceptances) {
         for (ACLMessage bestVehicleMsg : acceptMsgs) {
+            try {
+                Object content = bestVehicleMsg.getContentObject();
+                if (content instanceof VehicleResponse) {
+                    String vehicleName = ((VehicleResponse) content).getVehicleName();
+                    if (vehicleName != null) {
+                        GUI.createEdgeName(GUI.getNode(vehicleName), ControlTowerAgent.getDFName(), Color.red);
+                    }
+                }
+            } catch (UnreadableException e) {
+                e.printStackTrace();
+            }
+
             ACLMessage towerReply = bestVehicleMsg.createReply();
             towerReply.setPerformative(ACLMessage.ACCEPT_PROPOSAL);
             towerReply.setContent(Messages.ACCEPT_VEHICLE);

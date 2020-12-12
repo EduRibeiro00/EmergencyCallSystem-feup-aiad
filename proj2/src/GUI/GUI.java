@@ -18,6 +18,9 @@ public class GUI {
     private static int displayId = 0;
     private static DefaultDrawableNode controlTowerNode;
 
+    public static int CONTROL_TOWER_EDGE_DURATION = 500; // in ms
+
+
     public static Color parseColor(VehicleAgent agent){
         switch (agent.getType()) {
             case FIREMAN: return Color.red;

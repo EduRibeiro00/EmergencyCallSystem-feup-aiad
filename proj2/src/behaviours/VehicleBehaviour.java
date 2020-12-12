@@ -2,11 +2,8 @@ package behaviours;
 
 
 import GUI.GUI;
-import GUI.Edge;
-import agents.ControlTowerAgent;
 import agents.VehicleAgent;
 import repast.RepastLauncher;
-import sajas.core.Agent;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import jade.lang.acl.UnreadableException;
@@ -16,8 +13,6 @@ import messages.TowerRequest;
 import messages.VehicleResponse;
 import messages.AcceptVehicle;
 import messages.Messages;
-import uchicago.src.sim.network.DefaultDrawableEdge;
-import uchicago.src.sim.network.DefaultDrawableNode;
 import utils.Emergency;
 import utils.Point;
 import utils.VehicleType;
@@ -47,7 +42,7 @@ public abstract class VehicleBehaviour extends ContractNetResponder {
         fuel = getMaxFuel();
         this.vehicleAgent.setOccupied(new AtomicBoolean(false));
         refueling = new AtomicBoolean(false);
-        executor = new ScheduledThreadPoolExecutor(2);
+        executor = new ScheduledThreadPoolExecutor(3);
 
         LoggerHelper.get().logStartVehicle(
                 this.myAgent.getLocalName(),
@@ -85,6 +80,7 @@ public abstract class VehicleBehaviour extends ContractNetResponder {
                     vehicleReply.setContent(Messages.NOT_ENOUGH_FUEL);
                     consecutiveRejectionsByFuel++;
                     LoggerHelper.get().logFuelInsuf(this.myAgent.getLocalName());
+
                 // vehicle is free and has enough fuel; is eligible for the emergency
                 } else {
                     vehicleAgent.setCurrentEmergencyCoords(emergencyCoords);
@@ -134,10 +130,6 @@ public abstract class VehicleBehaviour extends ContractNetResponder {
 
             this.vehicleAgent.setEmergencyId(acceptVehicleMsg.getEmergencyId());
             GUI.createEdgeName(vehicleAgent.getNode(), GUI.getEmergencyLabel(acceptVehicleMsg.getEmergencyId()),Color.green);
-            System.out.println("ZAAAAAAAAAAAAAAAS");
-            System.out.println(GUI.getControlTowerNode());
-            GUI.removeEdge(vehicleAgent.getNode(),GUI.getControlTowerNode());
-
 
             double distance = vehicleAgent.getCoordinates().getDistance(acceptVehicleMsg.getCoordinates());
             int duration = (acceptVehicleMsg.getAccidentDuration() + (int) Math.round(distance) * 20);
@@ -150,9 +142,6 @@ public abstract class VehicleBehaviour extends ContractNetResponder {
         ACLMessage informReply = accept.createReply();
         informReply.setPerformative(ACLMessage.INFORM);
 
-        //TODO Como e que isto funciona?
-        GUI.createEdgeName(vehicleAgent.getNode(),ControlTowerAgent.getDFName(),Color.red);
-
         return informReply;
     }
 
@@ -164,7 +153,7 @@ public abstract class VehicleBehaviour extends ContractNetResponder {
 
             double value = this.calcVehicleValue(distance);
 
-            vehicleReply.setContentObject(new VehicleResponse(value));
+            vehicleReply.setContentObject(new VehicleResponse(value, vehicleAgent.getVehicleName()));
         } catch (UnreadableException | IOException e) {
             e.printStackTrace();
         }
@@ -191,6 +180,12 @@ public abstract class VehicleBehaviour extends ContractNetResponder {
         executor.schedule(
                 this::finishOccupied,
                 duration,
+                TimeUnit.MILLISECONDS
+        );
+
+        executor.schedule(
+                () -> GUI.removeEdge(vehicleAgent.getNode(), GUI.getControlTowerNode()),
+                GUI.CONTROL_TOWER_EDGE_DURATION,
                 TimeUnit.MILLISECONDS
         );
 
