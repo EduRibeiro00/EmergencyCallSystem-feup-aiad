@@ -47,7 +47,7 @@ public class ControlTowerAgent extends Agent {
     }
 
     public void handleEmergency(Emergency emergency) {
-        RepastLauncher.getEmergencyMap().put(emergency.getId(),emergency);
+        RepastLauncher.getEmergencyMap().put(emergency.getId(), emergency);
         GUI.generateEmergencyNode(emergency);
         LoggerHelper.get().logReceivedEmergency(emergency);
         handleEmergency(emergency, emergency.getNumberVehicles() ,0, 1);

@@ -51,7 +51,6 @@ public class RepastLauncher extends Repast3Launcher {
 
     private static Map<Integer, Emergency> emergencyMap = new HashMap<>();
 
-
     public static Map<Integer, Emergency> getEmergencyMap() {
         return emergencyMap;
     }
@@ -567,7 +566,7 @@ public class RepastLauncher extends Repast3Launcher {
 
         plot.addSequence("Percentage of Emergencies handled by first priority", new Sequence() {
             public double getSValue() {
-                return Results.getNumberEmergFirstPriority() / Results.getNumberEmergencies();
+                return Results.getFirstPriorityEmergPerc();
             }
         });
 

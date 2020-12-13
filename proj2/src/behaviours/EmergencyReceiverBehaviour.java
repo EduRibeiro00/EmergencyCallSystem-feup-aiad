@@ -26,8 +26,7 @@ public class EmergencyReceiverBehaviour extends CyclicBehaviour {
                 Object content = requestMsg.getContentObject();
                 if(content instanceof Emergency) {
                     Emergency emergency = (Emergency) content;
-                    // TODO: nao ter isto aqui; incrementar no final como o resto das variaveis
-                    Results.incrementEmergencies();
+                    Results.incrementNumEmergencies();
                     this.agent.handleEmergency(emergency);
 
                 }

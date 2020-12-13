@@ -17,7 +17,7 @@ public class Results {
         numberFailedEmergencies++;
     }
 
-    public static  void incrementEmergencies(){
+    public static void incrementNumEmergencies(){
         numberEmergencies++;
     }
 
@@ -29,8 +29,8 @@ public class Results {
         return v / vehicles.size();
     }
 
-    public static double getNumberEmergencies() {
-        return numberEmergencies;
+    public static double getFirstPriorityEmergPerc() {
+        return numberEmergFirstPriority / (numberEmergencies == 0 ? 1 : numberEmergencies);
     }
 
     public static double getSuccessEmergenciesPerc(){
