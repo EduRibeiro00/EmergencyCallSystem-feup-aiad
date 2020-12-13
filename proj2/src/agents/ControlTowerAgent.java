@@ -1,28 +1,36 @@
 package agents;
 
+import GUI.Results;
+import GUI.GUI;
+import GUI.EdgeEmerVehicle;
 import behaviours.ControlTowerBehaviour;
+import repast.RepastLauncher;
 import sajas.core.Agent;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.domain.FIPANames;
 import jade.lang.acl.ACLMessage;
 import logs.LoggerHelper;
 import messages.TowerRequest;
+import uchicago.src.sim.network.DefaultDrawableNode;
 import utils.*;
 
+import java.awt.*;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 public class ControlTowerAgent extends Agent {
     private static final String DF_NAME = "control-tower";
     private static final int EMERGENCY_MAX_TRIES = 3;
-    private static final int WAIT_BETWEEN_TRIES = 10000;
+    private final int WAIT_BETWEEN_TRIES;
 
     private final ControlTowerBehaviour behaviour;
     private final ScheduledThreadPoolExecutor executor;
 
-    public ControlTowerAgent() {
+    public ControlTowerAgent(int WAIT_BETWEEN_TRIES) {
+        this.WAIT_BETWEEN_TRIES = WAIT_BETWEEN_TRIES;
         this.behaviour = new ControlTowerBehaviour(this);
         this.executor = new ScheduledThreadPoolExecutor(3);
     }
@@ -39,6 +47,8 @@ public class ControlTowerAgent extends Agent {
     }
 
     public void handleEmergency(Emergency emergency) {
+        RepastLauncher.getEmergencyMap().put(emergency.getId(),emergency);
+        GUI.generateEmergencyNode(emergency);
         LoggerHelper.get().logReceivedEmergency(emergency);
         handleEmergency(emergency, emergency.getNumberVehicles() ,0, 1);
     }
@@ -64,9 +74,28 @@ public class ControlTowerAgent extends Agent {
         if (priority >= vehiclePriorities.size()) {
             // if the max number of tries are
             if (numTries >= EMERGENCY_MAX_TRIES) {
+                String emergLabel = GUI.getEmergencyLabel(emergency.getId());
+                Results.incrementFailedEmergencies();
+
+                if(GUI.getNode(emergLabel).getNumInEdges() == 0) {
+                    LoggerHelper.get().logInfo("FALHEI NO IF");
+
+                    GUI.removeNode(emergLabel);
+                }
+                else{
+                    LoggerHelper.get().logInfo("FALHEI NO ELSE");
+                    List<EdgeEmerVehicle> edges = GUI.getEmergByID(emergency).getInEdges();
+                    for (int i = 0; i < edges.size(); i++) {
+                         edges.get(i).getVehicleAgent().setReachedMaxTries(true);
+                    }
+
+                }
+
                 LoggerHelper.get().logMaxRetriesEmergency(emergency, EMERGENCY_MAX_TRIES);
+
             }
             else {
+
                 LoggerHelper.get().logNotEnoughVehicles(emergency);
                 executor.schedule(
                         () -> this.handleEmergency(emergency, numberVehicles, 0, numTries + 1),
@@ -86,6 +115,9 @@ public class ControlTowerAgent extends Agent {
             this.handleEmergency(emergency, numberVehicles, priority + 1, numTries);
             return false;
         }
+
+
+        //Aqui é quando ele consegue à primeira?
 
         LoggerHelper.get().logSendingCfpTo(vehicleType.getDFName());
         for (DFAgentDescription vehicle : vehicles) {

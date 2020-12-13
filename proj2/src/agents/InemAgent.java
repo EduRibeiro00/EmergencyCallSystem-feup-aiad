@@ -10,6 +10,7 @@ public class InemAgent extends VehicleAgent {
     private final int SPARE_FUEL_LEVEL;
     private final double FUEL_RATE;
 
+
     public InemAgent(String name,
                      int MIN_NUM_EMPLOYEES, int MAX_NUM_EMPLOYEES, int REFUEL_DURATION, int EMPLOYEE_CHANGE_PROB,
                      double EMPLOYEE_MULTIPLIER, double DISTANCE_MULTIPLIER, double FUEL_MULTIPLIER,
@@ -28,9 +29,16 @@ public class InemAgent extends VehicleAgent {
     public VehicleType getType() {return VehicleType.INEM; }
 
     @Override
-    protected VehicleBehaviour getVehicleBehaviour() {
+    public VehicleBehaviour getVehicleBehaviour() {
         return new InemBehaviour(this, getMt());
     }
+
+    @Override
+    public VehicleBehaviour createVehicleBehaviour() {
+        return new InemBehaviour(this, getMt());
+    }
+
+
 
     @Override
     public int getMAX_FUEL() {

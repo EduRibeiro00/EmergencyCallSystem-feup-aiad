@@ -28,7 +28,7 @@ public class FiremanAgent extends VehicleAgent {
     public VehicleType getType() {return VehicleType.FIREMAN;}
 
     @Override
-    protected VehicleBehaviour getVehicleBehaviour() {
+    public VehicleBehaviour createVehicleBehaviour() {
         return new FiremanBehaviour(this, getMt());
     }
 

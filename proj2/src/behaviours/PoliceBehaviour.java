@@ -6,6 +6,8 @@ import jade.lang.acl.MessageTemplate;
 import utils.VehicleType;
 
 public class PoliceBehaviour extends VehicleBehaviour {
+
+
     public PoliceBehaviour(VehicleAgent agent, MessageTemplate msgTemp) {
         super(agent, msgTemp);
     }

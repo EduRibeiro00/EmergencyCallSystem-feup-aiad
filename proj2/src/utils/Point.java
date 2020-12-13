@@ -5,8 +5,10 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 
 public class Point implements java.io.Serializable {
+
     private static int MAX_COORDS_WIDTH = 100;
     private static int MAX_COORDS_HEIGHT = 100;
+
     private static final int PRECISION = 2;
 
     private double x;
@@ -55,6 +57,18 @@ public class Point implements java.io.Serializable {
                 Math.pow(this.getX() - other.getX(), 2)
         );
         return roundDouble(distance);
+    }
+
+    public Point getNextPos(Point other) {
+        double stepX = (other.getX() - getX());
+        double stepY = (other.getY() - getY());
+        stepX = stepX / (stepX == 0 ? 1 : Math.abs(stepX));
+        stepY = stepY / (stepY == 0 ? 1 : Math.abs(stepY));
+        return new Point(getX() + stepX,getY() +stepY);
+    }
+
+    public boolean equal(Point coord){
+        return x == coord.getX() && y == coord.getY();
     }
 
     private static double roundDouble(double value) {

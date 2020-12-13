@@ -1,23 +1,26 @@
 package utils;
 
+import agents.VehicleAgent;
+
+import GUI.GUI;
+
 public class Emergency implements java.io.Serializable {
+    private static int CURRENT_ID = 1;
+
+    private int id;
     private EmergencyType emergencyType;
     private Point coordinates;
     private int numberVehicles;
+    private int numberVehiclesDoneWithEmergency;
     private int duration; // in ms
-    private static int  currentID = 0;
-
-
-
-    private int id = 0;
 
     public Emergency(EmergencyType emergencyType, Point coordinates, int numberVehicles, int duration) {
         this.emergencyType = emergencyType;
         this.coordinates = coordinates;
         this.numberVehicles = numberVehicles;
         this.duration = duration;
-        this.id = currentID;
-
+        this.id = CURRENT_ID++;
+        this.numberVehiclesDoneWithEmergency = 0;
     }
 
     public EmergencyType getEmergencyType() {
@@ -48,8 +51,6 @@ public class Emergency implements java.io.Serializable {
 
     public void setId(int id) { this.id = id;}
 
-    public static void incrementID(){currentID++;}
-
     @Override
     public String toString() {
         return "Emergency { " +
@@ -67,5 +68,23 @@ public class Emergency implements java.io.Serializable {
 
     public void setDuration(int duration) {
         this.duration = duration;
+    }
+
+    public boolean incrementLeftVehiclesEmerg(VehicleAgent vehicleAgent){
+        numberVehiclesDoneWithEmergency++;
+        GUI.removeEdge(vehicleAgent.getNode(), GUI.getNode(GUI.getEmergencyLabel(vehicleAgent.getEmergencyId())));
+        if(numberVehiclesDoneWithEmergency >= numberVehicles) {
+            GUI.removeNode(GUI.getEmergencyLabel(id));
+            return true;
+        }
+        return false;
+    }
+
+    public int getNumberVehiclesDoneWithEmergency() {
+        return numberVehiclesDoneWithEmergency;
+    }
+
+    public void setNumberVehiclesDoneWithEmergency(int numberVehiclesDoneWithEmergency) {
+        this.numberVehiclesDoneWithEmergency = numberVehiclesDoneWithEmergency;
     }
 }

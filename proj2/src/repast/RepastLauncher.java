@@ -1,3 +1,9 @@
+package repast;
+
+import GUI.GUI;
+import utils.Emergency;
+import utils.MyDisplaySurface;
+import GUI.Results;
 import agents.*;
 import jade.core.Profile;
 import jade.core.ProfileImpl;
@@ -8,18 +14,79 @@ import sajas.wrapper.ContainerController;
 import jade.wrapper.StaleProxyException;
 
 import sajas.sim.repast3.Repast3Launcher;
+import uchicago.src.sim.analysis.OpenSequenceGraph;
+import uchicago.src.sim.analysis.Sequence;
+import uchicago.src.sim.engine.Schedule;
 import uchicago.src.sim.engine.SimInit;
+
+
+
+import java.awt.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import uchicago.src.sim.gui.Network2DDisplay;
 import utils.Point;
+
 
 public class RepastLauncher extends Repast3Launcher {
     // ******************************************************
-    // batch mode variables
-    private static final boolean BATCH_MODE = false;
-    private final boolean runInBatchMode;
+    // singleton variable
+    private static RepastLauncher singleton;
+
+    public static RepastLauncher get() {
+        if (singleton == null)
+            singleton = new RepastLauncher(BATCH_MODE);
+        return singleton;
+    }
+
+    public RepastLauncher(boolean runInBatchMode) {
+        super();
+        this.runInBatchMode = runInBatchMode;
+    }
+    // ******************************************************
+    // Emergency map
+
+    private static Map<Integer, Emergency> emergencyMap = new HashMap<>();
+
+
+    public static Map<Integer, Emergency> getEmergencyMap() {
+        return emergencyMap;
+    }
+
+    public static void setEmergencyMap(Map<Integer, Emergency> emergencyMap) {
+        RepastLauncher.emergencyMap = emergencyMap;
+    }
+
 
     // ******************************************************
-    // width and height variables
-    private int CITY_WIDTH = 100;
+    // Build and schedule display
+    private static MyDisplaySurface dsurf;
+    private OpenSequenceGraph plot;
+    private OpenSequenceGraph plot2;
+    private OpenSequenceGraph plot3;
+    private final List<VehicleAgent> vehicles = new ArrayList<>();
+    private static Network2DDisplay display;
+
+
+    public static Network2DDisplay getDisplay() {
+        return display;
+    }
+
+    public static void setDisplay(Network2DDisplay display) {
+        RepastLauncher.display = display;
+    }
+
+
+    public static MyDisplaySurface getDsurf() {
+        return dsurf;
+    }
+
+    // ******************************************************
+    // width and height variables for coordinates
+    private int CITY_WIDTH = 200;
     private int CITY_HEIGHT = 100;
 
     public int getCITY_WIDTH() {
@@ -43,10 +110,49 @@ public class RepastLauncher extends Repast3Launcher {
     }
 
     // ******************************************************
+    // repast related variables
+    private static final boolean BATCH_MODE = false;
+    private final boolean runInBatchMode;
+    // each step will be run each TICKS_FOR_STEP ticks
+    private static final int TICKS_FOR_STEP = 25;
+    // each tick takes around 30ms. This variable is used to calculate the amount
+    // of time each vehicle node should take to get to its emergency node
+    private static final int STEP_DURATION = 8 * TICKS_FOR_STEP;
+
+    public static int getStepDuration() {
+        return STEP_DURATION;
+    }
+
+    // ******************************************************
+    // width and height for GUI
+    private static final int WIDTH = get().CITY_WIDTH + 10;
+    private static final int HEIGHT = get().CITY_HEIGHT + 10;
+
+    public static int getWIDTH() {
+        return WIDTH;
+    }
+
+    public static int getHEIGHT() {
+        return HEIGHT;
+    }
+
+    // ******************************************************
+    // Control tower variables
+    private int WAIT_BETWEEN_TRIES_MS = 2000;
+
+    public int getWAIT_BETWEEN_TRIES_MS() {
+        return WAIT_BETWEEN_TRIES_MS;
+    }
+
+    public void setWAIT_BETWEEN_TRIES_MS(int WAIT_BETWEEN_TRIES_MS) {
+        this.WAIT_BETWEEN_TRIES_MS = WAIT_BETWEEN_TRIES_MS;
+    }
+
+    // ******************************************************
     // Common vehicle variables
     private int MIN_NUM_EMPLOYEES= 1;
     private int MAX_NUM_EMPLOYEES= 6;
-    private int REFUEL_DURATION_MS = 20000;
+    private int REFUEL_DURATION_MS = 5000;
     private int EMPLOYEE_CHANGE_PROB = 10; // 1 in 10 chance of changing number employees
 
     private double MULTIPLIER_EMPLOYEE = 2.5;
@@ -132,7 +238,7 @@ public class RepastLauncher extends Repast3Launcher {
 
     // ******************************************************
     // Inem vehicle variables
-    private int NUM_INEM = 2;
+    private int NUM_INEM = 5;
     private int MAX_FUEL_INEM = 700;
     private int SPARE_FUEL_LEVEL_INEM = 100;
     private double FUEL_RATE_INEM = 3.0;
@@ -183,7 +289,7 @@ public class RepastLauncher extends Repast3Launcher {
 
     // ******************************************************
     // Fire vehicle variables
-    private int NUM_FIRE = 2;
+    private int NUM_FIRE = 5;
     private int MAX_FUEL_FIRE = 1500;
     private int SPARE_FUEL_LEVEL_FIRE = 200;
     private double FUEL_RATE_FIRE = 6.0;
@@ -234,7 +340,7 @@ public class RepastLauncher extends Repast3Launcher {
 
     // ******************************************************
     // Police vehicle variables
-    private int NUM_POLICE = 2;
+    private int NUM_POLICE = 5;
     private int MAX_FUEL_POLICE = 350;
     private int SPARE_FUEL_LEVEL_POLICE = 60;
     private double FUEL_RATE_POLICE = 2.0;
@@ -285,7 +391,7 @@ public class RepastLauncher extends Repast3Launcher {
 
     // ******************************************************
     // Emergency variables (only for random generation of emergencies, i.e. when deterministic is false)
-    private int TIME_BETWEEN_CALLS_MS = 1000;
+    private int TIME_BETWEEN_CALLS_MS = 2000;
     private int MIN_VEHICLES_EMERGENCY = 1;
     private int MAX_VEHICLES_EMERGENCY = 3;
     private int MIN_DURATION_MS = 2000;
@@ -354,7 +460,7 @@ public class RepastLauncher extends Repast3Launcher {
     // ******************************************************
     // launch arguments (simple logs and deterministic emergencies i.e. reading from file)
     private boolean SIMPLE = true;
-    private boolean DETERMINISTIC = true;
+    private boolean DETERMINISTIC = false;
 
     public boolean isSIMPLE() {
         return SIMPLE;
@@ -384,6 +490,8 @@ public class RepastLauncher extends Repast3Launcher {
             "MAX_NUM_EMPLOYEES",
             "REFUEL_DURATION_MS",
             "EMPLOYEE_CHANGE_PROB",
+
+            "WAIT_BETWEEN_TRIES_MS",
 
             "MULTIPLIER_EMPLOYEE",
             "MULTIPLIER_DISTANCE",
@@ -416,11 +524,6 @@ public class RepastLauncher extends Repast3Launcher {
         };
     }
 
-    public RepastLauncher(boolean runInBatchMode) {
-        super();
-        this.runInBatchMode = runInBatchMode;
-    }
-
     @Override
 	public void setup() {
 		super.setup();
@@ -436,7 +539,78 @@ public class RepastLauncher extends Repast3Launcher {
     }
 
     private void buildAndScheduleDisplay() {
-        // TODO: fazer graficos e esquemas, para dar display
+        // display surface
+        if (dsurf != null) dsurf.dispose();
+        dsurf = new MyDisplaySurface(this, "Service Consumer/Provider Display");
+        registerDisplaySurface("Service Consumer/Provider Display", dsurf);
+        updateNetwork();
+        dsurf.display();
+        //*******************************************************************
+        // Plot 1
+        if (plot != null) plot.dispose();
+        plot = new OpenSequenceGraph("Percentages", this);
+        plot.setAxisTitles("time", "% successful service executions");
+        plot.setYRange(-0.2,1.2);
+
+        plot.addSequence("Occupied Vehicles Percentage", new Sequence() {
+            public double getSValue() {
+                // iterate through vehicles
+                return Results.getOccupiedVehicles(vehicles);
+            }
+        });
+        plot.addSequence("Emergencies Success Percentage", new Sequence() {
+            public double getSValue() {
+                return Results.getSuccessEmergenciesPerc();
+            }
+        });
+
+        plot.addSequence("Percentage of Emergencies handled by first priority", new Sequence() {
+            public double getSValue() {
+                return Results.getNumberEmergFirstPriority()/Results.getNumberEmergencies();
+            }
+        });
+
+        //*********************************************************************
+        //Plot 2
+
+        // graph
+        if (plot2 != null) plot2.dispose();
+        plot2 = new OpenSequenceGraph("Service performance", this);
+        plot2.setAxisTitles("time", "% Average Tip Duration");
+
+
+        plot2.addSequence("Average Trip Duration", new Sequence() {
+            public double getSValue() {
+                return Results.getAvgTripDuration();
+            }
+        });
+
+        //*********************************************************************
+        //Plot 3
+
+        // graph
+        if (plot3 != null) plot3.dispose();
+        plot3 = new OpenSequenceGraph("Service performance", this);
+        plot3.setAxisTitles("time", "Number times refueled");
+
+
+        //Number of times vehicles refuelled
+        plot3.addSequence("Times Refueled", new Sequence() {
+            public double getSValue() {
+                // iterate through vehicles
+                return Results.getNumberTimesRefuelled();
+            }
+        });
+
+
+        plot.display();
+        plot2.display();
+        plot3.display();
+        getSchedule().scheduleActionAtInterval(1, dsurf, "updateDisplay", Schedule.LAST);
+        getSchedule().scheduleActionAtInterval(TICKS_FOR_STEP, plot, "step", Schedule.LAST);
+        getSchedule().scheduleActionAtInterval(TICKS_FOR_STEP, plot2, "step", Schedule.LAST);
+        getSchedule().scheduleActionAtInterval(TICKS_FOR_STEP, plot3, "step", Schedule.LAST);
+        getSchedule().scheduleActionAtInterval(TICKS_FOR_STEP, this, "step", Schedule.INTERVAL_UPDATER);
     }
 
     @Override
@@ -458,15 +632,16 @@ public class RepastLauncher extends Repast3Launcher {
         try {
             // ----------------------------------------------------
             // starting control tower agent
-            ControlTowerAgent controlTowerAgent = new ControlTowerAgent();
+            ControlTowerAgent controlTowerAgent = new ControlTowerAgent(WAIT_BETWEEN_TRIES_MS);
             AgentController controlTower = container.acceptNewAgent(ControlTowerAgent.getDFName(), controlTowerAgent);
             LoggerHelper.get().logInfo("START - Started control tower");
             controlTower.start();
+            GUI.setControlTowerNode( GUI.generateNode(ControlTowerAgent.getDFName(),Color.GREEN, WIDTH/2,HEIGHT/2,5,false));
 
             // ----------------------------------------------------
             // starting vehicle agents
-            VehicleAgent[] vehicles = createVehicles(NUM_INEM, NUM_FIRE, NUM_POLICE);
-            startVehicles(vehicles, container);
+            createVehicles(NUM_INEM, NUM_FIRE, NUM_POLICE);
+            startVehicles(container);
 
             // ----------------------------------------------------
             // starting client agent
@@ -482,11 +657,8 @@ public class RepastLauncher extends Repast3Launcher {
         }
     }
 
-    private VehicleAgent[] createVehicles(int numberInem, int numberFire, int numberPolice){
+    private void createVehicles(int numberInem, int numberFire, int numberPolice){
         LoggerHelper.get().logCreateVehicles(numberInem, numberFire, numberPolice);
-
-        int total = numberFire + numberInem + numberPolice;
-        VehicleAgent[] vehicles  = new VehicleAgent[total];
 
         for (int i = 0; i < numberInem; i++) {
             String name = "Inem" + i;
@@ -494,37 +666,56 @@ public class RepastLauncher extends Repast3Launcher {
                     MIN_NUM_EMPLOYEES, MAX_NUM_EMPLOYEES, REFUEL_DURATION_MS,
                     EMPLOYEE_CHANGE_PROB, MULTIPLIER_EMPLOYEE, MULTIPLIER_DISTANCE, MULTIPLIER_FUEL,
                     MULTIPLIER_EMPLOYEE_FUEL, MAX_FUEL_INEM, SPARE_FUEL_LEVEL_INEM, FUEL_RATE_INEM);
-            vehicles[i] = vehicleAgent;
+            vehicles.add(vehicleAgent);
         }
-        for (int i = numberInem; i < numberInem + numberFire; i++) {
+        for (int i = 0; i < numberFire; i++) {
             String name = "Fireman" + i;
             VehicleAgent vehicleAgent = new FiremanAgent(name,
                     MIN_NUM_EMPLOYEES, MAX_NUM_EMPLOYEES, REFUEL_DURATION_MS,
                     EMPLOYEE_CHANGE_PROB, MULTIPLIER_EMPLOYEE, MULTIPLIER_DISTANCE, MULTIPLIER_FUEL,
                     MULTIPLIER_EMPLOYEE_FUEL, MAX_FUEL_FIRE, SPARE_FUEL_LEVEL_FIRE, FUEL_RATE_FIRE);
-            vehicles[i] = vehicleAgent;
+            vehicles.add(vehicleAgent);
         }
-        for (int i = numberInem + numberFire; i < total; i++) {
+        for (int i = 0; i < numberPolice; i++) {
             String name = "Police" + i;
             VehicleAgent vehicleAgent = new PoliceAgent(name,
                     MIN_NUM_EMPLOYEES, MAX_NUM_EMPLOYEES, REFUEL_DURATION_MS,
                     EMPLOYEE_CHANGE_PROB, MULTIPLIER_EMPLOYEE, MULTIPLIER_DISTANCE, MULTIPLIER_FUEL,
                     MULTIPLIER_EMPLOYEE_FUEL, MAX_FUEL_POLICE, SPARE_FUEL_LEVEL_POLICE, FUEL_RATE_POLICE);
-            vehicles[i] = vehicleAgent;
+            vehicles.add(vehicleAgent);
+
         }
-        return vehicles;
     }
 
-    private void startVehicles(VehicleAgent[] vehicleAgents, ContainerController container) {
-        for (VehicleAgent vehicleAgent : vehicleAgents){
+    private void startVehicles(ContainerController container) {
+        for (VehicleAgent vehicleAgent : vehicles){
             AgentController vehicle = null;
             try {
                 vehicle = container.acceptNewAgent(vehicleAgent.getVehicleName(), vehicleAgent);
                 vehicle.start();
+                GUI.generateVehicleNode(vehicleAgent);
             } catch (StaleProxyException e) {
                 e.printStackTrace();
             }
         }
+    }
+
+
+    public void step()
+    {
+        for(VehicleAgent vehicle : vehicles) {
+            vehicle.updateVehicleCoordinates();
+        }
+    }
+
+    public void updateNetwork() {
+        if (display != null)
+            dsurf.removeProbeableDisplayable(display);
+        display = new Network2DDisplay(GUI.getNodes(), WIDTH, HEIGHT);
+        dsurf.addDisplayableProbeable(display, "Network Display" + display.hashCode());
+        dsurf.addZoomable(display);
+        this.addSimEventListener(dsurf);
+
     }
 
     /**
@@ -532,11 +723,9 @@ public class RepastLauncher extends Repast3Launcher {
      * @param args
      */
     public static void main(String[] args) {
-        boolean runMode = BATCH_MODE;
-
         SimInit init = new SimInit();
         init.setNumRuns(1);   // works only in batch mode
-        init.loadModel(new RepastLauncher(runMode), null, runMode);
+        init.loadModel(RepastLauncher.get(), null, BATCH_MODE);
     }
 
 }
