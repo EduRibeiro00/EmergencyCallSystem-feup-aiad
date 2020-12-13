@@ -24,12 +24,13 @@ import java.util.concurrent.TimeUnit;
 public class ControlTowerAgent extends Agent {
     private static final String DF_NAME = "control-tower";
     private static final int EMERGENCY_MAX_TRIES = 3;
-    private static final int WAIT_BETWEEN_TRIES = 1000;
+    private final int WAIT_BETWEEN_TRIES;
 
     private final ControlTowerBehaviour behaviour;
     private final ScheduledThreadPoolExecutor executor;
 
-    public ControlTowerAgent() {
+    public ControlTowerAgent(int WAIT_BETWEEN_TRIES) {
+        this.WAIT_BETWEEN_TRIES = WAIT_BETWEEN_TRIES;
         this.behaviour = new ControlTowerBehaviour(this);
         this.executor = new ScheduledThreadPoolExecutor(3);
     }
