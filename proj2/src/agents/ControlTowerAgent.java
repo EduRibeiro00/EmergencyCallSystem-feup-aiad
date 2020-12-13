@@ -77,9 +77,13 @@ public class ControlTowerAgent extends Agent {
                 String emergLabel = GUI.getEmergencyLabel(emergency.getId());
                 Results.incrementFailedEmergencies();
 
-                if(GUI.getNode(emergLabel).getNumInEdges() == 0)
+                if(GUI.getNode(emergLabel).getNumInEdges() == 0) {
+                    LoggerHelper.get().logInfo("FALHEI NO IF");
+
                     GUI.removeNode(emergLabel);
+                }
                 else{
+                    LoggerHelper.get().logInfo("FALHEI NO ELSE");
                     List<EdgeEmerVehicle> edges = GUI.getEmergByID(emergency).getInEdges();
                     for (int i = 0; i < edges.size(); i++) {
                          edges.get(i).getVehicleAgent().setReachedMaxTries(true);

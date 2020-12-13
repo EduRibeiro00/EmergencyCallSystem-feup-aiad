@@ -132,7 +132,7 @@ public abstract class VehicleBehaviour extends ContractNetResponder {
             GUI.createVehicleEmergEdge( GUI.getEmergencyLabel(acceptVehicleMsg.getEmergencyId()),Color.green,vehicleAgent);
 
             double distance = vehicleAgent.getCoordinates().getDistance(acceptVehicleMsg.getCoordinates());
-            double tripDuration = Math.round(distance) * 100;
+            double tripDuration = Math.round(distance) * 50;
             int duration = (acceptVehicleMsg.getAccidentDuration() + (int) tripDuration);
 
             vehicleAgent.calcVehicleNodeMovement(acceptVehicleMsg.getCoordinates(), tripDuration);

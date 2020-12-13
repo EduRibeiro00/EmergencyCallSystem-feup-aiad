@@ -152,7 +152,7 @@ public class RepastLauncher extends Repast3Launcher {
     // Common vehicle variables
     private int MIN_NUM_EMPLOYEES= 1;
     private int MAX_NUM_EMPLOYEES= 6;
-    private int REFUEL_DURATION_MS = 20000;
+    private int REFUEL_DURATION_MS = 5000;
     private int EMPLOYEE_CHANGE_PROB = 10; // 1 in 10 chance of changing number employees
 
     private double MULTIPLIER_EMPLOYEE = 2.5;
@@ -238,7 +238,7 @@ public class RepastLauncher extends Repast3Launcher {
 
     // ******************************************************
     // Inem vehicle variables
-    private int NUM_INEM = 1;
+    private int NUM_INEM = 5;
     private int MAX_FUEL_INEM = 700;
     private int SPARE_FUEL_LEVEL_INEM = 100;
     private double FUEL_RATE_INEM = 3.0;
@@ -289,7 +289,7 @@ public class RepastLauncher extends Repast3Launcher {
 
     // ******************************************************
     // Fire vehicle variables
-    private int NUM_FIRE = 0;
+    private int NUM_FIRE = 5;
     private int MAX_FUEL_FIRE = 1500;
     private int SPARE_FUEL_LEVEL_FIRE = 200;
     private double FUEL_RATE_FIRE = 6.0;
@@ -340,7 +340,7 @@ public class RepastLauncher extends Repast3Launcher {
 
     // ******************************************************
     // Police vehicle variables
-    private int NUM_POLICE = 0;
+    private int NUM_POLICE = 5;
     private int MAX_FUEL_POLICE = 350;
     private int SPARE_FUEL_LEVEL_POLICE = 60;
     private double FUEL_RATE_POLICE = 2.0;
@@ -391,7 +391,7 @@ public class RepastLauncher extends Repast3Launcher {
 
     // ******************************************************
     // Emergency variables (only for random generation of emergencies, i.e. when deterministic is false)
-    private int TIME_BETWEEN_CALLS_MS = 1000;
+    private int TIME_BETWEEN_CALLS_MS = 2000;
     private int MIN_VEHICLES_EMERGENCY = 1;
     private int MAX_VEHICLES_EMERGENCY = 3;
     private int MIN_DURATION_MS = 2000;
@@ -550,6 +550,7 @@ public class RepastLauncher extends Repast3Launcher {
         if (plot != null) plot.dispose();
         plot = new OpenSequenceGraph("Percentages", this);
         plot.setAxisTitles("time", "% successful service executions");
+        plot.setYRange(-0.2,1.2);
 
         plot.addSequence("Occupied Vehicles Percentage", new Sequence() {
             public double getSValue() {
