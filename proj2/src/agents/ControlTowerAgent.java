@@ -10,6 +10,7 @@ import jade.domain.FIPANames;
 import jade.lang.acl.ACLMessage;
 import logs.LoggerHelper;
 import messages.TowerRequest;
+import uchicago.src.sim.network.DefaultDrawableNode;
 import utils.*;
 
 import java.awt.*;
@@ -70,12 +71,11 @@ public class ControlTowerAgent extends Agent {
         if (priority >= vehiclePriorities.size()) {
             // if the max number of tries are
             if (numTries >= EMERGENCY_MAX_TRIES) {
+                String emergLabel = GUI.getEmergencyLabel(emergency.getId());
                 Results.incrementFailedEmergencies();
-                LoggerHelper.get().logInfo("ZAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAS");
-                LoggerHelper.get().logInfo(emergency.getId()+"");
 
-                if( GUI.getNode(GUI.getEmergencyLabel(emergency.getId())).getNumInEdges()==0 )
-                    GUI.removeNode(GUI.getEmergencyLabel(emergency.getId()));
+                if(GUI.getNode(emergLabel).getNumInEdges() == 0)
+                    GUI.removeNode(emergLabel);
 
                 LoggerHelper.get().logMaxRetriesEmergency(emergency, EMERGENCY_MAX_TRIES);
 

@@ -105,6 +105,7 @@ public class GUI {
         Edge edge = new Edge(myNode, to);
         edge.setColor(color);
         myNode.addOutEdge(edge);
+        to.addInEdge(edge);
     }
 
     public static void addNode(DefaultDrawableNode node) {

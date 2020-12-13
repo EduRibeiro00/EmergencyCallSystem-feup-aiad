@@ -5,7 +5,7 @@ import agents.VehicleAgent;
 import GUI.GUI;
 
 public class Emergency implements java.io.Serializable {
-    private static int CURRENT_ID = 0;
+    private static int CURRENT_ID = 1;
 
     private int id;
     private EmergencyType emergencyType;
@@ -50,10 +50,6 @@ public class Emergency implements java.io.Serializable {
     public int getId() {return id;}
 
     public void setId(int id) { this.id = id;}
-
-    public static void incrementID(){
-        CURRENT_ID++;
-    }
 
     @Override
     public String toString() {

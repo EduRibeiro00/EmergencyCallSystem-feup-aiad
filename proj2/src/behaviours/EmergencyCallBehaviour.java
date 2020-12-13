@@ -53,7 +53,6 @@ public class EmergencyCallBehaviour extends TickerBehaviour {
     protected void onTick() {
         ACLMessage request = new ACLMessage(ACLMessage.INFORM);
         request.addReceiver(controlTowerID);
-        Emergency.incrementID();
         Emergency emergency = new Emergency(
                 getRandomEmergencyType(),
                 Point.genRandomPoint(),

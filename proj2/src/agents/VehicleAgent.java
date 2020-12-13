@@ -177,12 +177,6 @@ public abstract class VehicleAgent extends Agent {
         double totalDistY = emergencyCoords.getY() - coordinates.getY();
 
         numStepsUntilEmergNode = (int) Math.round(tripDuration / RepastLauncher.getStepDuration());
-        System.out.println("------------");
-        System.out.println("vehicleCoords: " + coordinates);
-        System.out.println("emergCoords: " + emergencyCoords);
-        System.out.println("tripDuration: " + tripDuration);
-        System.out.println("numSteps: " + numStepsUntilEmergNode);
-        System.out.println("------------");
         deltaXToEmergency = totalDistX / numStepsUntilEmergNode;
         deltaYToEmergency = totalDistY / numStepsUntilEmergNode;
     }
