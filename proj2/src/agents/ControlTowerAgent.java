@@ -2,6 +2,7 @@ package agents;
 
 import GUI.Results;
 import GUI.GUI;
+import GUI.EdgeEmerVehicle;
 import behaviours.ControlTowerBehaviour;
 import repast.RepastLauncher;
 import sajas.core.Agent;
@@ -16,6 +17,7 @@ import utils.*;
 import java.awt.*;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
@@ -76,6 +78,13 @@ public class ControlTowerAgent extends Agent {
 
                 if(GUI.getNode(emergLabel).getNumInEdges() == 0)
                     GUI.removeNode(emergLabel);
+                else{
+                    List<EdgeEmerVehicle> edges = GUI.getEmergByID(emergency).getInEdges();
+                    for (int i = 0; i < edges.size(); i++) {
+                         edges.get(i).getVehicleAgent().setReachedMaxTries(true);
+                    }
+
+                }
 
                 LoggerHelper.get().logMaxRetriesEmergency(emergency, EMERGENCY_MAX_TRIES);
 

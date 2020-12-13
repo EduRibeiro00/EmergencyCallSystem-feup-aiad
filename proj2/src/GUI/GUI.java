@@ -107,6 +107,20 @@ public class GUI {
         myNode.addOutEdge(edge);
         to.addInEdge(edge);
     }
+    public static void createVehicleEmergEdge(String name, Color color,VehicleAgent vehicleAgent){
+
+        DefaultDrawableNode myNode = vehicleAgent.getNode();
+
+        DefaultDrawableNode to = GUI.getNode(name);
+        if(to == null){
+            System.out.println("Node is null when creating edge");
+            return;
+        }
+        EdgeEmerVehicle edge = new EdgeEmerVehicle(myNode, to,vehicleAgent);
+        edge.setColor(color);
+        myNode.addOutEdge(edge);
+        to.addInEdge(edge);
+    }
 
     public static void addNode(DefaultDrawableNode node) {
         nodes.put(node.getNodeLabel(), node);
@@ -125,5 +139,10 @@ public class GUI {
 
     public static void setControlTowerNode(DefaultDrawableNode controlTowerNodeNew) {
         controlTowerNode = controlTowerNodeNew;
+    }
+
+    public static DefaultDrawableNode getEmergByID(Emergency emergency){
+        return GUI.getNode(GUI.getEmergencyLabel(emergency.getId()));
+
     }
 }

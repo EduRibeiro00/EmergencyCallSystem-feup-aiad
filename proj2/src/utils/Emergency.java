@@ -70,12 +70,14 @@ public class Emergency implements java.io.Serializable {
         this.duration = duration;
     }
 
-    public void incrementLeftVehiclesEmerg(VehicleAgent vehicleAgent){
+    public boolean incrementLeftVehiclesEmerg(VehicleAgent vehicleAgent){
         numberVehiclesDoneWithEmergency++;
         GUI.removeEdge(vehicleAgent.getNode(), GUI.getNode(GUI.getEmergencyLabel(vehicleAgent.getEmergencyId())));
         if(numberVehiclesDoneWithEmergency >= numberVehicles) {
             GUI.removeNode(GUI.getEmergencyLabel(id));
+            return true;
         }
+        return false;
     }
 
     public int getNumberVehiclesDoneWithEmergency() {

@@ -129,7 +129,7 @@ public abstract class VehicleBehaviour extends ContractNetResponder {
             LoggerHelper.get().logAcceptProposal(this.myAgent.getLocalName(), vehicleAgent.getCoordinates());
 
             this.vehicleAgent.setEmergencyId(acceptVehicleMsg.getEmergencyId());
-            GUI.createEdgeName(vehicleAgent.getNode(), GUI.getEmergencyLabel(acceptVehicleMsg.getEmergencyId()),Color.green);
+            GUI.createVehicleEmergEdge( GUI.getEmergencyLabel(acceptVehicleMsg.getEmergencyId()),Color.green,vehicleAgent);
 
             double distance = vehicleAgent.getCoordinates().getDistance(acceptVehicleMsg.getCoordinates());
             double tripDuration = Math.round(distance) * 100;
@@ -214,7 +214,9 @@ public abstract class VehicleBehaviour extends ContractNetResponder {
         vehicleAgent.setCoordsToEmergency();
 
         Emergency emergency = RepastLauncher.getEmergencyMap().get(this.vehicleAgent.getEmergencyId());
-        emergency.incrementLeftVehiclesEmerg(this.vehicleAgent);
+        if(!emergency.incrementLeftVehiclesEmerg(this.vehicleAgent)){
+            if(vehicleAgent.isReachedMaxTries()) GUI.removeNode(GUI.getEmergencyLabel(emergency.getId()));
+        }
         this.vehicleAgent.setEmergencyId(-1);
 
         boolean shouldChangeEmployees = ThreadLocalRandom.current().nextInt(this.vehicleAgent.getEMPLOYEE_CHANGE_PROB()) == 0;
@@ -278,9 +280,6 @@ public abstract class VehicleBehaviour extends ContractNetResponder {
             vehicleAgent.getNode().addOutEdge(edge);
         }*/
     }
-
-
-
 
 
 

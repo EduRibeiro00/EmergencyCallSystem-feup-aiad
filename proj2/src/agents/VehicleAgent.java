@@ -32,6 +32,8 @@ public abstract class VehicleAgent extends Agent {
     protected VehicleBehaviour vehicleBehaviour;
     private final String vehicleName;
     protected AtomicBoolean occupied;
+    private boolean reachedMaxTries = false;
+
 
     protected Point currentEmergencyCoords;
     protected int numStepsUntilEmergNode;
@@ -173,6 +175,7 @@ public abstract class VehicleAgent extends Agent {
     public void calcVehicleNodeMovement(Point emergencyCoords, double tripDuration) {
         Results.addTripTime(tripDuration);
         currentEmergencyCoords = emergencyCoords;
+        setReachedMaxTries(false);
         double totalDistX = emergencyCoords.getX() - coordinates.getX();
         double totalDistY = emergencyCoords.getY() - coordinates.getY();
 
@@ -199,5 +202,13 @@ public abstract class VehicleAgent extends Agent {
             this.currentEmergencyCoords.getY()
         );
         this.resetCurrentEmergency();
+    }
+
+    public boolean isReachedMaxTries() {
+        return reachedMaxTries;
+    }
+
+    public void setReachedMaxTries(boolean reachedMaxTries) {
+        this.reachedMaxTries = reachedMaxTries;
     }
 }
