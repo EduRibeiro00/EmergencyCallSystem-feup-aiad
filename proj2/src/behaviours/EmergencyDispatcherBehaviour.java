@@ -104,7 +104,9 @@ public class EmergencyDispatcherBehaviour extends ContractNetInitiator {
                             (LoggerHelper.get().getIDOut(emergency.getId())) : "")+
                             "Tower - will try to recruit vehicles from next type");
             agent.handleEmergency(emergency, numberVehicles - acceptedVehicles, this.priority + 1, numTries);
-        }else{ Results.incrementEmergFirstPriority();}
+        } else if (this.priority == 0) {
+            Results.incrementEmergFirstPriority();
+        }
     }
 
     @Override

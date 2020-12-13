@@ -558,6 +558,7 @@ public class RepastLauncher extends Repast3Launcher {
                 return Results.getOccupiedVehicles(vehicles);
             }
         });
+
         plot.addSequence("Emergencies Success Percentage", new Sequence() {
             public double getSValue() {
                 return Results.getSuccessEmergenciesPerc();
@@ -566,7 +567,7 @@ public class RepastLauncher extends Repast3Launcher {
 
         plot.addSequence("Percentage of Emergencies handled by first priority", new Sequence() {
             public double getSValue() {
-                return Results.getNumberEmergFirstPriority()/Results.getNumberEmergencies();
+                return Results.getNumberEmergFirstPriority() / Results.getNumberEmergencies();
             }
         });
 
@@ -594,7 +595,7 @@ public class RepastLauncher extends Repast3Launcher {
         plot3.setAxisTitles("time", "Number times refueled");
 
 
-        //Number of times vehicles refuelled
+        // Number of times vehicles refuelled
         plot3.addSequence("Times Refueled", new Sequence() {
             public double getSValue() {
                 // iterate through vehicles

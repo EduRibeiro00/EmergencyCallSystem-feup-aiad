@@ -8,18 +8,15 @@ public class Results {
 
     private static double numberFailedEmergencies = 0;
     private static double numberEmergencies = 0;
-    private static  double numberEmergFirstPriority = 0;
+    private static double numberEmergFirstPriority = 0;
     private static double numberTimesRefuelled = 0;
     private static double totalTripDuration = 0;
     private static double numberTripDurations = 0;
 
-    public static double getNumberFailedEmergencies() {
-        return numberFailedEmergencies;
-    }
     public static  void incrementFailedEmergencies(){
         numberFailedEmergencies++;
-        System.out.println("Incrementing Failed emerf" + numberFailedEmergencies);
     }
+
     public static  void incrementEmergencies(){
         numberEmergencies++;
     }
@@ -37,7 +34,7 @@ public class Results {
     }
 
     public static double getSuccessEmergenciesPerc(){
-        return (numberEmergencies-numberFailedEmergencies)/(numberEmergencies==0 ? 1:numberEmergencies);
+        return (numberEmergencies - numberFailedEmergencies) / (numberEmergencies == 0 ? 1 : numberEmergencies);
     }
 
     public static double getNumberEmergFirstPriority() {
@@ -65,15 +62,11 @@ public class Results {
     }
 
     public static double getAvgTripDuration() {
-        return (totalTripDuration/numberTripDurations)/1000;
+        return (totalTripDuration / numberTripDurations) / 1000;
     }
+
     public static void addTripTime(double tripTime) {
         Results.numberTripDurations++;
         totalTripDuration =  (totalTripDuration + tripTime);
-
     }
-
-
-
-
 }
