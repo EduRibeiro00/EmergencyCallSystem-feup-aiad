@@ -137,6 +137,18 @@ public class RepastLauncher extends Repast3Launcher {
     }
 
     // ******************************************************
+    // Control tower variables
+    private int WAIT_BETWEEN_TRIES_MS = 2000;
+
+    public int getWAIT_BETWEEN_TRIES_MS() {
+        return WAIT_BETWEEN_TRIES_MS;
+    }
+
+    public void setWAIT_BETWEEN_TRIES_MS(int WAIT_BETWEEN_TRIES_MS) {
+        this.WAIT_BETWEEN_TRIES_MS = WAIT_BETWEEN_TRIES_MS;
+    }
+
+    // ******************************************************
     // Common vehicle variables
     private int MIN_NUM_EMPLOYEES= 1;
     private int MAX_NUM_EMPLOYEES= 6;
@@ -479,6 +491,8 @@ public class RepastLauncher extends Repast3Launcher {
             "REFUEL_DURATION_MS",
             "EMPLOYEE_CHANGE_PROB",
 
+            "WAIT_BETWEEN_TRIES_MS",
+
             "MULTIPLIER_EMPLOYEE",
             "MULTIPLIER_DISTANCE",
             "MULTIPLIER_FUEL",
@@ -576,7 +590,7 @@ public class RepastLauncher extends Repast3Launcher {
         // graph
         if (plot3 != null) plot3.dispose();
         plot3 = new OpenSequenceGraph("Service performance", this);
-        plot3.setAxisTitles("time", "% Number times refueled");
+        plot3.setAxisTitles("time", "Number times refueled");
 
 
         //Number of times vehicles refuelled
@@ -588,16 +602,13 @@ public class RepastLauncher extends Repast3Launcher {
         });
 
 
-
-
-
-        //plot.display();
-        //plot2.display();
-        //plot3.display();
+        plot.display();
+        plot2.display();
+        plot3.display();
         getSchedule().scheduleActionAtInterval(1, dsurf, "updateDisplay", Schedule.LAST);
-        //getSchedule().scheduleActionAtInterval(TICKS_FOR_STEP, plot, "step", Schedule.LAST);
-        //getSchedule().scheduleActionAtInterval(TICKS_FOR_STEP, plot2, "step", Schedule.LAST);
-        //getSchedule().scheduleActionAtInterval(TICKS_FOR_STEP, plot3, "step", Schedule.LAST);
+        getSchedule().scheduleActionAtInterval(TICKS_FOR_STEP, plot, "step", Schedule.LAST);
+        getSchedule().scheduleActionAtInterval(TICKS_FOR_STEP, plot2, "step", Schedule.LAST);
+        getSchedule().scheduleActionAtInterval(TICKS_FOR_STEP, plot3, "step", Schedule.LAST);
         getSchedule().scheduleActionAtInterval(TICKS_FOR_STEP, this, "step", Schedule.INTERVAL_UPDATER);
     }
 
@@ -620,7 +631,7 @@ public class RepastLauncher extends Repast3Launcher {
         try {
             // ----------------------------------------------------
             // starting control tower agent
-            ControlTowerAgent controlTowerAgent = new ControlTowerAgent();
+            ControlTowerAgent controlTowerAgent = new ControlTowerAgent(WAIT_BETWEEN_TRIES_MS);
             AgentController controlTower = container.acceptNewAgent(ControlTowerAgent.getDFName(), controlTowerAgent);
             LoggerHelper.get().logInfo("START - Started control tower");
             controlTower.start();
