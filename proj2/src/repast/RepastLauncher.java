@@ -66,6 +66,7 @@ public class RepastLauncher extends Repast3Launcher {
     private static MyDisplaySurface dsurf;
     private OpenSequenceGraph plot;
     private OpenSequenceGraph plot2;
+    private OpenSequenceGraph plot3;
     private final List<VehicleAgent> vehicles = new ArrayList<>();
     private static Network2DDisplay display;
 
@@ -225,7 +226,7 @@ public class RepastLauncher extends Repast3Launcher {
 
     // ******************************************************
     // Inem vehicle variables
-    private int NUM_INEM = 10;
+    private int NUM_INEM = 1;
     private int MAX_FUEL_INEM = 700;
     private int SPARE_FUEL_LEVEL_INEM = 100;
     private double FUEL_RATE_INEM = 3.0;
@@ -276,7 +277,7 @@ public class RepastLauncher extends Repast3Launcher {
 
     // ******************************************************
     // Fire vehicle variables
-    private int NUM_FIRE = 10;
+    private int NUM_FIRE = 0;
     private int MAX_FUEL_FIRE = 1500;
     private int SPARE_FUEL_LEVEL_FIRE = 200;
     private double FUEL_RATE_FIRE = 6.0;
@@ -327,7 +328,7 @@ public class RepastLauncher extends Repast3Launcher {
 
     // ******************************************************
     // Police vehicle variables
-    private int NUM_POLICE = 10;
+    private int NUM_POLICE = 0;
     private int MAX_FUEL_POLICE = 350;
     private int SPARE_FUEL_LEVEL_POLICE = 60;
     private double FUEL_RATE_POLICE = 2.0;
@@ -548,7 +549,7 @@ public class RepastLauncher extends Repast3Launcher {
             }
         });
 
-        plot.addSequence("Emergencies Success Percentage", new Sequence() {
+        plot.addSequence("Percentage of Emergencies handled by first priority", new Sequence() {
             public double getSValue() {
                 return Results.getNumberEmergFirstPriority()/Results.getNumberEmergencies();
             }
@@ -560,23 +561,8 @@ public class RepastLauncher extends Repast3Launcher {
         // graph
         if (plot2 != null) plot2.dispose();
         plot2 = new OpenSequenceGraph("Service performance", this);
-        plot2.setAxisTitles("time", "% successful service executions");
+        plot2.setAxisTitles("time", "% Average Tip Duration");
 
-        /*//Num emergency com veiculo de primeira prioridade
-        plot2.addSequence("Number of Emergencies first priority", new Sequence() {
-            public double getSValue() {
-                // iterate through vehicles
-                return Results.getNumberEmergFirstPriority();
-            }
-        });*/
-
-        //Number of times vehicles refuelled
-        plot2.addSequence("Times Refueled", new Sequence() {
-            public double getSValue() {
-                // iterate through vehicles
-                return Results.getNumberTimesRefuelled();
-            }
-        });
 
         plot2.addSequence("Average Trip Duration", new Sequence() {
             public double getSValue() {
@@ -584,19 +570,34 @@ public class RepastLauncher extends Repast3Launcher {
             }
         });
 
+        //*********************************************************************
+        //Plot 3
+
+        // graph
+        if (plot3 != null) plot3.dispose();
+        plot3 = new OpenSequenceGraph("Service performance", this);
+        plot3.setAxisTitles("time", "% Number times refueled");
 
 
-        //Tempo medio de espera de emergencia;
-        //Numero de * total que tiveram que abastecer
+        //Number of times vehicles refuelled
+        plot3.addSequence("Times Refueled", new Sequence() {
+            public double getSValue() {
+                // iterate through vehicles
+                return Results.getNumberTimesRefuelled();
+            }
+        });
 
 
 
 
-        plot.display();
-        plot2.display();
+
+        //plot.display();
+        //plot2.display();
+        //plot3.display();
         getSchedule().scheduleActionAtInterval(1, dsurf, "updateDisplay", Schedule.LAST);
-        getSchedule().scheduleActionAtInterval(TICKS_FOR_STEP, plot, "step", Schedule.LAST);
-        getSchedule().scheduleActionAtInterval(TICKS_FOR_STEP, plot2, "step", Schedule.LAST);
+        //getSchedule().scheduleActionAtInterval(TICKS_FOR_STEP, plot, "step", Schedule.LAST);
+        //getSchedule().scheduleActionAtInterval(TICKS_FOR_STEP, plot2, "step", Schedule.LAST);
+        //getSchedule().scheduleActionAtInterval(TICKS_FOR_STEP, plot3, "step", Schedule.LAST);
         getSchedule().scheduleActionAtInterval(TICKS_FOR_STEP, this, "step", Schedule.INTERVAL_UPDATER);
     }
 

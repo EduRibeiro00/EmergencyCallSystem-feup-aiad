@@ -12,6 +12,7 @@ import logs.LoggerHelper;
 import messages.TowerRequest;
 import utils.*;
 
+import java.awt.*;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
@@ -70,7 +71,12 @@ public class ControlTowerAgent extends Agent {
             // if the max number of tries are
             if (numTries >= EMERGENCY_MAX_TRIES) {
                 Results.incrementFailedEmergencies();
-                //GUI.removeNode(GUI.getEmergencyLabel(emergency.getId()));
+                LoggerHelper.get().logInfo("ZAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAS");
+                LoggerHelper.get().logInfo(emergency.getId()+"");
+
+                if( GUI.getNode(GUI.getEmergencyLabel(emergency.getId())).getNumInEdges()==0 )
+                    GUI.removeNode(GUI.getEmergencyLabel(emergency.getId()));
+
                 LoggerHelper.get().logMaxRetriesEmergency(emergency, EMERGENCY_MAX_TRIES);
 
             }
